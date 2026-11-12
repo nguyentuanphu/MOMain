@@ -1,0 +1,13 @@
+{
+  "name": "mumain-web-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Experimental browser renderer for the MuMain game data (Path B prototype).",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "three": "0.160.0"
+  }
+}

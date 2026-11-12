@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MuMain Web Viewer</title>
+  <style>
+    html, body { height: 100%; margin: 0; background: #0a0d14; color: #e6e8ef; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    #stage { position: fixed; inset: 0; }
+    #view { width: 100%; height: 100%; display: block; }
+    .hud { position: fixed; left: 12px; right: 12px; top: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; pointer-events: none; }
+    .chip { background: rgba(8, 10, 18, .72); border: 1px solid rgba(255, 255, 255, .12); border-radius: 6px; padding: 5px 10px; font-variant-numeric: tabular-nums; }
+    .chip label, .chip select { pointer-events: auto; }
+    select { background: #151a26; color: inherit; border: 1px solid #2c3446; border-radius: 4px; padding: 2px 4px; }
+    #loading { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); width: min(480px, 80vw); }
+    #track { height: 4px; background: rgba(255, 255, 255, .12); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+    #bar { height: 100%; width: 0; background: #c9a24a; transition: width .2s; }
+    body.ready #track { display: none; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="stage"><canvas id="view"></canvas></div>
+  <div class="hud">
+    <span class="chip">Cell <span id="position">-</span></span>
+    <span class="chip" id="fps">- fps</span>
+    <span class="chip"><label for="bodySet">Body set </label>
+      <select id="bodySet">
+        <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
+      </select>
+    </span>
+  </div>
+  <div id="loading" class="chip"><div id="status">Starting…</div><div id="track"><div id="bar"></div></div></div>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
