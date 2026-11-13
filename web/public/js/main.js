@@ -12,7 +12,7 @@ import { loadItemCatalog, itemsWithModels, ItemGroup, ARMOR_GROUPS, WEAPON_GROUP
 import { OnlineWorld } from './game/online.js';
 import { Chat } from './game/chat.js';
 import { loadGlowColors } from './game/itemGlow.js';
-import { fetchServerList, fetchGameServerAddress, login, fetchCharacters, enterWorld, CLASSES } from './net/session.js';
+import { fetchServerList, fetchGameServerAddress, login, fetchCharacters, enterWorld, createCharacter, CLASSES } from './net/session.js';
 
 THREE.ColorManagement.enabled = false;
 
@@ -216,6 +216,51 @@ function chooseFrom(container, items, describe) {
   });
 }
 
+const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const NEW_CHARACTER = { create: true };
+const MAX_CHARACTERS = 5;
+
+// The character list, with a form to create one (the client's CharacterScene).
+// The server sends the list once; a created character is added from the server's answer,
+// as the client's CharacterScene does.
+async function chooseCharacter(connection) {
+  const characters = await fetchCharacters(connection);
+  for (;;) {
+    const choices = characters.length < MAX_CHARACTERS ? [...characters, NEW_CHARACTER] : characters;
+    const choice = await chooseFrom(ui.characters, choices, (c) => (c.create ? '+ Create a character<small>Dark Wizard, Dark Knight, Fairy Elf, …</small>' : `${escapeHtml(c.name)}<small>Level ${c.level} ${CLASSES[c.classIndex]}</small>`));
+    if (!choice.create) return choice;
+    const created = await askNewCharacter();
+    if (!created) continue;
+    try {
+      const result = await createCharacter(connection, created.name, created.classIndex);
+      characters.push({ slot: result.CharacterSlot, name: result.CharacterName || created.name, level: result.Level ?? 1, classIndex: created.classIndex, equipment: {} });
+    } catch (error) {
+      showError(error);
+    }
+  }
+}
+
+function askNewCharacter() {
+  ui.characters.replaceChildren();
+  const form = document.createElement('div');
+  form.className = 'choices';
+  form.innerHTML = `
+    <label class="row"><span>Character name</span><input id="newName" maxlength="10" required autocomplete="off"></label>
+    <label class="row"><span>Class</span><select id="newClass">${CLASSES.map((name, index) => `<option value="${index}">${name}</option>`).join('')}</select></label>
+    <div class="buttons"><button type="button" class="primary" id="createIt">Create</button><button type="button" id="cancelIt">Back</button></div>`;
+  ui.characters.append(form);
+  form.querySelector('#newName').focus();
+  return new Promise((resolve) => {
+    form.querySelector('#cancelIt').addEventListener('click', () => resolve(null), { once: true });
+    form.querySelector('#createIt').addEventListener('click', () => {
+      const name = form.querySelector('#newName').value.trim();
+      if (name.length < 4 || name.length > 10) { showError(new Error('A character name has 4 to 10 letters or digits.')); return; }
+      ui.loginError.hidden = true;
+      resolve({ name, classIndex: Number(form.querySelector('#newClass').value) });
+    });
+  });
+}
+
 async function playOnline(settings) {
   const connectServer = { host: settings.host, port: Number(settings.port) };
   setStatus('Asking the connect server for game servers…');
@@ -226,9 +271,7 @@ async function playOnline(settings) {
   const address = await fetchGameServerAddress(settings.relay, connectServer, server.id);
   setStatus(`Logging in to ${address.host}:${address.port}…`);
   const connection = await login(settings.relay, address, settings.username, settings.password);
-  const characters = await fetchCharacters(connection);
-  if (!characters.length) throw new Error('This account has no characters yet. Character creation is not in the web client yet.');
-  const character = await chooseFrom(ui.characters, characters, (c) => `${c.name}<small>Level ${c.level} ${CLASSES[c.classIndex]}</small>`);
+  const character = await chooseCharacter(connection);
   ui.characters.hidden = true;
   await Promise.all([loadMonsterCatalog(), loadItemCatalog(), loadGlowColors()]);
   // The server sends who is in view right after the character information, while

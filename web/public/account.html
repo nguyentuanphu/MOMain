@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HNMO Account</title>
+  <style>
+    [hidden] { display: none !important; }
+    :root { --panel: rgba(10, 12, 20, .86); --line: rgba(255, 255, 255, .14); --gold: #c9a24a; --text: #e6e8ef; --muted: #9aa0b2; --error: #ef7a6c; --ok: #7cc98a; }
+    html, body { min-height: 100%; margin: 0; color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    body { background: radial-gradient(ellipse at top, #1a1f2e 0%, #07090f 70%) fixed; padding: 32px max(16px, env(safe-area-inset-left)) 48px; }
+    main { max-width: 760px; margin: 0 auto; display: grid; gap: 20px; }
+    header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+    h1 { margin: 0; color: var(--gold); letter-spacing: .04em; font-size: 28px; }
+    h2 { margin: 0 0 4px; font-size: 18px; }
+    a { color: var(--gold); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 12px; align-content: start; }
+    .panel p { margin: 0; color: var(--muted); font-size: 14px; }
+    label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+    input { background: #151a26; color: var(--text); border: 1px solid #2c3446; border-radius: 6px; padding: 8px 10px; font: inherit; }
+    button { font: inherit; border-radius: 6px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--gold); background: var(--gold); color: #1a1408; font-weight: 600; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+    .message { margin: 0; font-size: 14px; }
+    .message.error { color: var(--error); }
+    .message.ok { color: var(--ok); }
+    .coins { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .coin { background: #151a26; border-radius: 8px; padding: 10px; text-align: center; }
+    .coin strong { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+    .coin span { font-size: 12px; color: var(--muted); }
+    .notice { border-color: rgba(201, 162, 74, .5); }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>HNMO</h1>
+      <a href="/">Play the game →</a>
+    </header>
+
+    <section class="panel notice" id="setupPanel" hidden>
+      <h2>Finish the setup (host only)</h2>
+      <p>Registration needs a key for the game server, once:</p>
+      <p>1. Open the <a href="http://localhost:8095/users" target="_blank" rel="noopener">admin panel</a> and create the first user.<br>
+         2. Open <strong>API keys</strong>, create a key with the role <strong>Administrator</strong> and copy it.<br>
+         3. Paste it here. This only works on the host computer.</p>
+      <form id="setupForm" class="panel" style="padding:0;border:0;background:none">
+        <label>API key <input id="apiKey" name="apiKey" autocomplete="off" required></label>
+        <button type="submit">Save the key</button>
+        <p class="message" id="setupMessage" role="status"></p>
+      </form>
+    </section>
+
+    <div class="grid">
+      <form class="panel" id="registerForm">
+        <h2>Create an account</h2>
+        <p id="welcomeCoins">New accounts get free cash shop coins.</p>
+        <label>Account name <input id="loginName" name="loginName" required minlength="3" maxlength="10" pattern="[!-~]{3,10}" autocomplete="username"></label>
+        <label>Password <input id="password" name="password" type="password" required minlength="3" maxlength="20" autocomplete="new-password"></label>
+        <label>E-mail (optional) <input id="email" name="eMail" type="email" autocomplete="email"></label>
+        <button type="submit">Create account</button>
+        <p class="message" id="registerMessage" role="status"></p>
+      </form>
+
+      <form class="panel" id="coinsForm">
+        <h2>My coins</h2>
+        <p>Spend them in the game's cash shop. The host can give more in the admin panel, and playing earns Goblin Points.</p>
+        <label>Account name <input id="coinsAccount" name="account" required maxlength="10"></label>
+        <button type="submit">Show my coins</button>
+        <div class="coins" id="coins" hidden>
+          <div class="coin"><strong id="wcoinc">0</strong><span>WCoin (C)</span></div>
+          <div class="coin"><strong id="wcoinp">0</strong><span>WCoin (P)</span></div>
+          <div class="coin"><strong id="goblin">0</strong><span>Goblin Points</span></div>
+        </div>
+        <p class="message" id="coinsMessage" role="status"></p>
+      </form>
+    </div>
+  </main>
+  <script type="module">
+    const $ = (id) => document.getElementById(id);
+    const show = (element, text, ok) => { element.textContent = text; element.className = `message ${ok ? 'ok' : 'error'}`; };
+
+    async function call(url, options) {
+      const response = await fetch(url, options);
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || `The server answered ${response.status}.`);
+      return body;
+    }
+
+    const status = await call('/portal/status').catch(() => ({ ready: false }));
+    if (status.startingCoins) $('welcomeCoins').textContent = `New accounts get ${status.startingCoins} free to spend in the cash shop.`;
+    const onHost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+    $('setupPanel').hidden = status.ready || !onHost;
+
+    $('setupForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        await call('/portal/setup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: $('apiKey').value }) });
+        show($('setupMessage'), 'Saved. Friends can register now.', true);
+        $('apiKey').value = '';
+      } catch (error) { show($('setupMessage'), error.message, false); }
+    });
+
+    $('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = Object.fromEntries(new FormData(event.target));
+      try {
+        const result = await call('/portal/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ loginName: form.loginName, password: form.password, eMail: form.eMail || null }) });
+        show($('registerMessage'), `Account ${form.loginName} created${result.coins ? ` with ${result.coins}` : ''}. You can log in to the game now.`, true);
+        $('coinsAccount').value = form.loginName;
+        event.target.reset();
+      } catch (error) { show($('registerMessage'), error.message, false); }
+    });
+
+    $('coinsForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      try {
+        const coins = await call(`/portal/coins/${encodeURIComponent($('coinsAccount').value)}`);
+        // Grants the game server hasn't applied yet count too: it adds them when the player opens the cash shop.
+        const pending = { WCoinC: 0, WCoinP: 0, GoblinPoints: 0 };
+        for (const grant of coins.grants ?? []) if (!grant.appliedAt) pending[grant.coinType] = (pending[grant.coinType] ?? 0) + grant.amount;
+        $('wcoinc').textContent = (coins.wCoinC ?? 0) + pending.WCoinC;
+        $('wcoinp').textContent = (coins.wCoinP ?? 0) + pending.WCoinP;
+        $('goblin').textContent = (coins.goblinPoints ?? 0) + pending.GoblinPoints;
+        $('coins').hidden = false;
+        const waiting = pending.WCoinC + pending.WCoinP + pending.GoblinPoints;
+        show($('coinsMessage'), waiting ? `Includes ${waiting} new coins, which arrive in your account when you open the cash shop in the game.` : '', true);
+      } catch (error) { $('coins').hidden = true; show($('coinsMessage'), error.message, false); }
+    });
+  </script>
+</body>
+</html>

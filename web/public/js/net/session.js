@@ -100,6 +100,15 @@ export async function fetchCharacters(connection) {
   }));
 }
 
+// Creates a character (CharacterScene / CharMakeWin). The class goes as OpenMU's class
+// number, four apart for each base class. Classes the account hasn't unlocked yet
+// (e.g. Magic Gladiator) are refused by the server.
+export async function createCharacter(connection, name, classIndex) {
+  const result = await connection.request('ClientToServer', 'CreateCharacter', { Name: name, Class: classIndex * 4 }, 'ServerToClient', 'CharacterCreationSuccessful');
+  if (result.Success !== true) throw new Error(`The server didn't create ${name}: the name may be taken or not allowed, or the class isn't unlocked yet.`);
+  return result;
+}
+
 export async function enterWorld(connection, characterName) {
   return connection.request('ClientToServer', 'SelectCharacter', { Name: characterName }, 'ServerToClient', 'CharacterInformationExtended');
 }

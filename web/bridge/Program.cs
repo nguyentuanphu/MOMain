@@ -22,6 +22,11 @@ using MUnique.OpenMU.Network.Xor;
 using Pipelines.Sockets.Unofficial;
 
 var builder = WebApplication.CreateBuilder(args);
+var launcherOptions = builder.Configuration.GetSection("Launcher").Get<LauncherOptions>() ?? new LauncherOptions();
+builder.Services.AddHostedService(services => new GameLauncher(launcherOptions, builder.Environment.ContentRootPath, services.GetRequiredService<ILogger<GameLauncher>>()));
+builder.Host.ConfigureHostOptions(host => host.ShutdownTimeout = TimeSpan.FromSeconds(30));
+var portalOptions = builder.Configuration.GetSection("Portal").Get<PortalOptions>() ?? new PortalOptions();
+builder.Services.AddHttpClient();
 var app = builder.Build();
 var contentRoot = app.Environment.ContentRootPath;
 var webRoot = Path.GetFullPath(Path.Combine(contentRoot, app.Configuration["HNMO:WebRoot"] ?? "../public"));
@@ -49,6 +54,7 @@ if (Directory.Exists(Path.Combine(vendorRoot, "three")))
 }
 
 app.MapGet("/data/{**path}", (HttpContext context, string path) => gameFiles.ServeAsync(context, path));
+Portal.Map(app, new Portal(portalOptions, contentRoot, app.Services.GetRequiredService<IHttpClientFactory>().CreateClient(), app.Services.GetRequiredService<ILogger<Portal>>()));
 app.Logger.LogInformation("Web client: {WebRoot}. Game data: {DataRoot}.", webRoot, gameFiles.Root);
 
 app.Map("/relay", async context =>

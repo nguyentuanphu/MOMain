@@ -39,9 +39,13 @@ function readString(bytes, start, length) {
   return textDecoder.decode(bytes.subarray(start, end));
 }
 
+const FIXED_SIZES = { ShortLittleEndian: 2, ShortBigEndian: 2, IntegerLittleEndian: 4, IntegerBigEndian: 4, LongLittleEndian: 8, LongBigEndian: 8, Float: 4, Double: 8 };
+
 function readField(context, field, base, end) {
   const { bytes, view } = context;
   const at = base + field.index;
+  // A shorter variant of a packet (e.g. a failure answer) has no value for fields past its end.
+  if (at >= end || at + (FIXED_SIZES[field.type] ?? 1) > end) return undefined;
   switch (field.type) {
     case 'Byte':
     case 'Enum':

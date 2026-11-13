@@ -17,10 +17,20 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 | Character list | ✅ | Name, level, class |
 | Enter the world with a character | ✅ | Map and position from the server |
 | Ping and ping answers | ✅ | |
-| Character creation and deletion | ⬜ | |
+| Character creation | ✅ | Classes the account has unlocked; the new character comes from the server's answer, like CharacterScene |
+| Character deletion | ⬜ | |
 | Login and character screens with the original 3D scenes and UI | ⬜ | Plain HTML forms for now |
 | Reconnect after a lost connection (`Network/Reconnect`) | ⬜ | |
 | Server messages, notices, disconnect reasons | ⬜ | |
+
+## 1b. HNMO folder
+
+| Feature | Status | Notes |
+|---|---|---|
+| One folder: server, admin panel, web client, game data | ✅ | `tools/package-hnmo.sh`, Windows build by the "HNMO package" workflow |
+| Saving in the folder (portable PostgreSQL, started by HNMO) | ✅ | Tested on Linux: a character's map survives a restart |
+| Account page: register with free coins, show coins | ✅ | Uses the server's API with a key kept on the host |
+| Daily free coins, coin top-ups | ⬜ | |
 
 ## 2. World (`World/`, `Render/Terrain`, `Engine/Object`)
 

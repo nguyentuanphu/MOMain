@@ -1,48 +1,57 @@
 HNMO
 ====
 
-Everything in this folder: the game server, its admin panel and the game, which you
-play in a web browser. Nothing needs to be installed.
+Everything in this folder: the game, its server and admin panel, and a small
+database that keeps your progress. You play in a web browser. Nothing needs to be
+installed.
 
 START
-  Windows: double-click "Start HNMO.bat".
-  Linux/Mac: run ./start-hnmo.sh
+  Windows: double-click "Start HNMO.bat". One window opens; keep it open while you
+           play, close it to stop the game (your progress is saved).
+  Linux/Mac: run ./start-hnmo.sh (Ctrl+C stops it).
 
-  The game opens in your browser at http://localhost:8080/ after about 15 seconds.
-  Test accounts: test0 ... test9, test300, test400 (password = account name).
-  Press Enter in the game to chat; "/move devias" travels to Devias.
+  The game opens in your browser at http://localhost:8080/ when it's ready. The very
+  first start sets up the save game and takes up to a few minutes.
+
+  Windows may warn "Windows protected your PC" (the files aren't signed):
+  click "More info" and "Run anyway".
+
+SAVE GAME
+  Progress is saved in the "save" folder: accounts, characters, items, guilds, coins.
+  To back it up, stop the game and copy the "save" folder. To start over, stop the
+  game and delete the "save" folder.
+
+ACCOUNTS AND COINS
+  http://localhost:8080/account.html  (friends use your address instead of localhost)
+  - Create an account: new accounts get free cash shop coins.
+  - My coins: shows an account's coins.
+  First, once, on the host computer:
+    1. Open the admin panel (below), go to Users and create the first user.
+    2. Open "API keys", create a key with the role "Administrator", copy it.
+    3. Open http://localhost:8080/account.html and paste the key into the setup box.
+  Test accounts also work: test0 ... test9, test300, test400 (password = name).
+
+IN THE GAME
+  Log in, pick or create a character (Dark Wizard, Dark Knight and Fairy Elf;
+  the other classes unlock later in the game). Click to walk, right-drag to turn,
+  mouse wheel to zoom. Press Enter to chat; "/move devias" travels to Devias.
 
 ADMIN PANEL
-  http://localhost:8095/  - only reachable from this computer, on purpose.
-  Create the first user on the Users page before you do anything else.
+  http://localhost:8095/  - only on the host computer, on purpose.
 
-PLAY TOGETHER
-  One person runs this folder (the host). Friends need only a web browser.
+PLAY WITH FRIENDS
+  One person runs this folder (the host); friends need only a web browser.
 
-  Same Wi-Fi / home network:
-    1. Find the host's IP address (Windows: run "ipconfig", look for IPv4 Address,
-       e.g. 192.168.1.20).
-    2. Friends open http://192.168.1.20:8080/ in their browser.
-    3. If it doesn't load, allow "HNMO.Web" through the Windows firewall
-       (Windows asks the first time - choose "Private networks").
+  Same Wi-Fi: friends open http://HOST-IP:8080/ (Windows: "ipconfig" shows the
+  host's IPv4 address, e.g. 192.168.1.20). Allow "HNMO" through the firewall when
+  Windows asks (Private networks).
 
-  Over the internet (friends elsewhere):
-    Only port 8080 is needed, because the game server talks to the web part on the
-    host computer itself.
-    - Forward TCP port 8080 on your router to the host computer, and give friends
-      http://YOUR-PUBLIC-IP:8080/ (search "what is my IP" to find it), or
-    - use a private network app such as Tailscale on every computer, and use the
-      host's Tailscale address instead.
-    Don't post the address publicly: the game data isn't ours to publish.
-
-PLAY OFFLINE
-  Run this folder on your own computer and play at http://localhost:8080/.
-  Everyone can have their own copy for playing alone.
-
-GOOD TO KNOW
-  - This version runs in demo mode: characters and progress are NOT saved when the
-    server stops. Saving comes with the database in a later version.
-  - Close the two windows (or press Ctrl+C) to stop the game.
+  Friends elsewhere, without opening ports - Tailscale (free):
+    1. The host and every friend install Tailscale (tailscale.com) and sign in.
+    2. The host shares this computer with each friend: Tailscale admin console,
+       Machines, the host's machine, "Share", and sends them the invite.
+    3. Friends open http://HOST-TAILSCALE-IP:8080/ (the host's 100.x.y.z address,
+       shown in the Tailscale app).
 
 LICENSES
   See the "licenses" folder.

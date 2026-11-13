@@ -28,8 +28,16 @@ jobs:
           node-version: '22'
       - name: Install the web client's library
         run: npm ci --prefix client/web
+      - name: Get a portable PostgreSQL for Windows (the save game database)
+        run: |
+          for version in 16.9-1 16.8-1 16.6-1 16.4-1; do
+            if curl -fsSL -o pg.zip "https://get.enterprisedb.com/postgresql/postgresql-$version-windows-x64-binaries.zip"; then echo "PostgreSQL $version"; break; fi
+          done
+          unzip -q pg.zip -d pg
+          # Only what the database needs; leave out pgAdmin, StackBuilder, docs and headers
+          rm -rf pg/pgsql/pgAdmin* pg/pgsql/StackBuilder pg/pgsql/doc pg/pgsql/include pg/pgsql/symbols
       - name: Build the HNMO folder
-        run: client/web/tools/package-hnmo.sh "$GITHUB_WORKSPACE/server" win-x64 "$GITHUB_WORKSPACE/HNMO"
+        run: POSTGRES_DIR="$GITHUB_WORKSPACE/pg/pgsql" client/web/tools/package-hnmo.sh "$GITHUB_WORKSPACE/server" win-x64 "$GITHUB_WORKSPACE/HNMO"
       - uses: actions/upload-artifact@v4
         with:
           name: HNMO-windows
