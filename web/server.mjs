@@ -37,15 +37,20 @@ const CONTENT_TYPES = {
 
 const directoryIndex = new Map();
 
-async function listDirectory(dir) {
-  if (!directoryIndex.has(dir)) {
-    try {
-      const names = await fs.readdir(dir);
-      directoryIndex.set(dir, new Map(names.map((name) => [name.toLowerCase(), name])));
-    } catch {
-      directoryIndex.set(dir, null);
-    }
+async function readDirectory(dir) {
+  try {
+    const names = await fs.readdir(dir);
+    return new Map(names.map((name) => [name.toLowerCase(), name]));
+  } catch {
+    return null;
   }
+}
+
+// The game data doesn't change while the server runs, so its listings are kept;
+// the web files are listed fresh, so edits show up without a restart.
+async function listDirectory(dir) {
+  if (!dir.startsWith(DATA_DIR)) return readDirectory(dir);
+  if (!directoryIndex.has(dir)) directoryIndex.set(dir, await readDirectory(dir));
   return directoryIndex.get(dir);
 }
 

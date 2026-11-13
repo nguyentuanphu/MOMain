@@ -1,33 +1,53 @@
-# Web viewer (experimental)
+# Web client (experimental)
 
-A first step towards running the client in a browser: it reads the game data in
-`src/bin/Data` directly and draws a world with three.js. It is a prototype of the
-rendering side only; it does not connect to a server yet.
+A browser version of the client that reads the game data in `src/bin/Data`
+directly and plays on an OpenMU server. It is being built up to match the desktop
+client one to one; [PARITY.md](PARITY.md) tracks what works and what's next.
 
 ## What it does
 
-- Lorencia: terrain heights, both texture layers with their blend, the baked
-  light map, and all 2,870 static objects (houses, trees, walls, the fountain, …).
-- A player character: the `player.bmd` skeleton with the five body parts of a
-  class set, animated (standing and walking).
-- Click to walk, stopping at cells the map marks as not walkable. Right-drag turns
-  the camera, the mouse wheel zooms.
+- Logs in to OpenMU: server list, login, character list, entering the world.
+- Draws the map the server puts you on: terrain, light map and all static objects.
+- Shows the players, NPCs and monsters in view, with their models and animations
+  from `Data/Monsters`, and keeps them in sync as they come, go and walk.
+- Click to walk: the path avoids blocked cells and is sent to the server, so other
+  players see you walk. Right-drag turns the camera, the mouse wheel zooms.
+- "Explore offline" walks Lorencia without a server.
 
 ## Run it
 
-Requires Node.js 18 or newer.
+You need Node.js 18+, the .NET 10 SDK and a running OpenMU server (for example
+`dotnet MUnique.OpenMU.Startup.dll -demo -autostart -resolveIP:loopback`).
 
 ```bash
+# 1. The relay between the browser and the game servers (port 8081)
+cd web/bridge
+dotnet run -c Release
+
+# 2. The web client (port 8080), in a second terminal
 cd web
 npm install
 npm start
 ```
 
-Then open <http://127.0.0.1:8080/>. `PORT`, `HOST` and `MU_DATA_DIR` (another
-`Data` folder) can be set in the environment.
+Open <http://127.0.0.1:8080/> and log in, e.g. with OpenMU's test account
+`test300` / `test300`. The connect server and relay addresses are under "Server".
 
-The server binds to localhost on purpose: the game data is not ours to publish,
-so don't expose this server to the internet.
+Browsers can't open TCP connections, so everything goes through the relay. It only
+connects to the hosts in `bridge/appsettings.json` (`Relay:AllowedHosts`, plus
+loopback addresses), so it can't be used to reach anything else.
+
+The web server binds to localhost on purpose: the game data is not ours to
+publish, so don't expose it to the internet.
+
+## Packets
+
+`public/js/net/packets.generated.js` is generated from OpenMU's packet
+definitions, so every packet the server knows can be read and written by name:
+
+```bash
+node tools/generate-packets.mjs <OpenMU>/src/Network/Packets
+```
 
 ## How the files are read
 
@@ -46,9 +66,5 @@ names the C++ function it follows:
 
 ## Not done yet
 
-- Network: login, other players, monsters and NPCs from OpenMU. Browsers can't open
-  TCP sockets, so this needs a WebSocket bridge to the server and the packet
-  encryption in JavaScript.
-- Other maps (only Lorencia's model table is in `world.js`), water and grass
-  animation, object animation, effects, weapons, wings, the UI.
-- BMD version 14 models.
+See [PARITY.md](PARITY.md). Next up: attacking monsters (damage, health bars,
+dying), then equipment on characters and the HUD.
