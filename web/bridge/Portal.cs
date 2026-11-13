@@ -33,24 +33,48 @@ internal sealed class Portal(PortalOptions options, string contentRoot, HttpClie
 
     public static void Map(WebApplication app, Portal portal)
     {
-        app.MapGet("/portal/status", () => Results.Json(new { ready = !string.IsNullOrEmpty(portal.ApiKey), startingCoins = portal.StartingCoinsText }));
+        // Handlers that take only the HttpContext are cast to Func<..., Task<IResult>>, so their answer is sent:
+        // as a plain RequestDelegate the result would be dropped (ASP0016).
+        app.MapGet("/portal/status", (Func<HttpContext, Task<IResult>>)portal.StatusAsync);
         app.MapPost("/portal/register", portal.RegisterAsync);
         app.MapGet("/portal/coins/{account}", portal.CoinsAsync);
-        app.MapPost("/portal/setup", portal.SetupAsync);
+        app.MapPost("/portal/setup", (Func<HttpContext, Task<IResult>>)portal.SetupAsync);
     }
 
     private string StartingCoinsText => options.StartingCoins > 0 ? $"{options.StartingCoins} {options.StartingCoinType}" : string.Empty;
 
-    private HttpRequestMessage ApiRequest(HttpMethod method, string path, object? body = null)
+    private HttpRequestMessage ApiRequest(HttpMethod method, string path, object? body = null, string? apiKey = null)
     {
         var request = new HttpRequestMessage(method, new Uri(new Uri(options.ApiBaseUrl), path));
-        request.Headers.Add("X-Api-Key", this.ApiKey);
+        request.Headers.Add("X-Api-Key", apiKey ?? this.ApiKey);
         if (body is not null)
         {
             request.Content = JsonContent.Create(body);
         }
 
         return request;
+    }
+
+    private async Task<IResult> StatusAsync(HttpContext context) =>
+        Results.Json(new { ready = await this.IsKeyAcceptedAsync(context.RequestAborted).ConfigureAwait(false), startingCoins = this.StartingCoinsText });
+
+    // Ready means the game server accepts the saved key, not just that one is saved.
+    private async Task<bool> IsKeyAcceptedAsync(CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(this.ApiKey))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var check = await http.SendAsync(this.ApiRequest(HttpMethod.Get, "api/status"), cancellationToken).ConfigureAwait(false);
+            return check.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
     }
 
     private bool TryCountRegistration(IPAddress address)
@@ -147,11 +171,15 @@ internal sealed class Portal(PortalOptions options, string contentRoot, HttpClie
             return Results.Json(new { error = "Paste the API key." }, statusCode: 400);
         }
 
+        // Only a key the game server accepts replaces the saved one.
+        using var check = await http.SendAsync(this.ApiRequest(HttpMethod.Get, "api/status", apiKey: key), context.RequestAborted).ConfigureAwait(false);
+        if (!check.IsSuccessStatusCode)
+        {
+            return Results.Json(new { error = $"The game server refused this key ({(int)check.StatusCode}). Create a key with the role Administrator and paste it again." }, statusCode: 400);
+        }
+
         Directory.CreateDirectory(Path.GetDirectoryName(this.KeyFile)!);
         await File.WriteAllTextAsync(this.KeyFile, key, context.RequestAborted).ConfigureAwait(false);
-        using var check = await http.SendAsync(this.ApiRequest(HttpMethod.Get, "api/status"), context.RequestAborted).ConfigureAwait(false);
-        return check.IsSuccessStatusCode
-            ? Results.Json(new { saved = true })
-            : Results.Json(new { error = $"The key was saved, but the game server refused it ({(int)check.StatusCode}). Create an Administrator key." }, statusCode: 400);
+        return Results.Json(new { saved = true });
     }
 }
