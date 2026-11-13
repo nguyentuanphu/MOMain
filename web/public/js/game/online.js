@@ -5,6 +5,7 @@
 
 import { read, packetCode } from '../net/packets.js';
 import { classOfAppearance } from '../net/session.js';
+import { parseAppearance } from './items.js';
 import { createMonsterCharacter, createPlayerCharacter } from './characters.js';
 import { findPath, directionBetween } from './pathfinding.js';
 
@@ -72,7 +73,8 @@ export class OnlineWorld {
   addPlayer(player) {
     const id = player.Id & ID_MASK;
     const bodySet = classOfAppearance(player.AppearanceAndEffects) + 1;
-    this.spawn(id, () => createPlayerCharacter({ id, name: player.Name, bodySet }), {
+    const { equipment } = parseAppearance(player.AppearanceAndEffects);
+    this.spawn(id, () => createPlayerCharacter({ id, name: player.Name, bodySet, equipment }), {
       x: player.CurrentPositionX, y: player.CurrentPositionY, targetX: player.TargetPositionX, targetY: player.TargetPositionY, rotation: player.Rotation,
     });
   }

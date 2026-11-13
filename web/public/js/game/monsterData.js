@@ -44,7 +44,7 @@ export function describeMonster(number) {
     usesPlayerModel: false,
     dir,
     fileName: file.slice(dir.length + 1),
-    textureDir: model.textureFolders?.[0] ?? dir,
+    textureDir: model.textureFolders?.length ? model.textureFolders : [dir],
     scale: monster?.scale ?? model.scale ?? 1,
     keysPerSecond: speeds,
   };

@@ -8,6 +8,7 @@ import { loadWorldData, createWorld } from './world.js';
 import { createPlayerCharacter } from './game/characters.js';
 import { findPath } from './game/pathfinding.js';
 import { loadMonsterCatalog } from './game/monsterData.js';
+import { loadItemCatalog, itemsWithModels, ItemGroup, ARMOR_GROUPS, WEAPON_GROUPS } from './game/items.js';
 import { OnlineWorld } from './game/online.js';
 import { fetchServerList, fetchGameServerAddress, login, fetchCharacters, enterWorld, CLASSES } from './net/session.js';
 
@@ -24,7 +25,9 @@ const $ = (id) => document.getElementById(id);
 const ui = {
   canvas: $('view'), status: $('status'), bar: $('bar'), position: $('position'), fps: $('fps'),
   login: $('login'), loginForm: $('loginForm'), loginError: $('loginError'), servers: $('servers'), characters: $('characters'),
-  offline: $('offline'), hud: $('hud'), heroName: $('heroName'), labels: $('labels'), bodySetChip: $('bodySetChip'), bodySet: $('bodySet'),
+  offline: $('offline'), hud: $('hud'), heroName: $('heroName'), labels: $('labels'), wardrobe: $('wardrobe'), bodySet: $('bodySet'),
+  armorSet: $('armorSet'), rightHand: $('rightHand'), leftHand: $('leftHand'), wings: $('wings'), previousSet: $('previousSet'), nextSet: $('nextSet'),
+  holdWeapons: $('holdWeapons'),
 };
 
 const renderer = new THREE.WebGLRenderer({ canvas: ui.canvas, antialias: true });
@@ -70,10 +73,12 @@ async function loadMap(mapNumber) {
   root.add(world.group);
 }
 
-async function placeHero({ id, name, bodySet, x, y }) {
-  if (state.hero) root.remove(state.hero.group);
+async function placeHero({ id, name, bodySet, equipment, x, y }) {
   setStatus('Loading character…', 0.95);
-  state.hero = await createPlayerCharacter({ id, name, bodySet });
+  const hero = await createPlayerCharacter({ id, name, bodySet, equipment });
+  if (state.hero) root.remove(state.hero.group);
+  state.hero = hero;
+  hero.holdWeapons = !state.online && ui.holdWeapons.checked;
   state.hero.placeAt(x, y);
   root.add(state.hero.group);
   ui.heroName.textContent = name;
@@ -222,7 +227,7 @@ async function playOnline(settings) {
   if (!characters.length) throw new Error('This account has no characters yet. Character creation is not in the web client yet.');
   const character = await chooseFrom(ui.characters, characters, (c) => `${c.name}<small>Level ${c.level} ${CLASSES[c.classIndex]}</small>`);
   ui.characters.hidden = true;
-  await loadMonsterCatalog();
+  await Promise.all([loadMonsterCatalog(), loadItemCatalog()]);
   // The server sends who is in view right after the character information, while
   // the map is still loading: keep those packets and replay them once it's ready.
   const earlyPackets = [];
@@ -230,7 +235,7 @@ async function playOnline(settings) {
   const info = await enterWorld(connection, character.name);
   ui.login.hidden = true;
   await loadMap(info.MapId);
-  await placeHero({ id: connection.playerId, name: character.name, bodySet: character.classIndex + 1, x: info.X, y: info.Y });
+  await placeHero({ id: connection.playerId, name: character.name, bodySet: character.classIndex + 1, equipment: character.equipment, x: info.X, y: info.Y });
   stopBuffering();
   state.online = new OnlineWorld({ connection, root, world: state.world, hero: state.hero, playerId: connection.playerId });
   earlyPackets.forEach((bytes) => state.online.handle(bytes));
@@ -238,19 +243,79 @@ async function playOnline(settings) {
   setStatus(`${character.name} entered the world. Left-click to walk, right-drag to turn, wheel to zoom.`, 1);
 }
 
-async function playOffline() {
-  ui.login.hidden = true;
-  await loadMap(OFFLINE_START.map);
-  await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), x: OFFLINE_START.x, y: OFFLINE_START.y });
-  ui.bodySetChip.hidden = false;
-  setStatus('Offline: Lorencia without a server. Left-click to walk, right-drag to turn, wheel to zoom.', 1);
+// ---------- wardrobe (offline) ----------
+
+const NOTHING = '';
+
+function fillSelect(select, items, { none = true } = {}) {
+  select.replaceChildren();
+  if (none) select.append(new Option('Nothing', NOTHING));
+  for (const item of items) select.append(new Option(`${item.name}`, `${item.group}:${item.number}`));
 }
 
-ui.bodySet.addEventListener('change', async () => {
-  if (state.online || !state.hero) return;
-  const { x, y } = state.hero.cell;
-  await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), x, y });
-});
+function selectedItem(select) {
+  if (select.value === NOTHING) return null;
+  const [group, number] = select.value.split(':').map(Number);
+  return { group, number };
+}
+
+// An armour set is the same item number in the helm, armour, pants, gloves and boots groups.
+function armorSetEquipment(number) {
+  if (number === null) return {};
+  const slots = ['helm', 'armor', 'pants', 'gloves', 'boots'];
+  const equipment = {};
+  ARMOR_GROUPS.forEach((group, index) => {
+    if (itemsWithModels(group).some((item) => item.number === number)) equipment[slots[index]] = { group, number };
+  });
+  return equipment;
+}
+
+function wardrobeEquipment() {
+  const armor = selectedItem(ui.armorSet);
+  return {
+    ...armorSetEquipment(armor ? armor.number : null),
+    rightHand: selectedItem(ui.rightHand),
+    leftHand: selectedItem(ui.leftHand),
+    wings: selectedItem(ui.wings),
+  };
+}
+
+const WING_NAME = /wing|cape|cloak|mantle/i;
+
+function initWardrobe() {
+  fillSelect(ui.armorSet, itemsWithModels(ItemGroup.ARMOR).map((item) => ({ ...item, name: item.name.replace(/ Armor$/, '') })));
+  fillSelect(ui.rightHand, WEAPON_GROUPS.flatMap((group) => itemsWithModels(group)));
+  fillSelect(ui.leftHand, [ItemGroup.SHIELD, ...WEAPON_GROUPS].flatMap((group) => itemsWithModels(group)));
+  fillSelect(ui.wings, itemsWithModels(ItemGroup.WING).filter((item) => WING_NAME.test(item.name)));
+  ui.armorSet.selectedIndex = 1;
+  ui.rightHand.selectedIndex = 1;
+  ui.leftHand.value = `${ItemGroup.SHIELD}:0`;
+  ui.wings.selectedIndex = 1;
+  const redress = async () => {
+    if (state.online || !state.hero) return;
+    const { x, y } = state.hero.cell;
+    await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), equipment: wardrobeEquipment(), x, y });
+  };
+  for (const select of [ui.bodySet, ui.armorSet, ui.rightHand, ui.leftHand, ui.wings]) select.addEventListener('change', redress);
+  ui.holdWeapons.addEventListener('change', () => { if (state.hero) state.hero.holdWeapons = ui.holdWeapons.checked; });
+  const step = (delta) => {
+    const count = ui.armorSet.options.length;
+    ui.armorSet.selectedIndex = (ui.armorSet.selectedIndex + delta + count) % count;
+    redress();
+  };
+  ui.previousSet.addEventListener('click', () => step(-1));
+  ui.nextSet.addEventListener('click', () => step(1));
+}
+
+async function playOffline() {
+  ui.login.hidden = true;
+  await loadItemCatalog();
+  initWardrobe();
+  await loadMap(OFFLINE_START.map);
+  await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), equipment: wardrobeEquipment(), x: OFFLINE_START.x, y: OFFLINE_START.y });
+  ui.wardrobe.hidden = false;
+  setStatus('Offline: Lorencia without a server. Left-click to walk, right-drag to turn, wheel to zoom.', 1);
+}
 
 function startGame(play) {
   ui.loginError.hidden = true;

@@ -39,6 +39,12 @@
     #labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
     .label { position: absolute; left: 0; top: 0; font-size: 12px; white-space: nowrap; color: #f2f3f7; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
     .label.npc { color: #9fe0a8; }
+    .wardrobe { position: fixed; right: 12px; top: 56px; width: min(260px, calc(100vw - 24px)); display: grid; gap: 4px; padding: 12px; }
+    .wardrobe label { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .wardrobe select { width: 100%; }
+    .wardrobe .check { display: flex; gap: 6px; align-items: center; color: var(--text); }
+    .wardrobe .buttons { margin-top: 8px; }
+    .wardrobe .buttons button { flex: 1; }
   </style>
   <script type="importmap">
     { "imports": { "three": "/vendor/three/build/three.module.js" } }
@@ -51,12 +57,20 @@
     <span class="chip" id="heroName">-</span>
     <span class="chip">Cell <span id="position">-</span></span>
     <span class="chip" id="fps">- fps</span>
-    <span class="chip" id="bodySetChip" hidden><label for="bodySet">Body set </label>
-      <select id="bodySet">
-        <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option>
-        <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
-      </select>
-    </span>
+  </div>
+  <div class="chip wardrobe" id="wardrobe" hidden>
+    <strong>Wardrobe</strong>
+    <label for="bodySet">Class</label>
+    <select id="bodySet">
+      <option value="1">Dark Wizard</option><option value="2" selected>Dark Knight</option><option value="3">Fairy Elf</option>
+      <option value="4">Magic Gladiator</option><option value="5">Dark Lord</option><option value="6">Summoner</option><option value="7">Rage Fighter</option>
+    </select>
+    <label for="armorSet">Armour set</label><select id="armorSet"></select>
+    <label for="rightHand">Right hand</label><select id="rightHand"></select>
+    <label for="leftHand">Left hand</label><select id="leftHand"></select>
+    <label for="wings">Wings</label><select id="wings"></select>
+    <label class="check"><input type="checkbox" id="holdWeapons"> Hold weapons in town</label>
+    <div class="buttons"><button type="button" id="previousSet">◀ Set</button><button type="button" id="nextSet">Set ▶</button></div>
   </div>
   <div id="login">
     <form class="panel" id="loginForm" autocomplete="on">

@@ -45,7 +45,13 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 | NPCs and monsters in view (`13`) with models from `Data/Monsters` | ✅ | Scale and animation speeds from the data |
 | Pathfinding and walk packets (15 steps per packet, continued) | ✅ | Verified: another player sees the same cell |
 | Name labels | 🟡 | Players and NPCs, always shown; the client shows them on hover |
-| Equipment on characters (armor sets, weapons, wings, pets) from appearance bytes | ⬜ | Base body only |
+| Armour on characters from the appearance bytes (helm, armour, pants, gloves, boots) | ✅ | Models from `Data/Items/Models`; class body where nothing is worn |
+| Weapons and shields in the hands, on the back in safe zones | ✅ | Bones 33, 42 and 47 with the back placements of `PlaceLinkedPart`; crossbow and a few special placements not yet |
+| Wings | ✅ | Bone 47, animated, glowing meshes drawn additively |
+| Capes (Dark Lord, Rage Fighter) as cloth | 🟡 | Drawn stiff on the back bone; the client hangs them from bone 19 as cloth |
+| Pets and mounts (Guardian Angel, Imp, Horn of Fenrir, Dark Horse, …) | ⬜ | Read from the appearance, not drawn |
+| Item glow by level, excellent and ancient shine | ⬜ | Read from the appearance, not drawn |
+| Wardrobe (offline): try on any class, armour set, weapon and wings | ✅ | A developer tool, like the client's item previews |
 | NPCs drawn with the player model (guards, …) with their equipment | 🟡 | Drawn with a default body set |
 | Others' exact walking steps (`StepData`) | ⬜ | |
 | Actions: attack, skills, die, emotes, sit (`18`, `19`, `1E`, `17`) | ⬜ | |
@@ -93,5 +99,7 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 |---|---|---|
 | BMD versions 10 and 12 | ✅ | |
 | BMD version 14 | ⬜ | Needed for newer models |
-| Texture scripts (`_R` additive, alpha) | 🟡 | Additive by name and TGA alpha only |
+| Texture scripts (`_R` bright, `_H` hidden, `_N` no blending), `hid…` textures | ✅ | Hair is drawn as hair, not bright |
+| Item glow meshes (`glowingMesh`, `pulsingGlow`, `noneBlendMeshes`) | 🟡 | Drawn additively; the pulsing and render styles (chrome, Flamberge fire, …) not yet. Staff of Resurrection still shows a black plane |
+| Texture folders: first folder that has the texture | ✅ | |
 | GLB models (`Data/Models/ModelFiles.json`) | ⬜ | |

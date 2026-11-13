@@ -4,6 +4,7 @@
 import { Connection } from './connection.js';
 import { read } from './packets.js';
 import { PACKETS } from './packets.generated.js';
+import { parseAppearance } from '../game/items.js';
 
 // The client identity MuMain sends (Network/Server/WSclient.cpp: Version, Serial).
 const CLIENT_VERSION = new TextEncoder().encode('20404');
@@ -95,6 +96,7 @@ export async function fetchCharacters(connection) {
     name: character.Name,
     level: character.Level,
     classIndex: classOfAppearance(character.Appearance),
+    equipment: parseAppearance(character.Appearance).equipment,
   }));
 }
 

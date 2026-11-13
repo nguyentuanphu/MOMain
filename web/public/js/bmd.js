@@ -6,7 +6,6 @@
 import * as THREE from 'three';
 import { parseBMD, decodeTGA } from './formats.js';
 
-const ADDITIVE_SUFFIX = '_r';
 const ALPHA_TEST = 0.25;
 
 const fileCache = new Map();
@@ -27,10 +26,19 @@ export async function loadModel(dir, fileName) {
   return parseBMD(bytes);
 }
 
+// Texture scripts in the file name (TextureScript.cpp): the letters after the first
+// "_" can be R (bright), H (hidden mesh), S (stream mesh) and N (no blending).
+// Hair is drawn as hair, not bright, like the client's IsHair textures.
 function textureKind(name) {
   const lower = name.toLowerCase();
-  const base = lower.replace(/\.[^.]+$/, '');
-  return { isTga: lower.endsWith('.tga'), additive: base.endsWith(ADDITIVE_SUFFIX) };
+  const underscore = name.indexOf('_');
+  const script = underscore < 0 ? '' : name.slice(underscore + 1, underscore + 5).split('.')[0];
+  const isHair = lower.startsWith('hair');
+  return {
+    isTga: lower.endsWith('.tga'),
+    additive: script.includes('R') && !script.includes('N') && !isHair,
+    hidden: script.includes('H'),
+  };
 }
 
 async function decodeTexture(url, isTga) {
@@ -48,7 +56,7 @@ async function decodeTexture(url, isTga) {
   return texture;
 }
 
-export function loadTexture(dir, name) {
+function loadTextureFrom(dir, name) {
   const url = `/data/${dir}/${name}`;
   if (!textureCache.has(url)) {
     const { isTga } = textureKind(name);
@@ -58,16 +66,29 @@ export function loadTexture(dir, name) {
       texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
       return texture;
-    }).catch((error) => {
-      console.warn('Texture missing:', url, error.message);
-      return null;
-    }));
+    }).catch(() => null));
   }
   return textureCache.get(url);
 }
 
-export async function createMaterial(dir, textureName) {
-  const { isTga, additive } = textureKind(textureName);
+// A texture comes from the first of the folders that has it (LoadTextureFromFolders).
+export async function loadTexture(dirs, name) {
+  const folders = Array.isArray(dirs) ? dirs : [dirs];
+  for (const dir of folders) {
+    const texture = await loadTextureFrom(dir, name);
+    if (texture) return texture;
+  }
+  console.warn('Texture missing:', name, 'in', folders.join(', '));
+  return null;
+}
+
+// Meshes whose texture name starts with "hid" are never drawn (Data::Items::IsHiddenTexture).
+const HIDDEN_TEXTURE_PREFIX = 'hid';
+
+export async function createMaterial(dir, textureName, { glow = false } = {}) {
+  const { isTga, additive: additiveByName, hidden } = textureKind(textureName);
+  const additive = glow || additiveByName;
+  if (hidden || textureName.startsWith(HIDDEN_TEXTURE_PREFIX)) return new THREE.MeshBasicMaterial({ visible: false });
   const map = await loadTexture(dir, textureName);
   const material = new THREE.MeshBasicMaterial({ map, color: 0xffffff, side: THREE.DoubleSide });
   if (!map) material.color.set(0x808080);
