@@ -1187,7 +1187,7 @@ void LogSafeCastSizeMismatch(const char* packet_type, std::size_t received, std:
                           static_cast<unsigned>(expected));
 }
 
-// C3 F3 03 CharacterInformationExtended: OpenMU appends the discriminator at
+// C3 F3 03 CharacterInformationExtended: HNMO appends the discriminator at
 // 92, so the packet is 93 bytes.
 static_assert(sizeof(PRECEIVE_JOIN_MAP_SERVER_EXTENDED) == 92);
 
@@ -3570,7 +3570,7 @@ void ReceiveAction(const BYTE* ReceiveBuffer, int Size)
     int iTargetKey, iTargetIndex;
 
     iTargetKey = ((int)(Data->TargetKeyH) << 8) + Data->TargetKeyL;
-    // OpenMU sends 0 for an animation without a target; local characters can use key 0 too.
+    // HNMO sends 0 for an animation without a target; local characters can use key 0 too.
     iTargetIndex = iTargetKey != NoActionTargetKey ? FindCharacterIndex(iTargetKey) : MAX_CHARACTERS_CLIENT;
 
     if (!c->SafeZone && c->Helper.Type == MODEL_DARK_HORSE_ITEM)
@@ -9989,7 +9989,7 @@ void ReceiveOption(const BYTE* ReceiveBuffer)
         int iIndex = i * Hotkeys::BytesPerHotkey;
         iHotKey = Hotkeys::SkillNumber(Data->HotKey[iIndex], Data->HotKey[iIndex + 1]);
 
-        // Zeros (OpenMU's default) would bind the hotkey to the first empty skill slot, which then shows
+        // Zeros (HNMO's default) would bind the hotkey to the first empty skill slot, which then shows
         // the next learned skill.
         if (Hotkeys::IsAssigned(static_cast<uint16_t>(iHotKey)))
         {
@@ -12617,7 +12617,7 @@ bool ReceiveResultEmpireGuardian(const BYTE* ReceiveBuffer)
 
 // (0xD2)(0x01)
 // D2 01 CashShopPointInfo: the view type at 4, then five doubles. The exact sizes of the
-// D2 packets are generated from OpenMU's XML (wire_sizes.generated.h); the handlers cast the
+// D2 packets are generated from HNMO's XML (wire_sizes.generated.h); the handlers cast the
 // buffer, so a field at the wrong offset would be read without any message.
 static_assert(offsetof(PMSG_CASHSHOP_CASHPOINT_ANS, dTotalCash) == 5);
 static_assert(offsetof(PMSG_CASHSHOP_CASHPOINT_ANS, dTotalMileage) == 37);
@@ -13121,7 +13121,7 @@ bool ReceivePeriodItemListCount(const BYTE* pReceiveBuffer)
     return true;
 }
 
-// D2 12 period item list: not in OpenMU's XML, so its size is guarded here. The struct isn't
+// D2 12 period item list: not in HNMO's XML, so its size is guarded here. The struct isn't
 // packed; the expire date is at 8.
 static_assert(sizeof(PMSG_PERIODITEMEX_ITEMLIST) == 12);
 static_assert(offsetof(PMSG_PERIODITEMEX_ITEMLIST, lExpireDate) == 8);
@@ -13426,7 +13426,7 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
             ReceiveMagicList(ReceiveBuffer);
             break;
         case 0x13:
-            // not really in use in OpenMU
+            // not really in use in HNMO
             ReceiveEquipment(received_span);
             break;
         case 0x14:

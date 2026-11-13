@@ -17,7 +17,7 @@
 //         "name": "luck",
 //         "type": "luck",
 //         "displayName": {"en": "Luck"},
-//         "openMu": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
+//         "hnmo": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
 //         "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
 //         "options": [
 //           {"attribute": "criticalDamageChance", "percent": {"values": 5},

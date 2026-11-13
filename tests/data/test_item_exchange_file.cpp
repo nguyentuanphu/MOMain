@@ -21,7 +21,7 @@
 
 using namespace Data::Items;
 
-// The item exchange file with OpenMU (phase 7): the shared fields of the items and the item
+// The item exchange file with HNMO (phase 7): the shared fields of the items and the item
 // formulas, in the layout of the item files.
 namespace
 {
@@ -62,7 +62,7 @@ bool HasIssueAbout(const std::vector<ItemDataIssue>& issues, ItemDataIssueSeveri
 
 // A file of one item around `item` (the JSON of one item, with its group).
 std::string FileWithItem(const std::string& item,
-                         const std::string& header = R"("source": "OpenMU", "gameVersion": "season6")")
+                         const std::string& header = R"("source": "HNMO", "gameVersion": "season6")")
 {
     return R"({"formatVersion": 1, )" + header + R"(, "items": [)" + item + "]}";
 }
@@ -116,7 +116,7 @@ TEST_CASE("The exchange file has only the shared fields of an item [data][items]
     CHECK(shared.weaponKind == WeaponKind::None);
     CHECK(shared.attackType == 0);
 
-    // The tags OpenMU has too; a profile the item has by default is named.
+    // The tags HNMO has too; a profile the item has by default is named.
     ItemDefinition arrows = *g_ItemDatabase.Find(MakeItemType(4, 15));
     REQUIRE(arrows.tags.Has(ItemTag::Ammunition));
     arrows.tags.Set(ItemTag::Valuable);
@@ -134,7 +134,7 @@ TEST_CASE("The exchange file reader refuses what cannot be exchanged [data][item
 
     SUBCASE("a file of another game version")
     {
-        ReadExchange(FileWithItem(kris, R"("source": "OpenMU", "gameVersion": "season4")"), issues);
+        ReadExchange(FileWithItem(kris, R"("source": "HNMO", "gameVersion": "season4")"), issues);
         CHECK(HasIssueAbout(issues, ItemDataIssueSeverity::Fatal, "season6"));
     }
     SUBCASE("an unknown source")
@@ -145,13 +145,13 @@ TEST_CASE("The exchange file reader refuses what cannot be exchanged [data][item
     SUBCASE("an empty server is as if there were none")
     {
         const ItemExchangeFile file = ReadExchange(
-            R"({"formatVersion": 1, "source": "OpenMU", "server": "", "gameVersion": "season6", "items": []})", issues);
+            R"({"formatVersion": 1, "source": "HNMO", "server": "", "gameVersion": "season6", "items": []})", issues);
         CHECK_FALSE(HasFatal(issues));
         CHECK(file.server.empty());
     }
     SUBCASE("a newer format")
     {
-        ReadExchange(R"({"formatVersion": 3, "source": "OpenMU", "gameVersion": "season6", "items": []})", issues);
+        ReadExchange(R"({"formatVersion": 3, "source": "HNMO", "gameVersion": "season6", "items": []})", issues);
         CHECK(HasFatal(issues));
     }
     SUBCASE("an item without a group")
@@ -174,10 +174,10 @@ TEST_CASE("The exchange file reader refuses what cannot be exchanged [data][item
     }
 }
 
-// OpenMU's export adds its fields one at a time: a file of version 2 names the ones it carries.
+// HNMO's export adds its fields one at a time: a file of version 2 names the ones it carries.
 TEST_CASE("A file of version 2 carries only the fields of its list [data][items][editor]")
 {
-    const std::string header = R"({"formatVersion": 2, "source": "OpenMU", "gameVersion": "season6", )";
+    const std::string header = R"({"formatVersion": 2, "source": "HNMO", "gameVersion": "season6", )";
     std::vector<ItemDataIssue> issues;
 
     SUBCASE("its items need no name while the list leaves it out")
@@ -228,7 +228,7 @@ TEST_CASE("A file with a field list is written as version 2 with only those fiel
 {
     const ShippedItems shipped;
     ItemExchangeFile file = BuildItemExchange(g_ItemDatabase.GetAllSlots(), g_ItemDataHandler.GetStatFile());
-    file.source = ItemExchangeSourceOpenMU;
+    file.source = ItemExchangeSourceHNMO;
     file.fields = std::set<std::string, std::less<>>{"height", "width"};
 
     const std::string text = WriteItemExchangeJson(file);
@@ -317,14 +317,14 @@ TEST_CASE("The exchange file reader leaves out what stays with the client [data]
         REQUIRE(file.formulas);
         CHECK(file.formulas->profileRules.empty());
     }
-    SUBCASE("the server of a file from OpenMU")
+    SUBCASE("the server of a file from HNMO")
     {
         const ItemExchangeFile file =
             ReadExchange(FileWithItem(R"({"group": 0, "number": 0, "name": "Kris"})",
-                                      R"("source": "OpenMU", "server": "3f2a", "gameVersion": "season6")"),
+                                      R"("source": "HNMO", "server": "3f2a", "gameVersion": "season6")"),
                          issues);
         CHECK(issues.empty());
-        CHECK(file.source == ItemExchangeSourceOpenMU);
+        CHECK(file.source == ItemExchangeSourceHNMO);
         CHECK(file.server == "3f2a");
         CHECK_FALSE(file.formulas);
     }

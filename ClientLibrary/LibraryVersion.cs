@@ -1,8 +1,8 @@
-// <copyright file="LibraryVersion.cs" company="MUnique">
+// <copyright file="LibraryVersion.cs" company="HNMO">
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace MUnique.Client.Library;
+namespace HNMO.Client.Library;
 
 using System;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 /// <summary>
 /// The version the native client writes into MuError.log: this library's own, which carries the commit it was
-/// built from, and the version of the OpenMU packet definitions it was built against.
+/// built from, and the version of the HNMO packet definitions it was built against.
 /// </summary>
 public static class LibraryVersion
 {
@@ -23,7 +23,7 @@ public static class LibraryVersion
     private static readonly Lazy<nint> Utf8Text = new(() => Marshal.StringToCoTaskMemUTF8(Describe()));
 
     /// <summary>
-    /// Describes this library, e.g. "1.0.0+01b11b112c9e... (OpenMU packets 0.11.0)".
+    /// Describes this library, e.g. "1.0.0+01b11b112c9e... (HNMO packets 0.11.0)".
     /// </summary>
     /// <returns>The description.</returns>
     public static string Describe()
@@ -33,8 +33,8 @@ public static class LibraryVersion
 
         // The package version from the project file: the packets assembly itself carries an older number.
         var packetsVersion = assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attribute => attribute.Key == "OpenMuPacketsVersion")?.Value;
-        return $"{version ?? Unknown} (OpenMU packets {packetsVersion ?? Unknown})";
+            .FirstOrDefault(attribute => attribute.Key == "HnmoPacketsVersion")?.Value;
+        return $"{version ?? Unknown} (HNMO packets {packetsVersion ?? Unknown})";
     }
 
     /// <summary>

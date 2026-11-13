@@ -387,7 +387,7 @@ TEST_CASE("Buffs: the shipped file keeps the strip rules of the old client's cod
     };
     // SetDisableRenderBuff's effects.
     const std::vector<int> oldHidden = {83, 84, 85, 120};
-    // CancellableSkill, with the strengthened tiers OpenMU also cancels.
+    // CancellableSkill, with the strengthened tiers HNMO also cancels.
     const std::map<int, int> cancelSkills = {{6, 77}, {82, 233}, {138, 380}, {139, 383}, {143, 441}};
 
     std::map<std::string, std::vector<int>> families;

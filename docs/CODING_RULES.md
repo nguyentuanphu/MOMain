@@ -29,7 +29,7 @@ Items, monsters and their models, effects and looks, the server list, tooltips, 
 
 - **New or changed behaviour is a field in the data, not a check in code.** Don't add `if (type == ITEM_...)` or another `case` for one monster number; add a field, a tag or a rule to the data.
 - **A field works for every entry of its kind.** An option one sword needed is available to every item; a setting one monster needed is available to every monster. No field that only one hard-coded entry reads.
-- **A new field is complete when it is everywhere the data is:** loading and saving, the editor tool, Data Checks, the area's docs (`docs/<area>-data.md`), and — where the server has the same value — the exchange with OpenMU, under OpenMU's name.
+- **A new field is complete when it is everywhere the data is:** loading and saving, the editor tool, Data Checks, the area's docs (`docs/<area>-data.md`), and — where the server has the same value — the exchange with HNMO, under HNMO's name.
 - **Special cases you touch move into data.** When your change affects a hard-coded case for one entry, turn it into data as part of the change. Cases you don't touch stay until someone works on them (no retroactive cleanups, see [`AGENTS.md`](../AGENTS.md)).
 - **Moving game behaviour into data must not change it.** A test that compares the old code with the new data for every entry ships with the move; changes you mean to make go in commits of their own.
 

@@ -1,5 +1,5 @@
 using System.Net.Sockets;
-using MUnique.Client.Library;
+using HNMO.Client.Library;
 
 // ConnectFailure.Describe, which writes a failed connect into MuError.log: socket errors by their code (their message
 // names the address), anything else with its message.

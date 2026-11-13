@@ -44,7 +44,7 @@ namespace
 "\r\n"
 "Four steps, no command line.\r\n"
 "\r\n"
-"  1. Open the OpenMU Admin Panel in your browser.\r\n"
+"  1. Open the HNMO Admin Panel in your browser.\r\n"
 "  2. Go to the map list and edit the map with Number = %d.\r\n"
 "  3. Find the \"Terrain Data\" field and upload terrain_map%d_server.att\r\n"
 "     (the file in THIS folder).\r\n"
@@ -101,7 +101,7 @@ namespace
 // on. Saving it verbatim bakes "an NPC was standing here when I hit Save" into the
 // map, e.g. a safezone tile becomes 1|2 = 3.
 //
-// That byte is poison for the server: OpenMU decides walkability with an EXACT value
+// That byte is poison for the server: HNMO decides walkability with an EXACT value
 // test (walkable = v==0 || v==1), so 3 reads as BLOCKED - while the client's bit test
 // still reads it as walkable. Result: players walk onto the tile and get rubber-banded
 // back. Strip the transient bit on save.

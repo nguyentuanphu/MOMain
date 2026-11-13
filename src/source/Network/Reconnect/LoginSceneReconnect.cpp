@@ -11,12 +11,12 @@ namespace
 // server's list, the game server's join answer) before the attempt counts as failed.
 constexpr double GreetingTimeoutMs = 10000.0;
 
-// How often an open server list asks for a fresh one. Well within OpenMU's connect
+// How often an open server list asks for a fresh one. Well within HNMO's connect
 // server Timeout (one minute by default), so the list's connection stays up and its
 // load figures current.
 constexpr double ServerListRefreshMs = 30000.0;
 
-// How many list requests the connect server answers over one connection: OpenMU
+// How many list requests the connect server answers over one connection: HNMO
 // closes the connection on the next one (MaxServerListRequests, 20 by default).
 constexpr int ListRequestsPerConnection = 20;
 

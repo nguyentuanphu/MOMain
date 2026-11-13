@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using MUnique.Client.Library;
+using HNMO.Client.Library;
 
 internal static unsafe class Program
 {

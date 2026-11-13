@@ -55,7 +55,7 @@ public:
         REQUIRE(g_ItemDataHandler.Load(errorMessage));
         client = BuildItemExchange(g_ItemDatabase.GetAllSlots(), g_ItemDataHandler.GetStatFile());
         file = client;
-        file.source = ItemExchangeSourceOpenMU;
+        file.source = ItemExchangeSourceHNMO;
     }
 
     ItemDefinition& FileItem(int itemType)
@@ -269,7 +269,7 @@ TEST_CASE("An item the game holds keeps its size and slot or is not added, and a
                                { return MakeItemType(item.group, item.number) == MakeItemType(0, 100); }));
 }
 
-TEST_CASE("A drop level OpenMU cannot keep is not taken by default [data][items][editor]")
+TEST_CASE("A drop level HNMO cannot keep is not taken by default [data][items][editor]")
 {
     Sides sides;
     REQUIRE(Sides::Find(sides.client, ITEM_HORN_OF_FENRIR).level == 300);
@@ -282,7 +282,7 @@ TEST_CASE("A drop level OpenMU cannot keep is not taken by default [data][items]
     CHECK_FALSE(level->inexact.empty());
     CHECK_FALSE(level->checked);
 
-    // Nor when the client is marked wrong: OpenMU's 255 is not the drop level.
+    // Nor when the client is marked wrong: HNMO's 255 is not the drop level.
     KnownDifferences known;
     known.Set(row->group, row->number, "level", WrongSide::Client);
     const ItemSyncDiff marked = sides.Diff(&known);
@@ -735,7 +735,7 @@ TEST_CASE("Item Sync imports the checked rows of a file as one undo step [data][
     g_ItemEdits.GetHistory().Clear();
 }
 
-// OpenMU's export adds its fields one at a time: only the fields a file names are compared and
+// HNMO's export adds its fields one at a time: only the fields a file names are compared and
 // taken, and an item only the file has is not added while the file lacks fields.
 TEST_CASE("A file with a field list changes only those fields and adds no item [data][items][editor]")
 {
@@ -949,8 +949,8 @@ TEST_CASE("Update from server fills the client's entry without a name [data][ite
 
 TEST_CASE("The API key is kept per admin panel address [data][items][editor]")
 {
-    CHECK(GetApiKeySecretName(" https://admin.example.org/ ") == "OpenMU API key https://admin.example.org");
-    CHECK(GetApiKeySecretName("http://localhost:8080") == "OpenMU API key http://localhost:8080");
+    CHECK(GetApiKeySecretName(" https://admin.example.org/ ") == "HNMO API key https://admin.example.org");
+    CHECK(GetApiKeySecretName("http://localhost:8080") == "HNMO API key http://localhost:8080");
 }
 
 // A secret of its own goes into the system's key store and out again. A build without a store,
@@ -980,24 +980,24 @@ TEST_CASE("Update from server needs an address and an API key [data][items][edit
 {
     // The address field is empty in a new editor.
     CHECK_FALSE(g_MuItemSyncUI.UpdateFromServer());
-    CHECK(g_MuItemSyncUI.GetServerMessage() == std::string(I18N::Editor::EnterTheAddressOfTheOpenMUAdminPanel));
+    CHECK(g_MuItemSyncUI.GetServerMessage() == std::string(I18N::Editor::EnterTheAddressOfTheHNMOAdminPanel));
 }
 
-// Against a running OpenMU: MU_TEST_OPENMU_URL is the exchange file's address (e.g.
-// http://127.0.0.1:18080/api/items/exchange) and MU_OPENMU_API_KEY a Viewer key. Without them the
+// Against a running HNMO: MU_TEST_HNMO_URL is the exchange file's address (e.g.
+// http://127.0.0.1:18080/api/items/exchange) and MU_HNMO_API_KEY a Viewer key. Without them the
 // test does nothing. The file must read without errors, and the diff may only list the fields the
 // file names.
-TEST_CASE("Update from server reads the file of a running OpenMU [data][items][editor]")
+TEST_CASE("Update from server reads the file of a running HNMO [data][items][editor]")
 {
-    const char* url = std::getenv("MU_TEST_OPENMU_URL");
-    if (url == nullptr || ReadOpenMUApiKey().empty())
+    const char* url = std::getenv("MU_TEST_HNMO_URL");
+    if (url == nullptr || ReadHNMOApiKey().empty())
     {
-        MESSAGE("MU_TEST_OPENMU_URL or MU_OPENMU_API_KEY is not set: no server to read");
+        MESSAGE("MU_TEST_HNMO_URL or MU_HNMO_API_KEY is not set: no server to read");
         return;
     }
     Sides sides;
     CItemSyncDownload download;
-    REQUIRE(download.Start(url, ReadOpenMUApiKey()));
+    REQUIRE(download.Start(url, ReadHNMOApiKey()));
     std::optional<ServerDownload> result;
     for (int attempt = 0; attempt < 1200 && !result; ++attempt)
     {
@@ -1018,7 +1018,7 @@ TEST_CASE("Update from server reads the file of a running OpenMU [data][items][e
         MESSAGE(issue.ToString());
     }
     REQUIRE(CanImportItemExchange(file, issues));
-    CHECK(file.source == ItemExchangeSourceOpenMU);
+    CHECK(file.source == ItemExchangeSourceHNMO);
 
     g_MuItemSyncUI.CompareServerFile(result->body, url);
     REQUIRE(g_MuItemSyncUI.GetDiff());
@@ -1150,7 +1150,7 @@ TEST_CASE("Item Sync compares two files read-only [data][items][editor]")
     const std::filesystem::path b = folder.Path() / "Server.json";
     ItemExchangeFile fileA = sides.client;
     ItemExchangeFile fileB = sides.client;
-    fileB.source = ItemExchangeSourceOpenMU;
+    fileB.source = ItemExchangeSourceHNMO;
     ++Sides::Find(fileB, KrisType).width;
     Sides::Find(fileA, ShortSwordType).names.Set("zh-CN", "Short Sword (zh)");
     ItemDefinition added = Sides::Find(fileB, KrisType);
@@ -1158,7 +1158,7 @@ TEST_CASE("Item Sync compares two files read-only [data][items][editor]")
     added.names = Data::LocalizedString::Parse("New Sword");
     fileB.items.push_back(added);
     fileB.formulas->excellentDropLevelBonus = 30;
-    // Only file A has (0,101), and file A has (0,3) twice, as an OpenMU export can.
+    // Only file A has (0,101), and file A has (0,3) twice, as an HNMO export can.
     ItemDefinition onlyInA = Sides::Find(fileA, KrisType);
     onlyInA.number = 101;
     onlyInA.names = Data::LocalizedString::Parse("Old Sword");
@@ -1339,7 +1339,7 @@ TEST_CASE("Applying a diff leaves out a changed item the client no longer has [d
                                { return MakeItemType(item.group, item.number) == KrisType; }));
 }
 
-// OpenMU does not keep (group, number) unique: an item a file has twice is a locked row that
+// HNMO does not keep (group, number) unique: an item a file has twice is a locked row that
 // the import leaves as it is, while the rest of the file is imported.
 TEST_CASE("An item the file has twice is a locked row of the import [data][items][editor]")
 {

@@ -16,7 +16,7 @@ as [windows/visual-studio.md](visual-studio.md).
 
 Set the launch `cwd` to the build output's `src/<config>` directory (e.g.
 `out/build/windows-x64-mueditor/src/Debug`) so the client finds its assets and
-`MUnique.Client.Library.dll`, with `program` pointing at `Main.exe` there. Or
+`HNMO.Client.Library.dll`, with `program` pointing at `Main.exe` there. Or
 just run it from an integrated Developer terminal:
 
 ```powershell

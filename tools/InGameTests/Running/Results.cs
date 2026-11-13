@@ -18,7 +18,7 @@ internal sealed record StepResult(
 /// <summary>What a client showed when its scenario failed: its `state` and its recent events, as JSON.</summary>
 internal sealed record ClientDetails(string Role, string State, string Events);
 
-/// <summary>What served the run: e.g. OpenMU, its version and commit, where its source is; parts may be unknown.</summary>
+/// <summary>What served the run: e.g. HNMO, its version and commit, where its source is; parts may be unknown.</summary>
 internal sealed record ServerVersion(string Name, string? Version, string? Commit, string? Source);
 
 /// <summary>The client a run tested: the git commit it was built from, and whether its files differed from it.</summary>

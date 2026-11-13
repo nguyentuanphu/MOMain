@@ -6,7 +6,7 @@
 
 namespace Data
 {
-// A text with translations, stored in OpenMU's LocalizedString format:
+// A text with translations, stored in HNMO's LocalizedString format:
 // "English text||pt=Texto em português||es=Texto en español".
 // The first part is the neutral (English) text; the other parts are
 // "<locale>=<text>" pairs using the same locale codes as the UI translations

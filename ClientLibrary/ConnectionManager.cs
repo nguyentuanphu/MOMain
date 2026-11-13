@@ -1,8 +1,8 @@
-﻿// <copyright file="ConnectionManager.cs" company="MUnique">
+﻿// <copyright file="ConnectionManager.cs" company="HNMO">
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace MUnique.Client.Library;
+namespace HNMO.Client.Library;
 
 using System;
 using System.Collections.Concurrent;
@@ -11,9 +11,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
-using MUnique.OpenMU.Network;
-using MUnique.OpenMU.Network.SimpleModulus;
-using MUnique.OpenMU.Network.Xor;
+using HNMO.Network;
+using HNMO.Network.SimpleModulus;
+using HNMO.Network.Xor;
 
 /// <summary>
 /// Class which manages the connections which are created through the game client.

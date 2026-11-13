@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:msxsl="urn:schemas-microsoft-com:xslt" exclude-result-prefixes="msxsl"
-    xmlns:pd="http://www.munique.net/OpenMU/PacketDefinitions"
+    xmlns:pd="https://github.com/nguyentuanphu/HNMO/PacketDefinitions"
 >
   <xsl:variable name='newline'>
     <xsl:text xml:space='preserve'>
@@ -71,7 +71,7 @@
       <xsl:text>.</xsl:text>
     </xsl:if>
     <xsl:if test="contains($typeName, '.')">
-      <xsl:text>MUnique.OpenMU.Network.Packets.</xsl:text>
+      <xsl:text>HNMO.Network.Packets.</xsl:text>
     </xsl:if>
     <xsl:value-of select="$typeName"/>
   </xsl:template>

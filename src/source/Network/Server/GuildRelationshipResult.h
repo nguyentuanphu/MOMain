@@ -7,7 +7,7 @@
 
 namespace Network::Packets
 {
-// OpenMU's ServerToClientPackets.xml: C1 E6, the result of an alliance or hostility change. A failed request goes to
+// HNMO's ServerToClientPackets.xml: C1 E6, the result of an alliance or hostility change. A failed request goes to
 // the requester with the target's character key; after the other guild master responds, both masters get it with
 // the requester's key. One byte per field; the key is big-endian.
 struct GuildRelationshipResult

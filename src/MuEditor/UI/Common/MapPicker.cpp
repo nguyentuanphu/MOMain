@@ -56,7 +56,7 @@ std::vector<Row> MakeRows()
     {
         single(map);
     }
-    // The stages OpenMU sends with the map (its discriminators).
+    // The stages HNMO sends with the map (its discriminators).
     levels({StageMember(WD_9DEVILSQUARE, 1), StageMember(WD_9DEVILSQUARE, 2), StageMember(WD_9DEVILSQUARE, 3),
             StageMember(WD_9DEVILSQUARE, 4), StageMember(SecondDevilSquareMapId, 5),
             StageMember(SecondDevilSquareMapId, 6), StageMember(SecondDevilSquareMapId, 7)});

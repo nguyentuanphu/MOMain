@@ -19,7 +19,7 @@ internal static class Quests
     /// <summary>Marlon, who wanders: where he stands is found when a scenario needs him.</summary>
     public static readonly Npc Marlon = new("Marlon", 229, 0, 0);
 
-    // Marlon wanders: OpenMU puts him on one of these spots, a random one, and
+    // Marlon wanders: HNMO puts him on one of these spots, a random one, and
     // moves him to another every one to three hours.
     private static readonly (string Gate, int Map, Npc Spot)[] MarlonSpots =
     [
@@ -191,7 +191,7 @@ internal static class Quests
     {
         while (true)
         {
-            // OpenMU's log names him by its own designation; it has no monster number.
+            // HNMO's log names him by its own designation; it has no monster number.
             var spot = await Running.TestServer.WanderingNpcAsync(client.ServerHost, client.ServerPort, "Marlon", CancellationToken.None);
             if (spot is not null)
             {
@@ -208,7 +208,7 @@ internal static class Quests
         }
     }
 
-    // How long after its start OpenMU may take to place Marlon, with room to spare.
+    // How long after its start HNMO may take to place Marlon, with room to spare.
     private static readonly TimeSpan MarlonSpawnDelay = TimeSpan.FromSeconds(60);
 
     private static async Task<Npc> SearchMarlonAsync(GameClient client)

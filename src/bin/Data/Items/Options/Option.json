@@ -17,7 +17,7 @@
         "uk": "Додаткова шкода",
         "zh-TW": "附加傷害"
       },
-      "openMu": {"id": "00000083-0003-0000-0000-000000000000", "name": "Physical Base Damage (min and max) Option"},
+      "hnmo": {"id": "00000083-0003-0000-0000-000000000000", "name": "Physical Base Damage (min and max) Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "physicalBaseDmg", "add": {"values": [4, 8, 12, 16]}, "text": "additionalDamage"}
@@ -39,7 +39,7 @@
         "uk": "Додаткова фізична і магічна шкода",
         "zh-TW": "附加傷害與魔法傷害"
       },
-      "openMu": {"id": "00000083-0007-0000-0000-000000000000", "name": "Base Damage Bonus (physical and wizardry, min and max) Option"},
+      "hnmo": {"id": "00000083-0007-0000-0000-000000000000", "name": "Base Damage Bonus (physical and wizardry, min and max) Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "baseDamageBonus", "add": {"values": [4, 8, 12, 16]}, "text": ["additionalDamage", "additionalWizardryDamage"]}
@@ -61,7 +61,7 @@
         "uk": "Додаткова магічна шкода",
         "zh-TW": "附加魔法傷害"
       },
-      "openMu": {"id": "00000083-0004-0000-0000-000000000000", "name": "Wizardry Base Damage (min and max) Option"},
+      "hnmo": {"id": "00000083-0004-0000-0000-000000000000", "name": "Wizardry Base Damage (min and max) Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "wizardryBaseDmg", "add": {"values": [4, 8, 12, 16]}, "text": "additionalWizardryDamage"}
@@ -83,7 +83,7 @@
         "uk": "Додаткова шкода прокляттям",
         "zh-TW": "附加詛咒傷害"
       },
-      "openMu": {"id": "00000083-0005-0000-0000-000000000000", "name": "Curse Base Damage (min and max) Option"},
+      "hnmo": {"id": "00000083-0005-0000-0000-000000000000", "name": "Curse Base Damage (min and max) Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "curseBaseDmg", "add": {"values": [4, 8, 12, 16]}, "text": "additionalCurseDamage"}
@@ -105,7 +105,7 @@
         "uk": "Додатковий рівень захисту",
         "zh-TW": "附加防禦率"
       },
-      "openMu": {"id": "00000083-0006-0000-0000-000000000000", "name": "Defense Rate (PvM) Option"},
+      "hnmo": {"id": "00000083-0006-0000-0000-000000000000", "name": "Defense Rate (PvM) Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "defenseRatePvm", "add": {"values": [5, 10, 15, 20]}, "text": "additionalDefenseRate"}
@@ -127,7 +127,7 @@
         "uk": "Додатковий захист",
         "zh-TW": "附加防禦"
       },
-      "openMu": {"id": "00000083-0002-0000-0000-000000000000", "name": "Base Defense Option"},
+      "hnmo": {"id": "00000083-0002-0000-0000-000000000000", "name": "Base Defense Option"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "defenseBase", "add": {"values": [4, 8, 12, 16]}, "text": "additionalDefense"}
@@ -149,7 +149,7 @@
         "uk": "Автоматичне відновлення HP",
         "zh-TW": "HP自動恢復"
       },
-      "openMu": {"id": "00000083-0010-7a13-0000-000000000000", "name": "Health recover for jewelery"},
+      "hnmo": {"id": "00000083-0010-7a13-0000-000000000000", "name": "Health recover for jewelery"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "healthRecoveryMultiplier", "percent": {"values": [1, 2, 3]}, "text": "automaticHpRecovery"}
@@ -171,7 +171,7 @@
         "uk": "Максимальна мана",
         "zh-TW": "最大法力值"
       },
-      "openMu": {"name": "Jewelery option Maximum Mana"},
+      "hnmo": {"name": "Jewelery option Maximum Mana"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "maximumMana", "percent": {"values": [1, 2, 3]}, "text": "maxManaIncrease"}
@@ -193,7 +193,7 @@
         "uk": "Максимальний AG",
         "zh-TW": "最大 AG"
       },
-      "openMu": {"name": "Jewelery option Maximum Ability"},
+      "hnmo": {"name": "Jewelery option Maximum Ability"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"number": 0, "attribute": "maximumAbility", "percent": {"values": [1, 2, 3]}, "text": "maxAgIncrease"}

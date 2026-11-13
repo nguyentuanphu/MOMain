@@ -128,3 +128,6 @@ docs/reviews/
 in-game-test-results/
 __pycache__/
 dist/
+
+# The HNMO server checkout for the packet definitions (CI)
+.hnmo-server/

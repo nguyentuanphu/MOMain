@@ -20,10 +20,10 @@ public:
     std::string GetLanguage() const;
     void SetLanguage(const std::string& language);
 
-    // The address of the OpenMU admin panel which the Item Sync window updates from
-    // ([OpenMU] AdminPanelUrl).
-    const std::string& GetOpenMUAdminPanelUrl() const;
-    void SetOpenMUAdminPanelUrl(const std::string& url);
+    // The address of the HNMO admin panel which the Item Sync window updates from
+    // ([HNMO] AdminPanelUrl).
+    const std::string& GetHNMOAdminPanelUrl() const;
+    void SetHNMOAdminPanelUrl(const std::string& url);
 
     // The Server List window's preview of the offline servers ([ServerList] ShowOfflineServers,
     // OfflineServerLoad): CServerListManager::SetOfflinePreview.
@@ -54,7 +54,7 @@ private:
     // Settings storage
     std::string m_language;
     std::map<std::string, bool> m_skillEditorColumnVisibility;  // Skill Editor columns
-    std::string m_openMUAdminPanelUrl;
+    std::string m_hnmoAdminPanelUrl;
     bool m_showOfflineServers = false;
     int m_offlineServerLoad = 50;
 

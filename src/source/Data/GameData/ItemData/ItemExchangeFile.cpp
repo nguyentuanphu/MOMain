@@ -182,10 +182,10 @@ void ExchangeReader::Read(const OrderedJson& root, ItemExchangeFile& file)
     std::string text;
     if (ReadText(root, Keys::Source, true, text))
     {
-        if (text != ItemExchangeSourceMuMain && text != ItemExchangeSourceOpenMU)
+        if (text != ItemExchangeSourceMuMain && text != ItemExchangeSourceHNMO)
         {
             AddIssue(ItemDataIssueSeverity::Fatal, ItemDataIssue::NoItem, ItemDataIssue::NoItem, Keys::Source,
-                     std::string("must be \"") + ItemExchangeSourceMuMain + "\" or \"" + ItemExchangeSourceOpenMU +
+                     std::string("must be \"") + ItemExchangeSourceMuMain + "\" or \"" + ItemExchangeSourceHNMO +
                          "\"");
         }
         file.source = text;
@@ -226,7 +226,7 @@ void ExchangeReader::ReadItems(const OrderedJson& root, ItemExchangeFile& file)
         ReadItem((*list)[index], index, items);
     }
 
-    // A (group, number) that is there twice (OpenMU does not keep it unique): neither is read.
+    // A (group, number) that is there twice (HNMO does not keep it unique): neither is read.
     std::map<std::pair<int, int>, int> counts;
     for (const ItemDefinition& item : items)
     {

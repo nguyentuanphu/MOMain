@@ -1934,7 +1934,7 @@
     <value>Plus {0}, waga poziomu {1}, procent {2}</value>
   </data>
   <data name="The server keeps its own formulas" xml:space="preserve">
-    <value>Serwer (OpenMU) trzyma własne wzory, dopóki nie zostaną zsynchronizowane: to, co sprawdza i liczy, może się różnić od wyników tych wzorów.</value>
+    <value>Serwer (HNMO) trzyma własne wzory, dopóki nie zostaną zsynchronizowane: to, co sprawdza i liczy, może się różnić od wyników tych wzorów.</value>
   </data>
   <data name="Items keep their values until made again" xml:space="preserve">
     <value>Przedmioty, które Twoja postać już ma, zachowują swoje wartości, dopóki nie zostaną utworzone ponownie (np. po ponownym zalogowaniu).</value>
@@ -2512,8 +2512,8 @@
   <data name="Import from {0}" xml:space="preserve">
     <value>Importuj z {0}</value>
   </data>
-  <data name="From OpenMU, server {0}" xml:space="preserve">
-    <value>Z OpenMU, serwer {0}</value>
+  <data name="From HNMO, server {0}" xml:space="preserve">
+    <value>Z HNMO, serwer {0}</value>
   </data>
   <data name="The diff counts" xml:space="preserve">
     <value>Przedmioty: dodane {0}, zmienione {1}; wpisy wzorów: {2}</value>
@@ -2575,8 +2575,8 @@
   <data name="The marks are not saved while {0} cannot be read" xml:space="preserve">
     <value>Oznaczenia nie są zapisywane, dopóki nie można odczytać {0} (zobacz konsolę). Popraw lub usuń plik, a następnie zamknij to okno i otwórz je ponownie.</value>
   </data>
-  <data name="OpenMU keeps the drop level in a byte (at most 255)" xml:space="preserve">
-    <value>OpenMU trzyma poziom dropu w bajcie (najwyżej 255)</value>
+  <data name="HNMO keeps the drop level in a byte (at most 255)" xml:space="preserve">
+    <value>HNMO trzyma poziom dropu w bajcie (najwyżej 255)</value>
   </data>
   <data name="It has no model yet" xml:space="preserve">
     <value>Nie ma jeszcze modelu</value>
@@ -3242,10 +3242,10 @@
     <value>Pobieranie {0} ...</value>
   </data>
   <data name="What Update from server does" xml:space="preserve">
-    <value>Aktualizuj z serwera pobiera przedmioty serwera OpenMU z jego panelu admina i pokazuje, czym różnią się od przedmiotów klienta, tak jak Import. Wpisz klucz API panelu admina; Zapamiętaj przechowuje go dla tego adresu w magazynie kluczy systemu. Bez klucza pole wypełnia zmienna środowiskowa {0}.</value>
+    <value>Aktualizuj z serwera pobiera przedmioty serwera HNMO z jego panelu admina i pokazuje, czym różnią się od przedmiotów klienta, tak jak Import. Wpisz klucz API panelu admina; Zapamiętaj przechowuje go dla tego adresu w magazynie kluczy systemu. Bez klucza pole wypełnia zmienna środowiskowa {0}.</value>
   </data>
-  <data name="Enter the address of the OpenMU admin panel" xml:space="preserve">
-    <value>Wpisz adres panelu admina OpenMU, np. https://admin.example.org lub http://localhost:8080.</value>
+  <data name="Enter the address of the HNMO admin panel" xml:space="preserve">
+    <value>Wpisz adres panelu admina HNMO, np. https://admin.example.org lub http://localhost:8080.</value>
   </data>
   <data name="The admin panel address must be https" xml:space="preserve">
     <value>Adres panelu admina musi zaczynać się od https://; http:// działa tylko dla tego komputera (localhost, 127.0.0.1, [::1]).</value>
@@ -3257,7 +3257,7 @@
     <value>Ten klucz API nie może pobierać przedmiotów (403): potrzebuje roli Viewer, a panel admina potrzebuje użytkownika.</value>
   </data>
   <data name="The admin panel has no item exchange" xml:space="preserve">
-    <value>Panel admina nie ma pliku wymiany przedmiotów (404): potrzebny jest nowszy OpenMU.</value>
+    <value>Panel admina nie ma pliku wymiany przedmiotów (404): potrzebny jest nowszy HNMO.</value>
   </data>
   <data name="Too many requests, try again in a minute" xml:space="preserve">
     <value>Za dużo żądań (429): spróbuj ponownie za minutę.</value>

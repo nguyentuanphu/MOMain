@@ -22,7 +22,7 @@ internal sealed class LauncherOptions
 
     public string ServerPath { get; set; } = "../server";
 
-    public string ServerProgram { get; set; } = "MUnique.OpenMU.Startup";
+    public string ServerProgram { get; set; } = "HNMO.Startup";
 
     public string AdminUrl { get; set; } = "http://127.0.0.1:8095";
 

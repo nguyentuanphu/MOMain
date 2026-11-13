@@ -28,7 +28,7 @@ constexpr const char* SmallFile = R"({
         "en": "Luck",
         "de": "Glück"
       },
-      "openMu": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
+      "hnmo": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"attribute": "criticalDamageChance", "percent": {"values": 5}, "text": ["luckJewelOfSoul", "luckCriticalDamage"]}
@@ -91,8 +91,8 @@ TEST_CASE("The option definition files read and write back the same [data][items
     CHECK(luck.type == ItemOptionType::Luck);
     CHECK(luck.file == "Luck.json");
     CHECK(luck.displayName.Get("de") == "Glück");
-    CHECK(luck.openMu.id == "00000083-0001-0000-0000-000000000000");
-    CHECK(luck.openMu.name == "Luck");
+    CHECK(luck.hnmo.id == "00000083-0001-0000-0000-000000000000");
+    CHECK(luck.hnmo.name == "Luck");
     REQUIRE(luck.server.has_value());
     CHECK(luck.server->addsRandomly);
     CHECK(luck.server->addChance == doctest::Approx(0.25));
@@ -137,7 +137,7 @@ TEST_CASE("Option definition file errors stop the start [data][items]")
     fatal(R"({"name": "luck", "type": "luck", )" + std::string(LuckOption) + "}", "definitions[0].displayName");
     fatal(R"({"name": "luck", "type": "luck", "displayName": {"de": "Glück"}, )" + std::string(LuckOption) + "}",
           "definitions[0].displayName");
-    fatal(Luck(R"("openMu": {"id": "luck"}, )" + std::string(LuckOption)), "definitions[0].openMu.id");
+    fatal(Luck(R"("hnmo": {"id": "luck"}, )" + std::string(LuckOption)), "definitions[0].hnmo.id");
     fatal(Luck(R"("server": {"addChance": 2}, )" + std::string(LuckOption)), "definitions[0].server.addChance");
     fatal(Luck(R"("server": {"addsRandomly": 1}, )" + std::string(LuckOption)), "definitions[0].server.addsRandomly");
     fatal(Luck(R"("options": [])"), "definitions[0].options");
@@ -182,10 +182,10 @@ TEST_CASE("Option definition file errors stop the start [data][items]")
 TEST_CASE("Option definition file warnings name the unknown fields [data][items]")
 {
     const std::vector<ItemDataIssue> issues = ReadDefinition(
-        Luck(R"("color": "blue", "openMu": {"name": "Luck", "guid": 1}, )"
+        Luck(R"("color": "blue", "hnmo": {"name": "Luck", "guid": 1}, )"
              R"("options": [{"attribute": "a", "add": {"values": 1, "levels": 4}, "text": "t", "bold": true}])"));
     CHECK(HasIssue(issues, ItemDataIssueSeverity::Warning, "definitions[0].color"));
-    CHECK(HasIssue(issues, ItemDataIssueSeverity::Warning, "definitions[0].openMu.guid"));
+    CHECK(HasIssue(issues, ItemDataIssueSeverity::Warning, "definitions[0].hnmo.guid"));
     CHECK(HasIssue(issues, ItemDataIssueSeverity::Warning, "definitions[0].options[0].add.levels"));
     CHECK(HasIssue(issues, ItemDataIssueSeverity::Warning, "definitions[0].options[0].bold"));
     CHECK_FALSE(HasFatal(issues));
@@ -317,7 +317,7 @@ TEST_CASE("The item stat file's profile rules have neither item numbers nor tags
     CHECK(HasIssue(issues, ItemDataIssueSeverity::Fatal, "profileRules[0].tags[0]"));
 }
 
-// An additional option definition: its options numbered (OpenMU's ItemOption.Number, which the option type the server
+// An additional option definition: its options numbered (HNMO's ItemOption.Number, which the option type the server
 // sends picks), several of them in one definition, each with a value per level.
 TEST_CASE("Option definitions of type option read their numbered options and write them back [data][items]")
 {

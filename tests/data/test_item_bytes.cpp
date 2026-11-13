@@ -8,7 +8,7 @@
 #include <array>
 #include <span>
 
-// An item as the server sends it (OpenMU's ItemSerializerExtended): five fixed bytes (group and number, level,
+// An item as the server sends it (HNMO's ItemSerializerExtended): five fixed bytes (group and number, level,
 // durability, the option flags), then one byte for each option the flags name, in bit order, and the sockets. The
 // items here are a Bone Blade (0/22) +9.
 

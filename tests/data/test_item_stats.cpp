@@ -35,7 +35,7 @@ using namespace Data::Items;
 
 // What SetItemAttributes computes from the shipped item data: the values the item
 // tooltip and the character window show. The values the fixes of #683 changed are
-// the ones the client before 815b8828 and OpenMU compute; the "Unchanged" checks
+// the ones the client before 815b8828 and HNMO compute; the "Unchanged" checks
 // pin the client's other values.
 namespace
 {
@@ -366,7 +366,7 @@ TEST_CASE("Item requirements come from the item's stat profile [data][items]")
     CHECK(stats(ITEM_ORB_OF_SUMMONING, 7).requireEnergy == 500);
     CHECK(stats(ITEM_ORB_OF_SUMMONING, 8).requireEnergy == 0);
     CHECK(stats(ITEM_TRANSFORMATION_RING, 2).requireLevel == 20);
-    // A transformation ring links no excellent options, so the excellent byte doesn't raise it (OpenMU never sends one).
+    // A transformation ring links no excellent options, so the excellent byte doesn't raise it (HNMO never sends one).
     CHECK(stats(ITEM_TRANSFORMATION_RING, 3, 0x01).requireLevel == 50);
     // A level requirement given by level gets the excellent +20 too: a Ring of Ice with one.
     ItemDefinition ringByLevel = *g_ItemDatabase.Find(ITEM_RING_OF_ICE);
@@ -636,7 +636,7 @@ TEST_CASE("The excellent bonus adds the same to minimum and maximum damage [data
 TEST_CASE("The + level bonus adds up above +9 [data][items]")
 {
     ShippedItemAttributes items;
-    // The Season 6 client and OpenMU: 27 at +9, then 31, 36, 42, 49, 57 and 66 at +10 to +15.
+    // The Season 6 client and HNMO: 27 at +9, then 31, 36, 42, 49, 57 and 66 at +10 to +15.
     constexpr int FirstLevelAboveNine = 10;
     constexpr int BonusFromTen[] = {31, 36, 42, 49, 57, 66};
 
@@ -651,7 +651,7 @@ TEST_CASE("The + level bonus adds up above +9 [data][items]")
               items[DragonShieldType].SuccessfulBlocking + BonusFromTen[i]);
     }
 
-    // Magic power is halved after the bonus; staffs add 2 per level, sceptres don't (OpenMU's
+    // Magic power is halved after the bonus; staffs add 2 per level, sceptres don't (HNMO's
     // staff and sceptre rise tables).
     CHECK(ComputeItem(ITEM_LEGENDARY_STAFF, 15).MagicPower == 92);
     CHECK(ComputeItem(ITEM_GREAT_LORD_SCEPTER, 15).MagicPower == 66);
@@ -931,7 +931,7 @@ TEST_CASE("The item help window builds its content again only when what it shows
 }
 
 // Scrolls and orbs keep their stat requirements as the values the game asks for (their profiles
-// keep the base value), as OpenMU stores them. These are the values the drop level formula gave
+// keep the base value), as HNMO stores them. These are the values the drop level formula gave
 // them before; +0 is the only level they have.
 TEST_CASE("Scrolls and orbs ask for their requirements as stored [data][items]")
 {

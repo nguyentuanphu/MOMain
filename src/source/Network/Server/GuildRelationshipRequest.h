@@ -7,7 +7,7 @@
 
 namespace Network::Packets
 {
-// OpenMU's ServerToClientPackets.xml: C1 E5, a guild master asks for an alliance or hostility change.
+// HNMO's ServerToClientPackets.xml: C1 E5, a guild master asks for an alliance or hostility change.
 // One byte per field; the requester's character key is big-endian.
 struct GuildRelationshipRequest
 {

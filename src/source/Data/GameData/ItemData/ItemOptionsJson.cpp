@@ -21,7 +21,7 @@ constexpr const char* Definitions = "definitions";
 constexpr const char* Name = "name";
 constexpr const char* Type = "type";
 constexpr const char* DisplayName = "displayName";
-constexpr const char* OpenMu = "openMu";
+constexpr const char* Hnmo = "hnmo";
 constexpr const char* Id = "id";
 constexpr const char* Server = "server";
 constexpr const char* AddsRandomly = "addsRandomly";
@@ -46,19 +46,19 @@ constexpr int MaxNumber = 255;
 // The additional option's number is the option type the server sends, the option byte's high four bits.
 constexpr int MaxOptionTypeNumber = 15;
 constexpr int MaxOptionsPerItem = 255;
-// OpenMU's GUIDs: 8, 4, 4, 4 and 12 hexadecimal digits.
+// HNMO's GUIDs: 8, 4, 4, 4 and 12 hexadecimal digits.
 constexpr std::array<size_t, 5> GuidGroupLengths = {8, 4, 4, 4, 12};
 
 const KeySet RootKeys = {Json::Keys::FormatVersion, Keys::Definitions};
-const KeySet DefinitionKeys = {Keys::Name, Keys::Type, Keys::DisplayName, Keys::OpenMu, Keys::Server, Keys::Options};
-const KeySet OpenMuKeys = {Keys::Id, Keys::Name};
+const KeySet DefinitionKeys = {Keys::Name, Keys::Type, Keys::DisplayName, Keys::Hnmo, Keys::Server, Keys::Options};
+const KeySet HnmoKeys = {Keys::Id, Keys::Name};
 const KeySet ServerKeys = {Keys::AddsRandomly, Keys::AddChance, Keys::MaximumOptionsPerItem};
 const KeySet OptionKeys = {Keys::Number, Keys::Attribute, AddKeys[0], AddKeys[1], AddKeys[2], Keys::Text};
 // perLevel has an error of its own, so it is no unknown field.
 const KeySet ValueKeys = {Keys::Values, Keys::PerLevel, Keys::Per};
 const KeySet TermKeys = {Keys::Attribute, Keys::Times, Keys::Divisor};
 
-// Whether the options of a type have a number (OpenMU's ItemOption.Number), and whether a definition of it has one
+// Whether the options of a type have a number (HNMO's ItemOption.Number), and whether a definition of it has one
 // option only.
 bool HasNumbers(ItemOptionType type)
 {
@@ -120,7 +120,7 @@ private:
     bool ReadName(const OrderedJson& json, const char* key, const std::string& field, std::string& name);
     void ReadType(const OrderedJson& json, const std::string& field, ItemOptionType& type);
     void ReadDisplayName(const OrderedJson& json, const std::string& field, LocalizedString& displayName);
-    void ReadOpenMu(const OrderedJson& json, const std::string& field, ItemOptionOpenMuLabels& labels);
+    void ReadHnmo(const OrderedJson& json, const std::string& field, ItemOptionHnmoLabels& labels);
     void ReadServer(const OrderedJson& json, const std::string& field, std::optional<ItemOptionServerValues>& server);
     void ReadOptions(const OrderedJson& json, const std::string& field, ItemOptionDefinition& definition);
     void ReadOption(const OrderedJson& json, const std::string& field, ItemOptionType type, ItemOption& option);
@@ -186,17 +186,17 @@ void ItemOptionsReader::ReadDisplayName(const OrderedJson& json, const std::stri
     }
 }
 
-void ItemOptionsReader::ReadOpenMu(const OrderedJson& json, const std::string& field, ItemOptionOpenMuLabels& labels)
+void ItemOptionsReader::ReadHnmo(const OrderedJson& json, const std::string& field, ItemOptionHnmoLabels& labels)
 {
-    const auto value = json.find(Keys::OpenMu);
+    const auto value = json.find(Keys::Hnmo);
     if (value == json.end())
     {
         return;
     }
-    const std::string labelsField = field + "." + Keys::OpenMu;
+    const std::string labelsField = field + "." + Keys::Hnmo;
     if (!value->is_object())
     {
-        AddFatal(labelsField, R"(must be {"id": "<OpenMU's GUID>", "name": "<OpenMU's English name>"})");
+        AddFatal(labelsField, R"(must be {"id": "<HNMO's GUID>", "name": "<HNMO's English name>"})");
         return;
     }
     if (const auto id = value->find(Keys::Id); id != value->end())
@@ -214,14 +214,14 @@ void ItemOptionsReader::ReadOpenMu(const OrderedJson& json, const std::string& f
     {
         if (!name->is_string() || name->get_ref<const std::string&>().empty())
         {
-            AddFatal(labelsField + "." + Keys::Name, "must be OpenMU's English name of the definition");
+            AddFatal(labelsField + "." + Keys::Name, "must be HNMO's English name of the definition");
         }
         else
         {
             labels.name = name->get<std::string>();
         }
     }
-    WarnAboutUnknownKeys(*value, OpenMuKeys, labelsField);
+    WarnAboutUnknownKeys(*value, HnmoKeys, labelsField);
 }
 
 void ItemOptionsReader::ReadServer(const OrderedJson& json, const std::string& field,
@@ -498,7 +498,7 @@ bool ItemOptionsReader::ReadDefinition(const OrderedJson& json, const std::strin
     ReadName(json, Keys::Name, field, definition.name);
     ReadType(json, field, definition.type);
     ReadDisplayName(json, field, definition.displayName);
-    ReadOpenMu(json, field, definition.openMu);
+    ReadHnmo(json, field, definition.hnmo);
     ReadServer(json, field, definition.server);
     ReadOptions(json, field, definition);
     WarnAboutUnknownKeys(json, DefinitionKeys, field);
@@ -560,18 +560,18 @@ OrderedJson WriteDefinition(const ItemOptionDefinition& definition)
     const char* type = FindEnumName(definition.type);
     json[Keys::Type] = type != nullptr ? OrderedJson(type) : OrderedJson(static_cast<int>(definition.type));
     json[Keys::DisplayName] = Json::WriteLocalizedString(definition.displayName);
-    if (!definition.openMu.IsEmpty())
+    if (!definition.hnmo.IsEmpty())
     {
         OrderedJson labels;
-        if (!definition.openMu.id.empty())
+        if (!definition.hnmo.id.empty())
         {
-            labels[Keys::Id] = definition.openMu.id;
+            labels[Keys::Id] = definition.hnmo.id;
         }
-        if (!definition.openMu.name.empty())
+        if (!definition.hnmo.name.empty())
         {
-            labels[Keys::Name] = definition.openMu.name;
+            labels[Keys::Name] = definition.hnmo.name;
         }
-        json[Keys::OpenMu] = std::move(labels);
+        json[Keys::Hnmo] = std::move(labels);
     }
     if (definition.server)
     {
@@ -634,7 +634,7 @@ std::string WriteItemOptionsJson(std::span<const ItemOptionDefinition> definitio
         root[Keys::Definitions].push_back(WriteDefinition(definition));
     }
     std::string text = root.dump(Json::Indent, ' ', false, OrderedJson::error_handler_t::replace);
-    text = Json::PutObjectsOnOneLine(text, Keys::OpenMu);
+    text = Json::PutObjectsOnOneLine(text, Keys::Hnmo);
     text = Json::PutObjectsOnOneLine(text, Keys::Server);
     return Json::PutListEntriesOnOneLine(text, Keys::Options) + "\n";
 }

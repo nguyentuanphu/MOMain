@@ -5,7 +5,7 @@ typedef struct tagITEM ITEM;
 namespace GameLogic::Items
 {
 // Maps where the character must keep flight equipment on. Only Icarus: the
-// server requires it there (OpenMU: CanFly), not in the Kanturu event map.
+// server requires it there (HNMO: CanFly), not in the Kanturu event map.
 bool RequiresFlight(int world);
 
 // Whether the item in `equipmentSlot` may be taken off in `world`. Where the

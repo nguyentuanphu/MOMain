@@ -3,7 +3,7 @@
 #include "Core/Globals/_enum.h" // ActionSkillType
 
 // The hero's critical damage rate in percent, by where it comes from, added up the way the server adds up its
-// critical damage chance (OpenMU's CriticalDamageChance): the luck of the worn items, the active ancient set options,
+// critical damage chance (HNMO's CriticalDamageChance): the luck of the worn items, the active ancient set options,
 // the socket options, the hero's own mastered buff and the Scroll of Battle while they are on. No stat changes it. A
 // critical hit deals the maximum damage.
 namespace GameLogic::Combat

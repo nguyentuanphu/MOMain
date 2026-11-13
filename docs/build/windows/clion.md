@@ -24,7 +24,7 @@ concepts.
      (Use `toolchain-x86.cmake` for a 32-bit build.)
 4. Run config: set the **Working directory** to the build output, e.g.
    `D:\repos\MuMain\cmake-build-x64debug-mueditor\src\Debug`. The post-build
-   step copies the assets and `MUnique.Client.Library.dll` there.
+   step copies the assets and `HNMO.Client.Library.dll` there.
 
 ## Z: drive (single checkout on WSL)
 

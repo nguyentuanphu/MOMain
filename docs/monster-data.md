@@ -15,7 +15,7 @@ file, textures, animation speeds and sounds of each monster and NPC model
 when it appears (its creator); a monster's `model` names the model the code
 chooses, and a test checks that they agree. Its setup when it appears and its
 attacks are still code, chosen by its number; later phases move them into the
-monster data. The number and the names are what OpenMU calls a monster's
+monster data. The number and the names are what HNMO calls a monster's
 `Number` and `Designation`, so they can later be exchanged with the server.
 
 Design and plans: [monsters design](superpowers/specs/2026-10-23-data-driven-monsters-design.md).
@@ -98,7 +98,7 @@ Design and plans: [monsters design](superpowers/specs/2026-10-23-data-driven-mon
 | Field | Meaning |
 |---|---|
 | `numbers` | The monster's numbers, 0–1023, each `{"number": …}` with its own values |
-| `maps` | Of a number: the maps it appears on, by the server's map numbers (as in [map variants](#map-variants)). Filled from where OpenMU's Season 6 data places the number: its maps' spawns, with the event waves of Kanturu and Raklion, and the spawn lists of Crywolf, the Imperial Guardian and the Castle Siege (430 of the 547 numbers; Devil Square's stages are their map, 9 or 32). The others have none: the server's plug-ins place them (the golden invasions, Doppelganger), a player calls them up (the Kalima gates, summons), or no server sends them. Only the editor uses them; a monster has no `maps`, only its numbers |
+| `maps` | Of a number: the maps it appears on, by the server's map numbers (as in [map variants](#map-variants)). Filled from where HNMO's Season 6 data places the number: its maps' spawns, with the event waves of Kanturu and Raklion, and the spawn lists of Crywolf, the Imperial Guardian and the Castle Siege (430 of the 547 numbers; Devil Square's stages are their map, 9 or 32). The others have none: the server's plug-ins place them (the golden invasions, Doppelganger), a player calls them up (the Kalima gates, summons), or no server sends them. Only the editor uses them; a monster has no `maps`, only its numbers |
 | `name` | The names by language, see [Names and translations](#names-and-translations) |
 | `kind` | `monster`, `npc`, `trap` or `other`: what the game does with it, see [Kinds](#kinds) |
 | `model` | The model it appears with: a slot of the model list (`MONSTER_MODEL_HOUND`, `MODEL_SMITH`), `player` (a player-shaped monster: the player model with class and items), `MODEL_WARCRAFT` or `MODEL_BALL` (models of other areas: the Kalima gates, the soccer ball), `mapObject <number>` (a map object, a trap), or `none` (no body, no sounds: the Imperial Guardian's traps 523, which only hit). The monster appears with it (MN4) |
@@ -135,7 +135,7 @@ original client's name files.
 - The Kalima gates (152–158) have plain names (`Gate to Kalima 1` …). In the
   game a gate shows "Magic stone of <owner>", which is the UI text
   `MagicStoneOfOwner` of the `Game` group, not a monster name.
-- 658–668 (Cursed Statue and the Captured Stone Statues) have OpenMU's
+- 658–668 (Cursed Statue and the Captured Stone Statues) have HNMO's
   English names. The original client had no names for them.
 - The editor names a monster as `<English name> (<number>)`, e.g.
   `Budge Dragon (2)`, never by a translation.
@@ -363,7 +363,7 @@ Maps are the numbers the server sends (`mapTextureFolders`, a sound set's
 `maps`, a part's `maps`, and a monster's map variants): Devil Square 1–4 is 9 and
 Devil Square 5–7 is 32, although the client loads both as Devil Square (9).
 A list may also name one stage of a map: `{"map": 9, "stage": 2}` is Devil
-Square 2. OpenMU sends the extended client the stage with the map
+Square 2. HNMO sends the extended client the stage with the map
 (`MapChangedExtended`) and when it enters the world
 (`CharacterInformationExtended`, so a character which logs in again in Devil
 Square keeps its stage); a number names all of its stages, and with another
@@ -404,7 +404,7 @@ Preview tools show it):
 A model whose file is missing has no body: the monster appears without one
 and the game keeps running; the file is logged and listed by Data Checks.
 Molt's `Data/Monster/Monster50.bmd` is missing, here and in the original
-client (OpenMU has no monster 68).
+client (HNMO has no monster 68).
 
 ## Sounds
 
@@ -764,7 +764,7 @@ item tools.
   sets the kind of every number that shares it. On a number's row a shared
   name or kind is grey and its kind locked, an own one yellow (see
   **Shared and own values** below). The **Maps** column says
-  where each number appears, as OpenMU's Season 6 data places it; its button
+  where each number appears, as HNMO's Season 6 data places it; its button
   opens the map picker, one undo step per change (Q-MN98). The maps are a
   label for the tools: the server decides where monsters appear. A monster
   or number selected in another tool is scrolled to, its monster opened; the
@@ -1055,7 +1055,7 @@ item tools.
   shipped lists it shows warnings only: 252's empty name, Molt's missing
   file, 48 of the attacks (the bosses' appear and attack 3, Bali's draw, the
   Battle Castle guards' shock and the like), the 13 numbers of P26, the map
-  variants on maps where OpenMU does not place them (Erkanne's on map 79,
+  variants on maps where HNMO does not place them (Erkanne's on map 79,
   the Crywolf bodies of world 35) and the Wolf Status (204), which is
   dropped when it appears. The checks run when
   the window is first shown and on **Check**; after a change the window says

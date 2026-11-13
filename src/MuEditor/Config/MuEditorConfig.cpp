@@ -72,11 +72,11 @@ void CMuEditorConfig::Load()
             {
                 m_skillEditorColumnVisibility[key] = (value == "1" || value == "true");
             }
-            else if (currentSection == "OpenMU")
+            else if (currentSection == "HNMO")
             {
                 if (key == "AdminPanelUrl")
                 {
-                    m_openMUAdminPanelUrl = value;
+                    m_hnmoAdminPanelUrl = value;
                 }
             }
             else if (currentSection == "ServerList")
@@ -122,10 +122,10 @@ void CMuEditorConfig::Save()
         file << col.first << "=" << (col.second ? "1" : "0") << "\n";
     }
 
-    // [OpenMU]: the server of the Item Sync window's Update from server. Its API key is not
-    // kept here (MU_OPENMU_API_KEY).
-    file << "\n[OpenMU]\n";
-    file << "AdminPanelUrl=" << m_openMUAdminPanelUrl << "\n";
+    // [HNMO]: the server of the Item Sync window's Update from server. Its API key is not
+    // kept here (MU_HNMO_API_KEY).
+    file << "\n[HNMO]\n";
+    file << "AdminPanelUrl=" << m_hnmoAdminPanelUrl << "\n";
 
     // [ServerList]: the Server List window's preview of the servers the connect server didn't send.
     file << "\n[ServerList]\n";
@@ -145,14 +145,14 @@ void CMuEditorConfig::SetLanguage(const std::string& language)
     m_language = language;
 }
 
-const std::string& CMuEditorConfig::GetOpenMUAdminPanelUrl() const
+const std::string& CMuEditorConfig::GetHNMOAdminPanelUrl() const
 {
-    return m_openMUAdminPanelUrl;
+    return m_hnmoAdminPanelUrl;
 }
 
-void CMuEditorConfig::SetOpenMUAdminPanelUrl(const std::string& url)
+void CMuEditorConfig::SetHNMOAdminPanelUrl(const std::string& url)
 {
-    m_openMUAdminPanelUrl = url;
+    m_hnmoAdminPanelUrl = url;
 }
 
 #endif // _EDITOR

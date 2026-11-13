@@ -269,9 +269,9 @@ text, so they stay untranslated.
 
 ### German terminology
 
-The German texts use the same terms as the German resources of the OpenMU
+The German texts use the same terms as the German resources of the HNMO
 server (`src/**/Properties/*.de.resx` in
-[MUnique/OpenMU](https://github.com/MUnique/OpenMU)), so players see the same
+[HNMO/HNMO](https://github.com/nguyentuanphu/HNMO)), so players see the same
 words in the client and in server messages. The player is addressed formally
 ("Sie"); NPC dialogues (`Dialog.de.resx`) keep their old-fashioned "Ihr/Euch".
 Some fixed terms:
@@ -299,7 +299,7 @@ Some fixed terms:
 | Transformation Ring | Verwandlungsring |
 
 The German item names (the `"de"` names in `src/bin/Data/Items/*.json`) are the
-same as the German item names of the OpenMU server (`ItemNames.de.resx`). Texts
+same as the German item names of the HNMO server (`ItemNames.de.resx`). Texts
 that mention an item use its German name. Armor set names are joined with the
 piece (*Drachenhelm*), proper names get a hyphen (*Hades-Helm*), and adjectives
 are declined (*Legendärer Helm*, *Legendäre Rüstung*). Skill, monster and event

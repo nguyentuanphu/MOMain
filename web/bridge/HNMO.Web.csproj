@@ -9,9 +9,16 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- The HNMO server's source: next to this repository as MOnline, or set HnmoServerSource. -->
+    <HnmoServerSource Condition="'$(HnmoServerSource)' == '' And Exists('$(MSBuildThisFileDirectory)../../../MOnline/src')">$(MSBuildThisFileDirectory)../../../MOnline</HnmoServerSource>
+    <HnmoServerSource Condition="'$(HnmoServerSource)' == ''">$(MSBuildThisFileDirectory)../../../server</HnmoServerSource>
+  </PropertyGroup>
+
   <ItemGroup>
-    <!-- The same network library the desktop client's ClientLibrary uses. -->
-    <PackageReference Include="MUnique.OpenMU.Network.Packets" Version="0.11.0" />
+    <!-- The server's own network library: packets and their encryption. -->
+    <ProjectReference Include="$(HnmoServerSource)/src/Network/HNMO.Network.csproj" />
+    <ProjectReference Include="$(HnmoServerSource)/src/Network/Packets/HNMO.Network.Packets.csproj" />
     <PackageReference Include="Pipelines.Sockets.Unofficial" Version="2.2.8" />
   </ItemGroup>
 

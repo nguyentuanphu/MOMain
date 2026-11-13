@@ -175,7 +175,7 @@ TEST_CASE("Maps: the stage the server sends with the map, none where WorldActive
 
 TEST_CASE("Maps: MapChangedExtended carries the stage at 15, the 15-byte MapChanged none (D67) [maps][network]")
 {
-    // OpenMU's C3 1C 0F to the extended client in Devil Square 2: map 9 at
+    // HNMO's C3 1C 0F to the extended client in Devil Square 2: map 9 at
     // 130/90, stage 2.
     const std::array<BYTE, 16> extended = {0xC3, 16, 0x1C, 0x0F, 1, 0, 9, 130, 90, 1, 0, 0, 0, 0, 0, 2};
     PRECEIVE_TELEPORT_POSITION teleport{};
@@ -194,7 +194,7 @@ TEST_CASE("Maps: MapChangedExtended carries the stage at 15, the 15-byte MapChan
 
 TEST_CASE("Maps: CharacterInformationExtended carries the stage at 92, a 92-byte packet none (D67) [maps][network]")
 {
-    // OpenMU's C3 F3 03 to the extended client which logs in again in Devil
+    // HNMO's C3 F3 03 to the extended client which logs in again in Devil
     // Square 2 (93 bytes, the stage last), and a byte of the next packet in
     // the receive buffer.
     std::array<BYTE, 94> buffer{0xC3, 93, 0xF3, 0x03};

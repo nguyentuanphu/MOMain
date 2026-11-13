@@ -21,6 +21,8 @@ permissions:
   contents: read
 
 env:
+  # The HNMO server checkout the client takes its packet definitions from (see HNMO.Client.Library.csproj).
+  HnmoServerSource: ${{ github.workspace }}/.hnmo-server
   # actions/checkout runs git init and then checks out a detached commit; without these settings git prints a hint
   # about the initial branch name and an advice block about detached HEADs in every job. Git reads them from the
   # environment (GIT_CONFIG_COUNT), so they need no step.
@@ -68,6 +70,12 @@ jobs:
             !/src/bin/Data/*
             /src/bin/Data/Interface/
             /src/bin/Data/Dec2.dat
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       # Commits, tags and file lists for the diffs and release check, without every past asset version; git fetches
       # the few old file versions a diff needs on demand.
@@ -222,6 +230,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Setup .NET 10
         id: dotnet
@@ -496,7 +510,7 @@ jobs:
           $runtimeDirectory = "out/build/windows-ci-x64-release/src/Release"
           $requiredFiles = @(
             "$runtimeDirectory/Main.exe",
-            "$runtimeDirectory/MUnique.Client.Library.dll",
+            "$runtimeDirectory/HNMO.Client.Library.dll",
             "$runtimeDirectory/config.ini"
           )
           foreach ($path in $requiredFiles) {
@@ -750,6 +764,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Setup .NET 10
         id: dotnet
@@ -897,7 +917,7 @@ jobs:
           runtime_directory="out/build/linux-ci/src/Release"
           for path in \
             "$runtime_directory/Main" \
-            "$runtime_directory/MUnique.Client.Library.so" \
+            "$runtime_directory/HNMO.Client.Library.so" \
             "$runtime_directory/config.ini" \
             "$runtime_directory/shaders"
           do
@@ -960,6 +980,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Setup .NET 10
         id: dotnet
@@ -1069,7 +1095,7 @@ jobs:
           runtime_directory="out/build/macos-ci/src/Release/Main.app/Contents/MacOS"
           for path in \
             "$runtime_directory/Main" \
-            "$runtime_directory/MUnique.Client.Library.dylib" \
+            "$runtime_directory/HNMO.Client.Library.dylib" \
             "$runtime_directory/config.ini" \
             "$runtime_directory/shaders"
           do
@@ -1133,6 +1159,12 @@ jobs:
         with:
           sparse-checkout: scripts
           persist-credentials: false
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Delete older cache entries
         env:
@@ -1159,6 +1191,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Verify applicable checks
         env:
@@ -1186,6 +1224,12 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Check out the HNMO server (packet definitions)
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: .hnmo-server
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

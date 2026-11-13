@@ -7,7 +7,7 @@
 
 namespace Network::Packets
 {
-// OpenMU's ServerToClientPackets.xml: C1 EB 01, the result of a guild master removing a guild from the alliance.
+// HNMO's ServerToClientPackets.xml: C1 EB 01, the result of a guild master removing a guild from the alliance.
 // The client only needs whether it worked; the request and relationship type bytes after it aren't read.
 struct RemoveAllianceGuildResult
 {

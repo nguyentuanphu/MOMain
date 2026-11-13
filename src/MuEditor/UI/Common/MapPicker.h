@@ -11,7 +11,7 @@
 // the numbers the server sends, and the picker lists them with the levels of
 // an event under one name, each with its server number and the world folder it
 // loads. An event's levels are either maps of their own (Blood Castle 1-8 are
-// 11-17 and 52) or stages of one map, which OpenMU tells the client (Devil
+// 11-17 and 52) or stages of one map, which HNMO tells the client (Devil
 // Square 1-4 are stages of 9, 5-7 of 32).
 namespace MuEditor::MapPicker
 {

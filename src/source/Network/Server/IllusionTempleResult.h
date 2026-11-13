@@ -10,7 +10,7 @@
 
 namespace Network::Packets
 {
-// OpenMU's ServerToClientPackets.xml: C1 BF04, seven-byte header and 20-byte player rows.
+// HNMO's ServerToClientPackets.xml: C1 BF04, seven-byte header and 20-byte player rows.
 // Rows own their ten-byte UTF-8 name plus a terminator; no receive-buffer lifetime escapes parsing.
 struct IllusionTempleResult
 {

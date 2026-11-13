@@ -888,7 +888,7 @@ void CMapEditorUI::RenderAttributeTab()
     ImGui::PopStyleColor(2);
 
     ImGui::Spacing();
-    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.6f, 1.0f), "2) Server file (OpenMU)");
+    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.6f, 1.0f), "2) Server file (HNMO)");
     // The server keys maps by its own number: the world ENUM (Arena = 6), but 32 for
     // Devil Square 5-7, which loads world 9. The client folder is World{enum+1}
     // (World7, World10). Show both so they're never confused.

@@ -53,5 +53,5 @@ cd out/build/windows-x64-mueditor/src/Debug
 ```
 
 Run from the build output's `src/<config>` directory so the client finds its
-assets, `config.ini`, and `MUnique.Client.Library.dll` (all placed there by the
+assets, `config.ini`, and `HNMO.Client.Library.dll` (all placed there by the
 post-build step).

@@ -4,7 +4,7 @@
 
 using Data::LocalizedString;
 
-TEST_CASE("Localized strings parse the OpenMU format [data]")
+TEST_CASE("Localized strings parse the HNMO format [data]")
 {
     const LocalizedString text = LocalizedString::Parse("Kris||pt=Cris||es=Kris espa\xC3\xB1ol");
 

@@ -42,7 +42,7 @@ bool IsTurnedOn(const ITEM& item, ItemOptionType type)
 }
 
 // Whether the additional option is the one the server sends: by its number, the option type (ITEM::OptionType, the
-// option byte's high nibble; 0 for most items), as OpenMU reads it.
+// option byte's high nibble; 0 for most items), as HNMO reads it.
 bool IsAdditionalOptionSent(int optionType, const ItemOption& option)
 {
     return option.number == optionType;

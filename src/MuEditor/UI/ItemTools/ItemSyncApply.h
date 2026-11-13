@@ -15,7 +15,7 @@
 
 // What the Item Sync window does (phase 7): an import changes the client's data with the checked
 // rows of a diff as one step of the undo history; an export writes the client's items and
-// formulas into a file, without a diff (OpenMU's import page shows one).
+// formulas into a file, without a diff (HNMO's import page shows one).
 namespace MuEditor::Items
 {
 // The client's items and item formulas as an exchange file.

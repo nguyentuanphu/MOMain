@@ -99,7 +99,7 @@ void CUIWindowMgr::Reset()
     }
     if (g_iChatInputType == 0)
     {
-        // 2 means logging out; not required for OpenMU servers.
+        // 2 means logging out; not required for HNMO servers.
         SocketClient->ToGameServer()->SendSetFriendOnlineState(2);
     }
 }

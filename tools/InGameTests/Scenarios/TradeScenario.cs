@@ -178,6 +178,6 @@ internal sealed class TradeScenario : Scenario
     {
         var inventory = ItemSlots.Of(await client.StateAsync(), "inventory");
         return inventory.FirstOrDefault(item => item.Name.StartsWith("Jewel of", StringComparison.Ordinal))
-               ?? throw new ScenarioFailedException("the seller has no jewel to trade; the OpenMU test data gives test300Dl some");
+               ?? throw new ScenarioFailedException("the seller has no jewel to trade; the HNMO test data gives test300Dl some");
     }
 }

@@ -137,7 +137,7 @@ internal sealed class NpcShopScenario : Scenario
             }
         }
 
-        throw new ScenarioFailedException($"the inventory has no '{name}' to sell; the OpenMU test data gives {TestAccounts.NpcShopper.Name} some");
+        throw new ScenarioFailedException($"the inventory has no '{name}' to sell; the HNMO test data gives {TestAccounts.NpcShopper.Name} some");
     }
 
     // Two clicks: the item is picked up and dropped onto the shop, which buys it.

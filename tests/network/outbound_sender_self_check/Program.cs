@@ -1,4 +1,4 @@
-using MUnique.Client.Library;
+using HNMO.Client.Library;
 
 var timeout = TimeSpan.FromSeconds(5);
 await VerifyCoalescingAndDrainAsync(timeout).ConfigureAwait(false);

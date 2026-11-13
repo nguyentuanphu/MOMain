@@ -80,7 +80,7 @@ struct MonsterDefinition
     // What its character gets when it appears (D63, MN4).
     MonsterSetup setup;
     // The maps the number appears on, by the numbers the server sends
-    // (Q-MN61): where OpenMU's Season 6 data places it, and empty for a number
+    // (Q-MN61): where HNMO's Season 6 data places it, and empty for a number
     // it places nowhere. Each number has its own; only the tools read them.
     std::vector<Data::Maps::MapRef> maps;
 

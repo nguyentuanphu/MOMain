@@ -43,7 +43,7 @@ All under `src/MuEditor/UI/MapEditor/`:
 |---|---|
 | `MapEditorUI.h/.cpp` | The panel + all tabs (Texture, Objects, Height, T. Browse, Minimap, O. Browse). Owns UI state, edit-mode selection, input capture, and undo. |
 | `MapEditorSave.h/.cpp` | `Editor::MapSave` — **encrypting** save of the terrain mapping (`.map`). |
-| `MapAttributeSave.h/.cpp` | `Editor::AttrSave` — **encrypting** save of the walkability `.att` (client) **and** the plain `.att` for OpenMU's Admin Panel + a HOWTO text file (server). |
+| `MapAttributeSave.h/.cpp` | `Editor::AttrSave` — **encrypting** save of the walkability `.att` (client) **and** the plain `.att` for HNMO's Admin Panel + a HOWTO text file (server). |
 | `MapTextureBrowser.h/.cpp` | **T. Browse** tab — preview a chosen world's tile textures; "Use"/"Upload" a texture onto the current map. |
 | `MapTextureImport.h/.cpp` | `Editor::TextureImport` — put a `.jpg`/`.ozj` into a free `ExtTile` slot and load it live; Windows file dialog. |
 | `MapObjectPlace.h/.cpp` | `Editor::ObjectPlace` — enumerate loaded models, place/reposition/remove objects, save `.obj`, undo snapshot/restore. |
@@ -196,7 +196,7 @@ Files live in `Data\World{N}\`. **World folder = world enum value + 1**
 |---|---|---|---|
 | Tile mapping | `EncTerrain{N}.map` | `mapdecrypt` only. `version, mapNum, Layer1[256²], Layer2[256²], Alpha[256²]` | **We re-encrypt** (`MapEditorSave`) — the engine `SaveTerrainMapping` writes **plaintext**. |
 | Walkability (client) | `EncTerrain{N}.att` | Decode = `bux(mapdecrypt(f))` → `[version, mapId, 255, 255] + attr[256²]`, **1 byte/cell**, index `y*256+x` (same order as `TerrainWall[]`). | **We re-encrypt**: `MapFileEncrypt(BuxConvert(plain))` (`MapAttributeSave`). The engine `SaveTerrainAttribute` writes **plaintext AND 2 bytes/cell** — unusable. |
-| Walkability (server) | `terrain_map{E}_server.att` | The **exact bytes** of OpenMU's `config."GameMapDefinition"."TerrainData"` (bytea): `[0, 255, 255] + attr[256²]` = **65539 bytes, NOT encrypted** (attr `i` at offset `3+i`). Same layout as OpenMU's own `Resources\Terrain{N}.att` seed files. Row keyed by `"Number"` = world **enum**. | Written verbatim (`SaveServerAtt`) — no `BuxConvert`, no `MapFileEncrypt`, and **no `mapId` byte** in the header. Upload via the Admin Panel's **"Terrain Data"** field. |
+| Walkability (server) | `terrain_map{E}_server.att` | The **exact bytes** of HNMO's `config."GameMapDefinition"."TerrainData"` (bytea): `[0, 255, 255] + attr[256²]` = **65539 bytes, NOT encrypted** (attr `i` at offset `3+i`). Same layout as HNMO's own `Resources\Terrain{N}.att` seed files. Row keyed by `"Number"` = world **enum**. | Written verbatim (`SaveServerAtt`) — no `BuxConvert`, no `MapFileEncrypt`, and **no `mapId` byte** in the header. Upload via the Admin Panel's **"Terrain Data"** field. |
 | Objects | `EncTerrain{N}.obj` | `mapdecrypt`. `version, mapNum, count, {Type i16, Pos[3] f32, Angle[3] f32, Scale f32}×count`. **Flat list; re-blocks by position on load.** | Engine `SaveObjects` **already encrypts** — call directly. |
 | Height | `TerrainHeight.OZB` | Plain **BMP**: 1080-byte header + 256×256 grayscale; `height = byte × 1.5`. Loader appends `OZB` to the `.bmp` name. | Engine `SaveTerrainHeight` (plain BMP) — call directly. |
 | Minimap | `mini_map.OZT` | 4-byte header `00 00 02 00` + 18-byte TGA header + BGRA pixels, **bottom-origin**, 32-bit, **no footer**. 1024×1024 for Arena. | Wrapped externally (strip 4 bytes → TGA to edit; prepend them back → OZT). |
@@ -232,7 +232,7 @@ model + its textures live in `Data\Object{N}\`.
    editor-owned globals while the editor owns the mode; release once on exit (edge-detect).
 6. **World off-by-one.** `Data\World{WorldActive+1}\`. Special maps remap (Blood Castle,
    Chaos Castle, Hellas, Cursed Temple…). The Texture tab exposes a manual world override.
-   **And the server disagrees with the client:** OpenMU keys maps by `"Number"` =
+   **And the server disagrees with the client:** HNMO keys maps by `"Number"` =
    the raw world **enum** (Lorencia `0`, Arena `6`), while the client folder is
    `enum + 1` (`World1`, `World7`). Mixing them up is the #1 way to write the wrong map.
 7. **MSVC comment trap.** A `//` comment ending in a backslash (`...Data\`) continues onto

@@ -59,9 +59,9 @@ TEST_CASE("AC-4: ValidateServerPort rejects invalid port values [network][server
         REQUIRE(result == 65535);
     }
 
-    SUBCASE("AC-4: Port 44405 (normal OpenMU default) is valid — returns 44405")
+    SUBCASE("AC-4: Port 44405 (normal HNMO default) is valid — returns 44405")
     {
-        // GIVEN: the OpenMU default port
+        // GIVEN: the HNMO default port
         int value = 44405;
         int defaultPort = 44405;
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Generate wire_sizes.generated.h: static_assert size guards for client
-packet structs, derived from OpenMU's authoritative packet XML.
+packet structs, derived from HNMO's authoritative packet XML.
 
-The XML lives in the MUnique.OpenMU.Network.Packets NuGet package (the same
-package the .NET ClientLibrary consumes). CMake resolves the path and passes
-it via --xml.
+The XML lives in the HNMO server source (src/Network/Packets, the same
+packet project the .NET ClientLibrary builds against). CMake resolves the
+path and passes it via --xml.
 
 For each entry in PACKET_MAPPING, look up the wire <Length> and emit:
 
@@ -97,7 +97,7 @@ def emit_header(lengths: dict[str, int], out: Path, source_label: str) -> int:
         "// Generator: tools/gen_wire_sizes.py",
         "//",
         "// Static-assert that each client packet struct fits within the wire packet",
-        "// length declared by OpenMU. Guards against the PR #402 class of bug where a",
+        "// length declared by HNMO. Guards against the PR #402 class of bug where a",
         "// dropped #pragma pack(1) silently inflates the client struct above the wire",
         "// size, causing safe_cast to reject every packet (freezes the loading screen).",
         "// Structs read with a raw cast get an exact size instead (== rather than <=):",
@@ -124,12 +124,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--xml", required=True, type=Path,
                     help="Path to ServerToClientPackets.xml "
-                         "(from the MUnique.OpenMU.Network.Packets NuGet "
-                         "package contentFiles)")
+                         "(from the HNMO server's src/Network/Packets)")
     ap.add_argument("--source-label", default=None,
                     help="Optional label written into the generated header's "
-                         "'Source:' comment (e.g. the NuGet package "
-                         "version). Defaults to the XML basename.")
+                         "'Source:' comment"
+                         ". Defaults to the XML basename.")
     ap.add_argument("--output", required=True, type=Path,
                     help="Output header path")
     args = ap.parse_args()

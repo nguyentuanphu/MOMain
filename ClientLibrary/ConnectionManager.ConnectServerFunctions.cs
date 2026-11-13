@@ -1,4 +1,4 @@
-﻿// <copyright file="ConnectionManager.cs" company="MUnique">
+﻿// <copyright file="ConnectionManager.cs" company="HNMO">
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -17,16 +17,16 @@
 // ReSharper disable UseObjectOrCollectionInitializer
 
 #nullable enable
-namespace MUnique.Client.Library;
+namespace HNMO.Client.Library;
 
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using MUnique.OpenMU.Network;
-using MUnique.OpenMU.Network.Packets;
-using MUnique.OpenMU.Network.Packets.ConnectServer;
+using HNMO.Network;
+using HNMO.Network.Packets;
+using HNMO.Network.Packets.ConnectServer;
 
 /// <summary>
 /// Extension methods to start writing messages of this namespace on a <see cref="IConnection"/>.

@@ -18,20 +18,20 @@ namespace GameLogic::Combat
 {
 namespace
 {
-// The harmony options "Increase critical damage" of weapons and of staffs (JewelOfHarmonyOption_<lang>.bmd; OpenMU's
+// The harmony options "Increase critical damage" of weapons and of staffs (JewelOfHarmonyOption_<lang>.bmd; HNMO's
 // physical option 6 and wizardry option 5).
 constexpr int WeaponCriticalDamageHarmony = 6;
 constexpr int StaffCriticalDamageHarmony = 5;
 
-// Increase Critical Damage: 1 damage per 30 energy and per 25 command of its caster (OpenMU's
+// Increase Critical Damage: 1 damage per 30 energy and per 25 command of its caster (HNMO's
 // CriticalDamageIncreaseEffectInitializer).
 constexpr float EnergyPerDamage = 30.f;
 constexpr float CommandPerDamage = 25.f;
 
-// An excellent hit deals the maximum damage times this (OpenMU's AttackableExtensions).
+// An excellent hit deals the maximum damage times this (HNMO's AttackableExtensions).
 constexpr double ExcellentDamageFactor = 1.2;
 
-// Its buff states (OpenMU's magic effects 5 and 148; 149 is the client's extended one) and its skills: the hero casts
+// Its buff states (HNMO's magic effects 5 and 148; 149 is the client's extended one) and its skills: the hero casts
 // one of them when the buff is its own.
 constexpr std::array<eBuffState, 3> CriticalDamageBuffs{
     eBuff_AddCriticalDamage, EFFECT_GREATER_CRITICAL_DAMAGE_MASTERED, EFFECT_GREATER_CRITICAL_DAMAGE_EXTENDED};

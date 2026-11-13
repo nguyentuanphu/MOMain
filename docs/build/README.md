@@ -45,9 +45,9 @@ buildable for them. See the per-platform notes when that work lands.
 
 | OS | Arch | Editor | Network library | Status |
 |----|------|--------|-----------------|--------|
-| Linux | x64 | on / off | `MUnique.Client.Library.so` (linux-x64 AOT) | Full client |
-| Windows | x64 | on / off | `MUnique.Client.Library.dll` (win-x64 AOT) | Full client |
-| Windows | x86 | on / off | `MUnique.Client.Library.dll` (win-x86 AOT) | Full client |
+| Linux | x64 | on / off | `HNMO.Client.Library.so` (linux-x64 AOT) | Full client |
+| Windows | x64 | on / off | `HNMO.Client.Library.dll` (win-x64 AOT) | Full client |
+| Windows | x86 | on / off | `HNMO.Client.Library.dll` (win-x86 AOT) | Full client |
 | Linux | x86 | - | none | Not supported (see below) |
 
 Actions validate Windows native x64 Release, Linux x64 Release, and macOS arm64
@@ -174,14 +174,14 @@ successfully before building or running the tests.
 
 ### The network library
 
-The client talks to the server through OpenMU's `MUnique.Client.Library`, a C#
+The client talks to the server through HNMO's `HNMO.Client.Library`, a C#
 project compiled to a native shared library with .NET Native AOT
 (`ClientLibrary/`). The C++ client loads it at runtime (`dlopen`/`LoadLibrary`),
 so `Main` links without it, but it must sit next to the executable to connect.
 The build produces it automatically and copies it next to `Main`:
 
-- Linux target -> `MUnique.Client.Library.so`
-- Windows target -> `MUnique.Client.Library.dll`
+- Linux target -> `HNMO.Client.Library.so`
+- Windows target -> `HNMO.Client.Library.dll`
 
 Native AOT cannot cross-compile across OS boundaries: a Linux-hosted SDK cannot
 produce a Windows `.dll`, and vice versa. A MinGW-on-Linux build compiles and
@@ -196,7 +196,7 @@ library next to the executable, so the build output directory is runnable:
 ```
 <build-dir>/src/
   Main (or Main.exe)
-  MUnique.Client.Library.so (or .dll)
+  HNMO.Client.Library.so (or .dll)
   Data/ ...                          <-- copied assets
   config.ini                         <-- seeded from config.ini.template
 ```
@@ -451,7 +451,7 @@ up, the GPU, its graphics API and driver version, and the UI language the player
 a line: `> UI language changed to ...` for a switch in the options window or the editor,
 `> Item names now translated.` or `> Item names now in English.` for the options window's
 item name setting.
-`ClientLibrary` names the commit the .NET library was built from and its OpenMU
+`ClientLibrary` names the commit the .NET library was built from and its HNMO
 packets version. In a release download that commit is the client's, so a different
 one means a library from another download. A local build rebuilds the library only
 when its sources change, so there it can name an older commit.

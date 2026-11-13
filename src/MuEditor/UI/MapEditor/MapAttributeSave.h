@@ -16,7 +16,7 @@
 //      On disk it is BuxConvert'd and then MapFileEncrypt'd (the engine's own
 //      SaveTerrainAttribute writes PLAINTEXT and 2 bytes/cell, so we can't use it).
 //
-//  * SERVER (OpenMU): the walk map lives in config."GameMapDefinition"."TerrainData"
+//  * SERVER (HNMO): the walk map lives in config."GameMapDefinition"."TerrainData"
 //      (bytea), where attribute byte i sits at offset 3 + i. It is uploaded through
 //      the Admin Panel's "Terrain Data" field. NOTE the server keys maps by
 //      "Number" = the world ENUM value (Arena = 6), while the client's folder is

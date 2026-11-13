@@ -33,7 +33,7 @@ class ItemStatProfiles;
 
 // A stat requirement whose formula the item's stat profile (the one it names, or the one its rules
 // give) keeps the base value of, where the default grows it, is kept as the value the game asks
-// for, as OpenMU does: with the shipped formulas, those of the orbs, crystals and scrolls (the orb
+// for, as HNMO does: with the shipped formulas, those of the orbs, crystals and scrolls (the orb
 // and scroll profiles). The original client's bmd files hold weights for them, which its code grew
 // like any item's: 20 + weight * drop level * 3 / 100 (energy * 4), and a scroll's energy (group
 // 15) from its level requirement where it has one: 20 + weight * level requirement * 4 / 100.

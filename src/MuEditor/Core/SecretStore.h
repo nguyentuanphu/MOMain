@@ -5,7 +5,7 @@
 #include <optional>
 #include <string>
 
-// MuEditor's secrets (the OpenMU admin panel's API key) in the operating system's key store: the
+// MuEditor's secrets (the HNMO admin panel's API key) in the operating system's key store: the
 // Windows Credential Manager, the macOS Keychain or, when MuEditor was built with libsecret, the
 // Linux keyring. Never in a file of the editor or a log.
 namespace MuEditor::SecretStore

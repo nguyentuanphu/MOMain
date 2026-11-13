@@ -17,7 +17,7 @@
         "uk": "Чудовий захист",
         "zh-TW": "卓越防禦"
       },
-      "openMu": {"id": "00000083-0012-0000-0000-000000000000", "name": "Excellent Defense Options"},
+      "hnmo": {"id": "00000083-0012-0000-0000-000000000000", "name": "Excellent Defense Options"},
       "server": {"addsRandomly": true, "addChance": 0.001, "maximumOptionsPerItem": 2},
       "options": [
         {"number": 1, "attribute": "moneyAmountRate", "percent": {"values": 30}, "text": "zenAfterKill"},
@@ -44,7 +44,7 @@
         "uk": "Чудова фізична атака",
         "zh-TW": "卓越物理攻擊"
       },
-      "openMu": {"id": "00000083-0013-0000-0000-000000000000", "name": "Excellent Physical Attack Options"},
+      "hnmo": {"id": "00000083-0013-0000-0000-000000000000", "name": "Excellent Physical Attack Options"},
       "server": {"addsRandomly": true, "addChance": 0.001, "maximumOptionsPerItem": 2},
       "options": [
         {"number": 1, "attribute": "manaAfterMonsterKillMultiplier", "add": {"values": 8}, "text": "manaAfterKill"},
@@ -71,7 +71,7 @@
         "uk": "Чудова магічна атака",
         "zh-TW": "卓越魔法攻擊"
       },
-      "openMu": {"id": "00000083-0014-0000-0000-000000000000", "name": "Excellent Wizardry Attack Options"},
+      "hnmo": {"id": "00000083-0014-0000-0000-000000000000", "name": "Excellent Wizardry Attack Options"},
       "server": {"addsRandomly": true, "addChance": 0.001, "maximumOptionsPerItem": 2},
       "options": [
         {"number": 1, "attribute": "manaAfterMonsterKillMultiplier", "add": {"values": 8}, "text": "manaAfterKill"},

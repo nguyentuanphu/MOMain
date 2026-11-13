@@ -119,7 +119,7 @@ internal sealed class RepairScenario : Scenario
         await Expect.EventuallyAsync(
             async () => ItemSlots.At(ItemSlots.Of(await client.StateAsync(), "equipment"), slot) is not null,
             ServerAnswer,
-            $"nothing is equipped in slot {slot}; the OpenMU test data equips {TestAccounts.Repairer.Name} there");
+            $"nothing is equipped in slot {slot}; the HNMO test data equips {TestAccounts.Repairer.Name} there");
         foreach (var item in (await client.StateAsync()).GetProperty("equipment").EnumerateArray())
         {
             if (item.GetProperty("slot").GetInt32() != slot)
@@ -138,7 +138,7 @@ internal sealed class RepairScenario : Scenario
             return worn;
         }
 
-        throw new ScenarioFailedException($"nothing is equipped in slot {slot}; the OpenMU test data equips {TestAccounts.Repairer.Name} there");
+        throw new ScenarioFailedException($"nothing is equipped in slot {slot}; the HNMO test data equips {TestAccounts.Repairer.Name} there");
     }
 
     private static async Task ExpectRepairedAsync(GameClient client, int slot, int maxDurability)

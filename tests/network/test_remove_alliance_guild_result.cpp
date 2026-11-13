@@ -1,4 +1,4 @@
-// Tests of reading OpenMU's EB 01 remove-alliance-guild result.
+// Tests of reading HNMO's EB 01 remove-alliance-guild result.
 
 #include "Network/Server/RemoveAllianceGuildResult.h"
 

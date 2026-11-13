@@ -16,7 +16,7 @@ namespace GameLogic::Combat
 {
 namespace
 {
-// A mastered buff whose critical damage rate is the value of a master skill of its caster (OpenMU's magic effects
+// A mastered buff whose critical damage rate is the value of a master skill of its caster (HNMO's magic effects
 // 139 and 148: their critical damage chance is 0 plus the master skill's value).
 struct CriticalRateBuff
 {
@@ -64,7 +64,7 @@ void AddOwnBuff(CriticalDamageRate& rate)
     }
 }
 
-// The Scroll of Battle (14/97) adds its value of the item option table (ItemAddOption.bmd: 20, OpenMU's BuffItems:
+// The Scroll of Battle (14/97) adds its value of the item option table (ItemAddOption.bmd: 20, HNMO's BuffItems:
 // CriticalDamageChance +0.2) while its buff is on, as the other scrolls add theirs. The hero reads it from the
 // inventory, so the buff is always the hero's own.
 // The buffs design (B13) moves this value to Data/Buffs.json; this reader moves with it, or it reads 0.

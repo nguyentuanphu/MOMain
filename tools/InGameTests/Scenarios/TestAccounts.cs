@@ -4,7 +4,7 @@ namespace MuMain.Tools.InGameTests.Scenarios;
 internal sealed record TestCharacter(string Account, string Password, string Name);
 
 /// <summary>
-/// Accounts OpenMU creates with its test data (VersionSeasonSix/TestAccounts);
+/// Accounts HNMO creates with its test data (VersionSeasonSix/TestAccounts);
 /// the password is the account name. Each scenario has accounts of its own, and
 /// none of them is a game master account people play with, so a test and a
 /// person on the same server do not get in each other's way.

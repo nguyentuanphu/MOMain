@@ -451,7 +451,7 @@ if (APPLE)
   )
   set_target_properties(Main PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "MU Online"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "org.openmu.mumain"
+    MACOSX_BUNDLE_GUI_IDENTIFIER "org.hnmo.mumain"
     MACOSX_BUNDLE_ICON_FILE "MuMain.icns"
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/source/App/Platform/macOS/Info.plist.in"
   )
@@ -616,7 +616,7 @@ if (APPLE)
 endif()
 
 # --- .NET / NuGet infrastructure (shared by wire-sizes codegen and ClientLibrary)
-# Lifted up here so the wire-sizes block below can resolve the OpenMU packet
+# Lifted up here so the wire-sizes block below can resolve the HNMO packet
 # XML from the same NuGet cache the ClientLibrary uses.
 # A Linux target needs the native Linux dotnet to Native-AOT-compile the
 # linux-x64 .so (a Windows dotnet.exe cannot cross-OS AOT). Everything else
@@ -659,58 +659,32 @@ set(MU_NUGET_CACHE_DIR "${CMAKE_SOURCE_DIR}/.nuget" CACHE PATH "NuGet package ca
 file(MAKE_DIRECTORY "${MU_NUGET_CACHE_DIR}")
 
 # --- Generated wire-size guards ----------------------------------------------
-# tools/gen_wire_sizes.py reads OpenMU's authoritative packet XML and emits
+# tools/gen_wire_sizes.py reads the HNMO server's authoritative packet XML and emits
 # wire_sizes.generated.h with static_asserts that lock each client packet
 # struct's sizeof <= the wire length declared by the server. Guards against
-# the PR #402 class of bug (silent #pragma pack drift that freezes the client).
+# silent #pragma pack drift that freezes the client.
 #
-# The XML lives in the MUnique.OpenMU.Network.Packets NuGet package -- the
-# same package the .NET ClientLibrary consumes (see MUnique.Client.Library.csproj).
-# Sourcing from NuGet means a single versioned dependency instead of vendoring
-# the entire OpenMU repository as a submodule.
-# The version the ClientLibrary builds against, so the guards check the same packet definitions.
-set(_packets_version_source "${CMAKE_CURRENT_SOURCE_DIR}/../ClientLibrary/MUnique.Client.Library.csproj")
-# A version bump must reconfigure, or an existing build keeps checking the old packets.
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_packets_version_source}")
-file(STRINGS "${_packets_version_source}" _packets_version REGEX "<OpenMuPacketsVersion>")
-string(REGEX REPLACE ".*<OpenMuPacketsVersion>([^<]+)</OpenMuPacketsVersion>.*" "\\1"
-       OPENMU_PACKETS_VERSION "${_packets_version}")
-if (NOT OPENMU_PACKETS_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+")
-  message(FATAL_ERROR "Could not read <OpenMuPacketsVersion> from MUnique.Client.Library.csproj")
+# The XML comes from the HNMO server source, the same packet project the .NET
+# ClientLibrary builds against (see HNMO.Client.Library.csproj). By default it is
+# looked up next to this repository (../MOnline or ../server); override with
+# -DHNMO_SERVER_SOURCE=<path to the HNMO server> or the HnmoServerSource environment variable.
+if (NOT HNMO_SERVER_SOURCE)
+  if (DEFINED ENV{HnmoServerSource})
+    file(TO_CMAKE_PATH "$ENV{HnmoServerSource}" _hnmo_server_default)
+  elseif (EXISTS "${REPO_ROOT}/../MOnline/src/Network/Packets")
+    set(_hnmo_server_default "${REPO_ROOT}/../MOnline")
+  else()
+    set(_hnmo_server_default "${REPO_ROOT}/../server")
+  endif()
 endif()
-set(OPENMU_PACKETS_XML
-    "${MU_NUGET_CACHE_DIR}/munique.openmu.network.packets/${OPENMU_PACKETS_VERSION}/contentFiles/any/net10.0/ServerToClient/ServerToClientPackets.xml")
-
-# Restore the package on demand at configure time if it isn't cached yet.
-# dotnet restore is fast on cache-hit, so re-configuring stays cheap.
-if (NOT EXISTS "${OPENMU_PACKETS_XML}")
-  if (NOT DOTNET_EXECUTABLE)
-    message(FATAL_ERROR
-      "wire-size codegen needs MUnique.OpenMU.Network.Packets v${OPENMU_PACKETS_VERSION} "
-      "but it is not cached at ${MU_NUGET_CACHE_DIR} and no .NET SDK was found to restore "
-      "it. Install dotnet (Linux or Windows) or pre-populate the NuGet cache.")
-  endif()
-  message(STATUS "Restoring MUnique.OpenMU.Network.Packets v${OPENMU_PACKETS_VERSION} for wire-size codegen...")
-  set(_packets_csproj "${CMAKE_CURRENT_SOURCE_DIR}/../ClientLibrary/MUnique.Client.Library.csproj")
-  mu_native_path("${_packets_csproj}" _packets_csproj_native)
-  mu_native_path("${MU_NUGET_CACHE_DIR}" _packets_nuget_native)
-  # WSLENV=NUGET_PACKAGES/w is needed so the env var crosses the WSL->Windows
-  # interop boundary when DOTNET_EXECUTABLE is dotnet.exe; harmless otherwise.
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E env
-            "WSLENV=NUGET_PACKAGES/w"
-            "NUGET_PACKAGES=${_packets_nuget_native}"
-            "${DOTNET_EXECUTABLE}" restore "${_packets_csproj_native}" --nologo
-    RESULT_VARIABLE _restore_rc
-  )
-  if (NOT _restore_rc EQUAL 0)
-    message(FATAL_ERROR "dotnet restore failed (rc=${_restore_rc}) -- see output above.")
-  endif()
-  if (NOT EXISTS "${OPENMU_PACKETS_XML}")
-    message(FATAL_ERROR
-      "dotnet restore completed but ServerToClientPackets.xml is still missing at "
-      "${OPENMU_PACKETS_XML}. Did the NuGet package layout change?")
-  endif()
+set(HNMO_SERVER_SOURCE "${_hnmo_server_default}" CACHE PATH "The HNMO server source (for the packet definitions)")
+set(HNMO_PACKETS_DIR "${HNMO_SERVER_SOURCE}/src/Network/Packets")
+set(HNMO_PACKETS_XML "${HNMO_PACKETS_DIR}/ServerToClient/ServerToClientPackets.xml")
+if (NOT EXISTS "${HNMO_PACKETS_XML}")
+  message(FATAL_ERROR
+    "wire-size codegen needs the HNMO server's packet definitions, but "
+    "${HNMO_PACKETS_XML} doesn't exist. Check out the HNMO server next to this "
+    "repository or pass -DHNMO_SERVER_SOURCE=<path>.")
 endif()
 
 set(WIRE_SIZES_GEN_SCRIPT "${REPO_ROOT}/tools/gen_wire_sizes.py")
@@ -719,11 +693,11 @@ find_package(Python3 COMPONENTS Interpreter REQUIRED)
 add_custom_command(
   OUTPUT "${WIRE_SIZES_GEN_HEADER}"
   COMMAND "${Python3_EXECUTABLE}" "${WIRE_SIZES_GEN_SCRIPT}"
-          --xml "${OPENMU_PACKETS_XML}"
-          --source-label "MUnique.OpenMU.Network.Packets v${OPENMU_PACKETS_VERSION} (NuGet)"
+          --xml "${HNMO_PACKETS_XML}"
+          --source-label "HNMO server packet definitions"
           --output "${WIRE_SIZES_GEN_HEADER}"
-  DEPENDS "${WIRE_SIZES_GEN_SCRIPT}" "${OPENMU_PACKETS_XML}"
-  COMMENT "Generating wire_sizes.generated.h from OpenMU NuGet packet XML..."
+  DEPENDS "${WIRE_SIZES_GEN_SCRIPT}" "${HNMO_PACKETS_XML}"
+  COMMENT "Generating wire_sizes.generated.h from the HNMO packet XML..."
   VERBATIM
 )
 add_custom_target(GenWireSizes DEPENDS "${WIRE_SIZES_GEN_HEADER}")
@@ -906,7 +880,7 @@ if (DOTNET_EXECUTABLE)
   set(DOTNET_CAN_BUILD_CLIENT_LIBRARY TRUE)
   if (NOT DOTNET_EXECUTABLE MATCHES "\\.exe$" AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     message(WARNING "Found Linux dotnet but target is Windows. "
-      "Cross-OS Native AOT is not supported. MUnique.Client.Library.dll will NOT be built. "
+      "Cross-OS Native AOT is not supported. HNMO.Client.Library.dll will NOT be built. "
       "Install the Windows .NET SDK or use WSL interop (dotnet.exe) to enable.")
     set(DOTNET_CAN_BUILD_CLIENT_LIBRARY FALSE)
   endif()
@@ -918,14 +892,14 @@ if (DOTNET_EXECUTABLE)
   # library: .dll on Windows, .so on Linux (the runtime client dlopen's it by
   # this name).
   if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(DOTNET_LIB_NAME "MUnique.Client.Library.so")
+    set(DOTNET_LIB_NAME "HNMO.Client.Library.so")
   elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(DOTNET_LIB_NAME "MUnique.Client.Library.dylib")
+    set(DOTNET_LIB_NAME "HNMO.Client.Library.dylib")
   else()
-    set(DOTNET_LIB_NAME "MUnique.Client.Library.dll")
+    set(DOTNET_LIB_NAME "HNMO.Client.Library.dll")
   endif()
   set(DOTNET_DLL_PATH "${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_LIB_NAME}")
-  set(DOTNET_PROJ "${CMAKE_CURRENT_SOURCE_DIR}/../ClientLibrary/MUnique.Client.Library.csproj")
+  set(DOTNET_PROJ "${CMAKE_CURRENT_SOURCE_DIR}/../ClientLibrary/HNMO.Client.Library.csproj")
 
   # Create temp directories for Native AOT build.
   set(DOTNET_TEMP_OUTPUT "${CMAKE_BINARY_DIR}/dotnet_out")
@@ -1248,7 +1222,7 @@ if (DOTNET_EXECUTABLE)
     add_dependencies(InGameTestsGui InGameTestsTool)
   endif()
 else()
-  message(WARNING ".NET SDK not found. MUnique.Client.Library.dll will NOT be built. "
+  message(WARNING ".NET SDK not found. HNMO.Client.Library.dll will NOT be built. "
     "The game will run but cannot connect to the server. Install .NET SDK 10.0+ to enable.")
   if (ENABLE_IN_GAME_TESTS)
     message(WARNING "ENABLE_IN_GAME_TESTS: without the .NET SDK there is no in-game tester and no "
@@ -1392,7 +1366,7 @@ if(ENABLE_EDITOR)
   target_link_libraries(MuClient PUBLIC imgui)
 endif()
 
-# MuEditor remembers the OpenMU API key in the system's key store
+# MuEditor remembers the HNMO API key in the system's key store
 # (MuEditor/Core/SecretStore.cpp): the Windows Credential Manager (advapi32,
 # linked above), the macOS Keychain, and the Linux keyring when libsecret is
 # found. Without libsecret the editor keeps the key only while it runs.
@@ -1408,7 +1382,7 @@ if(ENABLE_EDITOR)
       target_link_libraries(MuClient PUBLIC PkgConfig::MU_LIBSECRET)
       target_compile_definitions(MuClient PRIVATE MU_HAS_LIBSECRET)
     else()
-      message(STATUS "libsecret-1 not found: MuEditor cannot remember the OpenMU API key")
+      message(STATUS "libsecret-1 not found: MuEditor cannot remember the HNMO API key")
     endif()
   endif()
 endif()

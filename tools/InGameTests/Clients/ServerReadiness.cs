@@ -15,7 +15,7 @@ internal static class ServerReadiness
     /// <remarks>
     /// An accepted connection alone proves nothing: a port forwarder (WSL, a container
     /// runtime) accepts it before the server listens, and drops it then, and a client
-    /// that loses its connection this way ends. OpenMU's game server greets every new
+    /// that loses its connection this way ends. HNMO's game server greets every new
     /// connection with a hello packet, so a first byte means the server is there.
     /// </remarks>
     public static async Task<bool> WaitAsync(string host, int port, TimeSpan timeout, CancellationToken cancellationToken)

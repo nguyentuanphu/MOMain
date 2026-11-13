@@ -18,14 +18,14 @@
 #include <vector>
 
 // The Item Sync window (phase 7, section 9's Item Sync): Import and Export of the item exchange
-// file with OpenMU. Import lists how the file differs from the client's items and item formulas
+// file with HNMO. Import lists how the file differs from the client's items and item formulas
 // (ItemSyncDiff); after a confirmation that says what changes, the checked rows are applied as one
 // step of the undo history. A difference can be marked wrong in the client (the box stays as it
 // is) or wrong in the server (unchecked); the marks are kept in Data/Items/Sync/KnownDifferences.json. Export
-// writes the client's items and formulas into a file without a diff (OpenMU's import page shows
+// writes the client's items and formulas into a file without a diff (HNMO's import page shows
 // one); a file that is there is replaced after a confirmation that says what changes in it. Compare
 // two files lists, read-only, what changes from one exchange file to another (e.g. a client export
-// and a server export), without marks. Update from server downloads OpenMU's file from its admin
+// and a server export), without marks. Update from server downloads HNMO's file from its admin
 // panel (ItemSyncServer.h) and goes on as Import.
 class CMuItemSyncUI
 {
@@ -224,7 +224,7 @@ private:
     std::string m_exportResult;
     bool m_exportFailed = false;
 
-    // Update from server: the address field (MuEditor.ini's [OpenMU] AdminPanelUrl), the running
+    // Update from server: the address field (MuEditor.ini's [HNMO] AdminPanelUrl), the running
     // download and its address, and why the last one has no file.
     std::string m_adminPanelUrl;
     bool m_adminPanelUrlLoaded = false;

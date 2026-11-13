@@ -17,7 +17,7 @@ client splits each ID into a group and a channel:
 - channel = server ID % 20 + 1
 
 So servers 0 to 19 are the channels 1 to 20 of group 0, servers 20 to 39 those
-of group 1, and so on. On OpenMU the ID is the game server's *Server ID* in the
+of group 1, and so on. On HNMO the ID is the game server's *Server ID* in the
 admin panel; to put a server into a second group, give it an ID from 20 to 39.
 
 - **Groups:** one button per group, in the order of the list. A server whose
@@ -65,9 +65,9 @@ channel: with PvP off, the move command cannot take you to Vulcanus; with PvP
 on, the PK field counts as a strife map.
 
 The file only names and colors the channels. Whether PvP is really on is
-decided by the server: on OpenMU, *PvP enabled* in the game server's settings
+decided by the server: on HNMO, *PvP enabled* in the game server's settings
 in the admin panel. Set both the same way. A VIP type only names and colors
-channels in the client; OpenMU does not keep players without VIP out of a
+channels in the client; HNMO does not keep players without VIP out of a
 server.
 
 ## Where a channel's name appears
@@ -85,7 +85,7 @@ theme), so a long name there can run past its edges.
 
 ## When a server drops the login screen
 
-OpenMU's connect server closes a connection that sends nothing for a while
+HNMO's connect server closes a connection that sends nothing for a while
 (its *Timeout* in the admin panel, one minute by default). An open server list
 asks for a fresh list every 30 seconds, which keeps that connection up and the
 load figures current. The connect server sends only so many lists over one

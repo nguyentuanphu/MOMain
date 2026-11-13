@@ -24,9 +24,9 @@ echo "Building HNMO for $RUNTIME into $OUT"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-dotnet publish "$SERVER_SOURCE/src/Startup/MUnique.OpenMU.Startup.csproj" -c Release -r "$RUNTIME" --self-contained \
+dotnet publish "$SERVER_SOURCE/src/Startup/HNMO.Startup.csproj" -c Release -r "$RUNTIME" --self-contained \
   -p:PublishSingleFile=false -o "$OUT/server" -v quiet
-dotnet publish "$WEB/bridge/HNMO.Web.csproj" -c Release -r "$RUNTIME" --self-contained -o "$OUT/web" -v quiet
+dotnet publish "$WEB/bridge/HNMO.Web.csproj" -c Release -r "$RUNTIME" --self-contained -o "$OUT/web" -v quiet -p:HnmoServerSource="$SERVER_SOURCE"
 
 # The web client and its library
 mkdir -p "$OUT/web/wwwroot" "$OUT/web/vendor/three"

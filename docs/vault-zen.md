@@ -22,7 +22,7 @@ The client checks two limits before it sends a move to the server:
   without a message.
 
 The server has its own limits, `MaximumVaultMoney` and `MaximumInventoryMoney`
-in OpenMU's game configuration (both 2,147,483,647 by default), and refuses
+in HNMO's game configuration (both 2,147,483,647 by default), and refuses
 any move above them. The client limits sit below those defaults, so a move the
 client allows also passes the server. On a server configured with lower limits,
 the server's limits win: the client may offer an amount that the server then

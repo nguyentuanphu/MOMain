@@ -4,7 +4,7 @@
 > `refactor/data-driven-items` branch and will be removed once the work
 > has landed.
 >
-> Based on MuMain `upstream/main` @ `7187ec2a` and OpenMU `master` @
+> Based on MuMain `upstream/main` @ `7187ec2a` and HNMO `master` @
 > `1e50df3bd`.
 
 ## Goal
@@ -16,7 +16,7 @@ code**:
   files, is loaded into an **in-memory item database** at startup, and rule
   code reads it instead of hardcoded item lists.
 - Runtime lookups are **as fast as hardcoded checks** (see section 1).
-- The data model is **equivalent to OpenMU's `ItemDefinition`** where both
+- The data model is **equivalent to HNMO's `ItemDefinition`** where both
   sides overlap, so data can be moved between client and server: by file on
   both sides, and by an update from the server in MuEditor (phase 7).
 - Items can be **added and removed** on client and server, and linked to
@@ -36,8 +36,8 @@ share with items) is planned in the
 | # | Topic | Decision |
 |---|---|---|
 | D1 | Data format | JSON files as the source of truth, loaded once at startup into flat tables. Runtime speed must be as close to hardcoded as possible; a binary cache is added only if startup parsing is measurably too slow. Chosen over a database or SQL text files; see section 2. |
-| D2 | Exchange format with OpenMU | JSON keyed by `(Group, Number)`, not SQL `UPDATE` statements (SQL would break whenever OpenMU's database schema changes). |
-| D3 | Server rules | Check what OpenMU already enforces (see "Server-side checks today"), then extend OpenMU's tables or add new ones following OpenMU's usual workflow. |
+| D2 | Exchange format with HNMO | JSON keyed by `(Group, Number)`, not SQL `UPDATE` statements (SQL would break whenever HNMO's database schema changes). |
+| D3 | Server rules | Check what HNMO already enforces (see "Server-side checks today"), then extend HNMO's tables or add new ones following HNMO's usual workflow. |
 | D4 | Sync | File-based import and export on **both** sides, each import with a diff the user checks by hand (an export writes its side's data), plus a read-only Update from server in MuEditor (phase 7, section 6). The client never writes to the server. |
 | D5 | Editors | Several focused editors instead of one big table. |
 | D6 | Add/remove | Items can be created and removed on client and server; MuEditor tools link a new item to its model data. |
@@ -46,15 +46,15 @@ share with items) is planned in the
 | D9 | Identity | `(group, number)` only, no readable string key. Logs always show the English name next to it. Once rules read data instead of hardcoded ids, a readable key has no extra benefit. |
 | D10 | bmd files | The JSON files are the **only** source of truth for items in the game. The game no longer reads `Item_<lang>.bmd`. MuEditor gets "Import from bmd" and "Export as bmd"; fields the bmd format does not have are left out on export and keep their current or default values on import. **Update (2026-09-26):** the repo no longer ships `Item_<lang>.bmd`. The editor keeps "Import from bmd" for your own old files and "Export as bmd". |
 | D11 | Exchange scope | Item sets and drop settings are separate exchange files, not part of the item file. |
-| D12 | Id ranges | No reserved number ranges for custom items, and no range checks (`type >= X && type <= Y`) in new code; everything an item "is" comes from its data. OpenMU must keep supporting the original Season 6 client **and** this client (see section 7). |
+| D12 | Id ranges | No reserved number ranges for custom items, and no range checks (`type >= X && type <= Y`) in new code; everything an item "is" comes from its data. HNMO must keep supporting the original Season 6 client **and** this client (see section 7). |
 | D13 | Other item files | `ItemAddOption`, `SocketItem`, `Mix`, `pet` and set options are decided later, when we know more. |
 | D14 | Item options | The item file only holds **links** to the option groups an item can have (Luck, additional option, excellent, wing, harmony, guardian, socket, …). The option definitions (values, chances, levels) live in their own files. Related data stays together in one file, e.g. an option definition with all its levels and values. |
-| D15 | Tooltips | Tooltips become data-driven with JSON data, converted from `ItemTooltip*` / `ItemLevelTooltip` (see "Unused item files in the repo"). Phase 8, after the item phases; moved earlier if the item changes turn out to need it. The tooltip bmd files stayed in the repo until then; they were removed once the item data held the tooltips and the names by level (#815). **Update (2026-10-22, #815):** an item's own tooltip texts (its `description` lines) live in its item file, with their translations, as client-only fields that the OpenMU exchange leaves out (D22). Texts and layouts that many items share get a tooltip file of their own. **Status (2026-10-29):** steps 1–5 of #815 are merged (#813–#836, and #863 resolves the names when the data loads); phase 8 lists what is left. |
+| D15 | Tooltips | Tooltips become data-driven with JSON data, converted from `ItemTooltip*` / `ItemLevelTooltip` (see "Unused item files in the repo"). Phase 8, after the item phases; moved earlier if the item changes turn out to need it. The tooltip bmd files stayed in the repo until then; they were removed once the item data held the tooltips and the names by level (#815). **Update (2026-10-22, #815):** an item's own tooltip texts (its `description` lines) live in its item file, with their translations, as client-only fields that the HNMO exchange leaves out (D22). Texts and layouts that many items share get a tooltip file of their own. **Status (2026-10-29):** steps 1–5 of #815 are merged (#813–#836, and #863 resolves the names when the data loads); phase 8 lists what is left. |
 | D16 | Unused item bmd copies | Removed on this branch; the game only loads `Item_<lang>.bmd`. |
 | D17 | Translations in phase 2 | Item names moved into phase 2, because the per-language bmd files were the only place the Portuguese and Spanish names existed. Names are `LocalizedString`s imported from all three files; the UI locale (the same setting as the `.resx` texts) picks the shown name, also when it changes at runtime. On disk, each item's `name` is an object of names by language (`{"en": "Blade", "es": "Espada", "pt": "Lâmina"}`, English first) in the item files; separate translation files were tried and dropped as extra maintenance. Phase 5 keeps only the translation tooling. |
 | D18 | Repairing the legacy data | The bmd import recovers names that ran past the 30-byte name field and takes the fields they overwrote from a language whose name did not reach them (defaults when none has them). Names that are not UTF-8 are read as Windows-1252. The changes are listed in the phase 2 PR and in `docs/item-data.md`. |
 | D19 | Editor sync | Every item editor change goes into the database right away (phase 2), so the editor and the database never differ. Moving the editor fully onto the database stays in phase 6 (done: the item tools edit the database, the item table is gone). |
-| D22 | Model data files | Model and display data (model file, textures, inventory and ground display, cloth, effects) lives in separate files, `Data/Items/Models/GroupNN_*.json`, one per item group, items by `number`. It is client-only: the item files keep what client and server share, and only those take part in the OpenMU exchange. The exception is an item's own tooltip texts (D15): they stay in the item file next to its name, as client-only fields that the exchange leaves out. Separate files also keep the item files small and let the model editor and the stats editor change different files. |
+| D22 | Model data files | Model and display data (model file, textures, inventory and ground display, cloth, effects) lives in separate files, `Data/Items/Models/GroupNN_*.json`, one per item group, items by `number`. It is client-only: the item files keep what client and server share, and only those take part in the HNMO exchange. The exception is an item's own tooltip texts (D15): they stay in the item file next to its name, as client-only fields that the exchange leaves out. Separate files also keep the item files small and let the model editor and the stats editor change different files. |
 | D23 | Model slots | Two steps. **Own model slots (phase 4a–4c):** every item keeps its own model slot, `MODEL_ITEM + item type`, as today; the data only says which file is loaded into it, so the ~100 places that compute `+ MODEL_ITEM` / `- MODEL_ITEM` stay unchanged. **Shared models (phase 4d, right after them):** models become entries of their own, and items reference them by name, so several items can share one model (loaded once; 4d1, done). Every item keeps a slot of its own, and the conversions between item types and model slots go through one place, `ToModelSlot` / `ToItemType` (4d2), so a moved item can keep its slot (phase 12) and the named slots of items (`MODEL_KRIS`, …) stay valid. One slot per shared model, with objects keeping item types, is not planned: about 240 places identify items by their model slot (see "Item-specific code that is left"), and none of them gains anything while each item has its own slot. Phase 12 (level variants as items of their own) shares models without loading them twice. |
 | D24 | Render effects | The effect code stays code, but which item uses which effect moves into the model data: the glow as values (color names from a glow color list, `Data/Effects/GlowColors.json`, which has the colors of the old `PartObjectColor*` palettes; the meshes it is drawn on; the level it glows like), a render style (`RenderPartObjectBody` recipes; identical recipes share one name) and an item effect (the item branches of `RenderPartObjectEffect`). Effects that depend on the item level (+7 glow, excellent, ancient) stay generic code, and the entries for monsters and NPCs stay in code. The named looks are code for now; D25 moves what they are made of into data. |
 | D25 | Looks in data | Items keep naming their looks; what a named look is made of moves from code into data (phase 13). Skills, monsters and NPCs use the same look format, so the decision lives in the [roadmap](2026-09-29-data-driven-content-roadmap-design.md). |
@@ -65,7 +65,7 @@ share with items) is planned in the
 | D71 | Item Tooltip | One item tool, **Item Tooltip**, shows how the selected item is presented: its ground label with D68's rules, and from #815 step 6a on its full tooltip. The preview has item controls (level, options, excellent, ancient, sockets, expired) and hero controls (class, level, stats). It draws the built lines in the editor, each with where it comes from (name line, description line, layout line, code). Next to them, the game's own tooltip box shows the previewed item: the real box on the game screen beside the window, while a checkbox is on, with a **Theme** combo that switches the game's theme for the session as the Options window does, so legacy, modern and classic are a click apart. The full preview comes after the code's lines (D72) and the option sections (phases 9 and 10) are data, so its sources show code only for the lines that need the game. |
 | D72 | Tooltip lines from code | The lines the tooltip code still writes that need neither the game's state nor the options move into the `default` layout, with output that stays the same: the **class lines** as one layout line repeated for each class the item names (`"forEachClass"`, its `{className}` the class at the level the item needs; states `allClasses` and `classUsable`), the **boots' and gloves' +5 lines** (states `boots` and `gloves`), the **expiry lines** (state `expired`, value `{expireDate}`), and the **four blank rows** the code writes (before the name, after it, before and after the options), with two new section markers: `itemCases` (lines before it come right after the name, lines after it after the item cases) and `afterOptions` (after the description's after-options lines). Lines that read the game stay code: shop prices, the reset fruits' points, saved places, socket seeds, the Sign of Dimensions' count, the Armor of Guardsman's table, the Lost Map and Symbol of Kundun, the Horn of Fenrir. The option lines become data with phase 9, the set option lines with phase 10. |
 | D73 | Layout presets | A layout line can have an `id`. A **preset** is a layout made from another: its `base` and its changes, `hide` (line ids) and `add` (lines after a line id), so a change to the `default` layout reaches every preset (D26). An item names a preset with `tooltipLayout` and can make its own changes with `tooltipLayoutChanges` (the same `hide` and `add`), on top of its preset or of `default`; both are client-only fields the exchange leaves out (D22). No item defines the blank rows or the class lines itself: they are in `default`, and an exception is a preset or an item's own change, without code. The editor always shows an item's layout as built: `default`, its preset, its own changes. The tags that only pick layout lines (`noClassLines`, `noDurabilityLine`, `noLevelRequirement`, `noBlankAfterOptions`) become presets and item changes; Item Checks' warning about an item of a kind without class lines (#893) then reads the item's layout. |
-| D21 | New item groups | *To discuss again when we reach phase 12.* Items may move into new groups (e.g. 16 = jewels, 17 = orbs) for the new client, while original Season 6 clients keep the old ids. Moved items keep their original id as a legacy id; OpenMU's Season 6 item serializer sends the legacy id, a serializer for the new client sends the new id. Planned after phases 3, 4 and OpenMU PR A, when little code depends on group numbers any more. |
+| D21 | New item groups | *To discuss again when we reach phase 12.* Items may move into new groups (e.g. 16 = jewels, 17 = orbs) for the new client, while original Season 6 clients keep the old ids. Moved items keep their original id as a legacy id; HNMO's Season 6 item serializer sends the legacy id, a serializer for the new client sends the new id. Planned after phases 3, 4 and HNMO PR A, when little code depends on group numbers any more. |
 
 ## Current state
 
@@ -113,7 +113,7 @@ Extra item bmd copies that no code loaded (`Data/Local/Item.bmd`,
 `Por/item.bmd`, `Por/item_eng_old.bmd`, `Spn/item.bmd`) were removed on
 this branch (D16).
 
-### Server (OpenMU)
+### Server (HNMO)
 
 - `ItemDefinition` (`src/DataModel/Configuration/Items/ItemDefinition.cs`):
   `Group`, `Number`, `Width`, `Height`, `Durability`, `Value`, `DropLevel`,
@@ -129,7 +129,7 @@ this branch (D16).
   (neutral) first.
 - Identity: `(Group, Number)`. Initialization creates deterministic GUIDs
   (`GuidHelper`, type id `0x80` for `ItemDefinition`).
-- OpenMU ships separate data sets per game version (`Version075`,
+- HNMO ships separate data sets per game version (`Version075`,
   `Version095d`, `VersionSeasonSix`); a server database is initialized from
   one of them.
 - Data changes ship as `UpdatePlugInBase` plug-ins. The admin panel's
@@ -141,10 +141,10 @@ this branch (D16).
 
 ### Server-side checks today
 
-What OpenMU enforces for the rules the client has in `TradeRestrictions` and
+What HNMO enforces for the rules the client has in `TradeRestrictions` and
 `ShopRestrictions`:
 
-| Client rule | OpenMU today | Where |
+| Client rule | HNMO today | Where |
 |---|---|---|
 | Trade ban | Only `IsBoundToCharacter` (blocks moving between storages, so also into the trade window) | `MoveItemAction` |
 | Vault/storage ban | Same `IsBoundToCharacter` check | `MoveItemAction` |
@@ -162,14 +162,14 @@ can skip them.
 
 **Approach (D3):**
 
-1. Build the full mapping of every client rule and category to an OpenMU
+1. Build the full mapping of every client rule and category to an HNMO
    field or check (phase 3 prerequisite).
-2. Where OpenMU has no equivalent, extend it the OpenMU way: new
+2. Where HNMO has no equivalent, extend it the HNMO way: new
    `ItemDefinition` properties (or a separate table if it grows large),
    an EF migration, Season 6 initialization values, an `UpdatePlugIn` that
    sets the values on existing databases, and enforcement in the matching
    `PlayerAction`. The admin panel picks up new properties automatically.
-3. These are separate OpenMU PRs. The client uses the same field names so
+3. These are separate HNMO PRs. The client uses the same field names so
    the data maps 1:1.
 
 ## Target design
@@ -206,11 +206,11 @@ the choice is only about how the data is stored, reviewed and exchanged.
 | Option | Why not chosen |
 |---|---|
 | Binary database file (e.g. SQLite `.db`) | A blob in git: changes cannot be reviewed, and parallel branches cannot be merged. |
-| SQL text files (schema + `INSERT`s) loaded into SQLite | Diffable, and the database checks links and uniqueness itself. But one item is spread over several tables, a changed value shows up as a long changed `INSERT` line, the player build needs SQLite as a new dependency, and the SQL cannot be run on OpenMU anyway (PostgreSQL via Entity Framework, GUID keys, different tables), so a second format for the exchange would still be needed. |
+| SQL text files (schema + `INSERT`s) loaded into SQLite | Diffable, and the database checks links and uniqueness itself. But one item is spread over several tables, a changed value shows up as a long changed `INSERT` line, the player build needs SQLite as a new dependency, and the SQL cannot be run on HNMO anyway (PostgreSQL via Entity Framework, GUID keys, different tables), so a second format for the exchange would still be needed. |
 | Editing in a database and exporting JSON for git | Two sources of truth that drift apart. |
 
 JSON gives readable diffs with related data kept together (D14), the same
-format as the OpenMU exchange (D2), and no new dependency: the client
+format as the HNMO exchange (D2), and no new dependency: the client
 already bundles nlohmann JSON (`src/ThirdParty/json.hpp`). The cost is that
 the checks a database would do (unique ids, valid links) must be done by
 our own loader; see "Validation" below.
@@ -226,7 +226,7 @@ our own loader; see "Validation" below.
 - Every file starts with a `formatVersion` and the `group` it contains.
 - Encoding UTF-8, LF line endings.
 
-#### Writing (editor, bmd import, OpenMU import)
+#### Writing (editor, bmd import, HNMO import)
 
 - **Deterministic output** so diffs only show real changes: items sorted by
   number, fixed key order, fixed indentation, one field per line.
@@ -291,18 +291,18 @@ Behavior:
 
 Each field belongs to one of two groups:
 
-- **Shared** fields map 1:1 to OpenMU and take part in import/export.
+- **Shared** fields map 1:1 to HNMO and take part in import/export.
 - **Client-only** fields (rendering and UI) never go to the server.
 
 | Group | Fields | Shared? |
 |---|---|---|
 | Identity | group, number | yes |
-| Name | `LocalizedString`, same format as OpenMU | yes |
+| Name | `LocalizedString`, same format as HNMO | yes |
 | Size and slot | width, height, item slot, two-handed | yes |
-| Stats | damage, defense, speed, durability, requirements, resistances, class requirements, value, skill | yes (mapped to OpenMU requirements and power-ups) |
+| Stats | damage, defense, speed, durability, requirements, resistances, class requirements, value, skill | yes (mapped to HNMO requirements and power-ups) |
 | Server flags | ammunition, quest item | yes; bound to character, drops from monsters and storage limit are server-only |
-| Rule flags | tradable, droppable, storable, sellable to NPC, personal-shop sellable, repairable | yes (OpenMU has them since PR A) |
-| Categories/tags | wing, flying, mount, pet, potion, jewel, ticket, cash shop, event, … | client-only at first; shared where OpenMU gets matching data |
+| Rule flags | tradable, droppable, storable, sellable to NPC, personal-shop sellable, repairable | yes (HNMO has them since PR A) |
+| Categories/tags | wing, flying, mount, pet, potion, jewel, ticket, cash shop, event, … | client-only at first; shared where HNMO gets matching data |
 | Model | model file, texture folders, cloth flag (in the model files, D22) | client-only |
 | Rendering | inventory offset, rotation and scale; ground rotation and scale; glow color, render style, effects (D24) | client-only |
 | Tooltip texts | `description` (D15) | client-only, in the item files; the exchange file leaves them out |
@@ -319,9 +319,9 @@ Each field belongs to one of two groups:
 
 ### 5. Names, translations and logging
 
-- In memory, item names are OpenMU-style `LocalizedString`s, so names from
+- In memory, item names are HNMO-style `LocalizedString`s, so names from
   the server can be taken over directly. On disk, `name` is an object of
-  names by language in the item files (D17); the OpenMU exchange writes it
+  names by language in the item files (D17); the HNMO exchange writes it
   in the `LocalizedString` format.
 - The name in the selected language is shown; missing translations fall back
   to English.
@@ -330,35 +330,35 @@ Each field belongs to one of two groups:
 - Stats are no longer duplicated per language: one data set, only names are
   translated.
 
-### 6. OpenMU sync (phase 7)
+### 6. HNMO sync (phase 7)
 
 - **The server is authoritative.** The client never writes to the server,
   not even in editor mode. Item data moves by file in both directions, and
   MuEditor can also download it from the server (Update from server).
 - **What moves:** the item fields both sides have, and the item formulas:
   everything in `Stats/ItemStats.json` except the profile rules, so a
-  formula OpenMU changes reaches the client too.
+  formula HNMO changes reaches the client too.
 - **Every import shows a diff** (added, changed and removed items and
   formula entries, field by field) that the user checks by hand; only the
   checked rows are applied, after a confirmation that says what changes.
-  The same holds for OpenMU's import page. An export shows no diff: it
+  The same holds for HNMO's import page. An export shows no diff: it
   writes the client's data, and the side that imports the file shows what
   it changes (a diff there and one at export only confused).
 - Item sets, drop settings and option definitions get exchange files of
   their own later (D11, D14).
 - Phase 7 has five steps, one PR each: **1** the exchange file with Export
-  and Import in MuEditor (MuMain); **2** the item formulas as data in OpenMU;
-  **3** OpenMU's read-only export endpoint; **4** Update from server in
-  MuEditor (MuMain); **5** OpenMU's import page. Steps 2, 3 and 5 are phase
+  and Import in MuEditor (MuMain); **2** the item formulas as data in HNMO;
+  **3** HNMO's read-only export endpoint; **4** Update from server in
+  MuEditor (MuMain); **5** HNMO's import page. Steps 2, 3 and 5 are phase
   B's part.
 
 **The exchange file.**
 
 - One UTF-8 JSON file in the layout of the item files: fixed key order,
   items sorted by (group, number), LF line endings.
-- Header: `formatVersion` (1), `source` (`"MuMain"` or `"OpenMU"`), `server`
-  (only in a file from OpenMU: an id its export creates once per
-  installation and keeps, step 3; the id of OpenMU's game configuration
+- Header: `formatVersion` (1), `source` (`"MuMain"` or `"HNMO"`), `server`
+  (only in a file from HNMO: an id its export creates once per
+  installation and keeps, step 3; the id of HNMO's game configuration
   cannot serve, as its initialization gives every installation the same
   one) and `gameVersion` (`"season6"`; a file of another version is
   refused, D8).
@@ -386,23 +386,23 @@ Each field belongs to one of two groups:
   `IsBoundToCharacter`, `StorageLimitPerCharacter`, `PetExperienceFormula`,
   `ConsumeEffect`, `MaximumSockets`, the item options and sets, the drop
   items and the power-ups the client has no field for, e.g. `CanFly`).
-- The file uses the client's names and meanings; OpenMU converts to and from
+- The file uses the client's names and meanings; HNMO converts to and from
   its model (steps 3 and 5). Its export and import report the cases where
   that is not exact:
-  - hand slots: OpenMU gives one-handed weapons a Dark Knight, Magic
+  - hand slots: HNMO gives one-handed weapons a Dark Knight, Magic
     Gladiator or Rage Fighter may use both hands ({0, 1}); the file has
-    `mainHand`, and OpenMU's import gives {0, 1} by the same rule;
-  - OpenMU's one `Value` is the client's `buyPrice` in groups 12 and 15 and
+    `mainHand`, and HNMO's import gives {0, 1} by the same rule;
+  - HNMO's one `Value` is the client's `buyPrice` in groups 12 and 15 and
     its `sellValue` elsewhere (a byte in the client);
-  - OpenMU's `Durability` of an item without a slot is its stack size, and
+  - HNMO's `Durability` of an item without a slot is its stack size, and
     its `Skill` of a scroll or orb is the skill it teaches; neither is
     exchanged;
-  - OpenMU's drop level is a byte (the Horn of Fenrir has 300 in the client);
-  - OpenMU has one `IsQuestItem` for the client's two tags
+  - HNMO's drop level is a byte (the Horn of Fenrir has 300 in the client);
+  - HNMO has one `IsQuestItem` for the client's two tags
     `secondClassQuestItem` and `thirdClassQuestItem` (the same eight items);
   - a class set with a gap, a requirement by level that goes down, magic
-    power's rounding (OpenMU halves each part, the client the sum), the
-    `@src` and `@stamp` parts of OpenMU's names and its `;` level variant
+    power's rounding (HNMO halves each part, the client the sum), the
+    `@src` and `@stamp` parts of HNMO's names and its `;` level variant
     names (three items), and a (group, number) that exists twice on the
     server (a locked row of the import, which leaves it as it is; an
     export replaces such a file after its confirmation).
@@ -413,12 +413,12 @@ Each field belongs to one of two groups:
 
 **The orbs, crystals and scrolls** (the 44 items of groups 12 and 15 that
 have stat requirements and no slot) keep their requirements as the values
-the game asks for, as OpenMU stores them, instead of a weight that the drop
+the game asks for, as HNMO stores them, instead of a weight that the drop
 level formula grows. Their stat profiles write `"base"` for the stat
 requirements: the `scroll` profile of group 15, and a new `orb` profile with
 a rule of its own for group 12. The values are converted once; a test pins
 them and checks that the game asks for the same at +0 (above +0 the value
-stays as it is, as on OpenMU; the game shows these items only at +0). The
+stays as it is, as on HNMO; the game shows these items only at +0). The
 Orb of Summoning keeps its energy by level. The bmd files of the original
 client hold weights for these items, so Import from bmd turns them into the
 values with the original client's formulas, and Export as bmd and Export as
@@ -445,7 +445,7 @@ tool of section 9):
 - **Compare two files**: a read-only diff of two exchange files (e.g. a
   client export and a server export), what changes from file A to file B,
   in every language; its rows can be marked as known differences. Only the
-  client has it: OpenMU's import page compares a file with its live data,
+  client has it: HNMO's import page compares a file with its live data,
   the client's Import a file with the client's data, and a comparison of
   two files is a tool for the one who edits the items.
 - The file dialogs are SDL3's (`SDL_ShowOpenFileDialog`,
@@ -461,7 +461,7 @@ tool of section 9):
   conflicts come with the last server state in step 4.)
 - **Known differences** are the items' fields and formula entries meant to
   differ between the client and a server (e.g. the Dark Horse is repairable
-  on OpenMU on purpose). They are kept in the repo, in
+  on HNMO on purpose). They are kept in the repo, in
   `Data/Items/Sync/KnownDifferences.json` (the game does not read it), so
   they are shared and survive a new build folder; the diff shows them
   greyed and unchecked, and a row can be added to the list from the diff.
@@ -498,13 +498,13 @@ tool of section 9):
 
 - `GET <admin panel URL>/api/items/exchange` (step 3), with the API key in
   the `X-Api-Key` header. The key comes from the environment variable
-  `MU_OPENMU_API_KEY` and is never written to a file or a log; the user
-  creates it on OpenMU's API keys page (the Viewer role is enough).
-- The URL is a setting of its own in `MuEditor/MuEditor.ini` (`[OpenMU]
+  `MU_HNMO_API_KEY` and is never written to a file or a log; the user
+  creates it on HNMO's API keys page (the Viewer role is enough).
+- The URL is a setting of its own in `MuEditor/MuEditor.ini` (`[HNMO]
   AdminPanelUrl`, read and written by the editor's settings like its other
   sections), never in `config.ini`, which ships to players. https is
   required except for `localhost`, `127.0.0.1` and `[::1]`; plain http on a
-  local network is an opt-in (OpenMU's all-in-one setup serves plain http
+  local network is an opt-in (HNMO's all-in-one setup serves plain http
   on port 80).
 - The download runs on a worker thread with libcurl (already linked into
   every build; its global init runs once before the thread starts), with
@@ -521,11 +521,11 @@ tool of section 9):
 - The remove warning names the items that were in the last server state
   (section 7).
 
-**OpenMU** (phase B, separate OpenMU PRs):
+**HNMO** (phase B, separate HNMO PRs):
 
 - **Step 2, formulas as data:** the named stat profiles, the level bonus
   tables (data already), the default terms and the drop level bonus become
-  part of OpenMU's game configuration, and each item definition names its
+  part of HNMO's game configuration, and each item definition names its
   profile and gets `excellentBonus` and `excellentRaisesLevel`.
   `ItemExtensions.GetRequirement` and `ItemPowerUpFactory` read them, and so
   does the price calculation, which has a copy of the drop level bonus of
@@ -539,7 +539,7 @@ tool of section 9):
 - **Step 3, the export endpoint:** `GET /api/items/exchange` in the admin
   panel, read only. It takes the API key scheme alone, with a policy of its
   own (the existing ones also accept the admin panel's login cookie), and
-  refuses while the server has no admin user yet: OpenMU lets every request
+  refuses while the server has no admin user yet: HNMO lets every request
   through then, its API keys page included, so anyone could make a key. Requests are
   limited per key and per address, and one export is built at a time (429
   otherwise). The export is built once and kept in memory with an ETag, and
@@ -554,7 +554,7 @@ tool of section 9):
   takes the client's export and shows the same diff. The checked rows are
   applied in one configuration context. A new item takes the server-only
   values (maximum item level, options, sets) from a template item picked
-  on the page. Names keep OpenMU's `@src` and `;` parts. A removal fails
+  on the page. Names keep HNMO's `@src` and `;` parts. A removal fails
   while something still references the item (existing behavior).
 
 **Later:** the server's item data reaching every player at game start or
@@ -574,7 +574,7 @@ from the game servers
   model slot; only the file link is needed.
 - **Remove item**: warns when the item is still in use: named in code (enum
   constant with special behavior), member of a tag, used by other data, or
-  present in the last OpenMU import.
+  present in the last HNMO import.
 - Limit: new items must fit into free slots of the 16 × 512 id space, the
   same as the network protocol.
 
@@ -584,13 +584,13 @@ from the game servers
   original client and this client agree on them.
 - Custom items take any free slot; there are no reserved ranges. The data
   marks them as custom, so nothing depends on where their number lies.
-- OpenMU must keep working with the original Season 6 client. That client
+- HNMO must keep working with the original Season 6 client. That client
   does not know custom items, so the server has to handle them for it
-  (see Q1). OpenMU already knows which client a server is for
+  (see Q1). HNMO already knows which client a server is for
   (`GameClientDefinition`: season, episode, language, version), which is a
   possible hook.
 
-**Server (OpenMU):** the admin panel can already add and delete item
+**Server (HNMO):** the admin panel can already add and delete item
 definitions. New items also arrive through the import (section 6).
 
 ### 8. Build gating
@@ -625,7 +625,7 @@ name, missing model file), and undo for the current session.
 
 ## Phases (one PR each)
 
-**Side:** *Client* = MuMain only, *Server* = OpenMU only, *Both* = changes
+**Side:** *Client* = MuMain only, *Server* = HNMO only, *Both* = changes
 in both repos (as separate PRs, one per repo).
 
 | Phase | Name | Side | Repo / PR | Depends on | Summary |
@@ -633,24 +633,24 @@ in both repos (as separate PRs, one per repo).
 | 0 | Design document | Both | MuMain | – | Agree on the design (this document). |
 | 1 | Item database | Client | MuMain | 0 | `ItemDefinition` model and flat in-memory table, built from the loaded `Item_<lang>.bmd` data; English names for logs; log-name helper; load-time log. No behavior change. |
 | 2 | Data file format and names | Client | MuMain | 1 | JSON per group becomes the only item source and the database becomes the source for `ItemAttribute[]`; translated names in the UI locale; loading, writing and validation rules; automated data test; bmd import (with repair) and export in MuEditor; editor edits go into the database right away. |
-| 3 | Rules and categories into data | Client | MuMain | 2 | Flags and tags replace the hardcoded lists; client ↔ OpenMU rule mapping (input for A). |
+| 3 | Rules and categories into data | Client | MuMain | 2 | Flags and tags replace the hardcoded lists; client ↔ HNMO rule mapping (input for A). |
 | 3b | Remaining item lists | Client | MuMain | 3 | The lists of item ids outside the phase 3 files that repeat data that exists or need new data (see "Item-specific code that is left"), checked like phase 3. |
-| 3c | Item stats by level | Both | MuMain (+ mapping for A) | 3 | How damage, defense, magic power, blocking and requirements change with the item level, and the bonus of excellent and ancient items, become named level bonus tables and formula parameters in data (D43), matching OpenMU's `ItemLevelBonusTable`; checked against the old formulas for every item and level. |
-| A | Server rule fields and checks | Server | OpenMU | 3 (mapping) | New `ItemDefinition` fields or tables, migration, Season 6 values, update plug-in, enforcement in player actions. |
+| 3c | Item stats by level | Both | MuMain (+ mapping for A) | 3 | How damage, defense, magic power, blocking and requirements change with the item level, and the bonus of excellent and ancient items, become named level bonus tables and formula parameters in data (D43), matching HNMO's `ItemLevelBonusTable`; checked against the old formulas for every item and level. |
+| A | Server rule fields and checks | Server | HNMO | 3 (mapping) | New `ItemDefinition` fields or tables, migration, Season 6 values, update plug-in, enforcement in player actions. |
 | 4 | Models into data | Client | MuMain | 2 | Model files per item group (D22), model slots stay `MODEL_ITEM + type` (D23, own model slots). One PR per part: **4a** model files and textures (`OpenItems()` / `OpenItemTextures()`), **4b** inventory and ground display, **4c** render effects (D24) in three parts: **4c1** glow, **4c2** render styles, **4c3** item effects. |
 | 4d | Shared models | Client | MuMain | 4 | Models as entries of their own that items reference by name, so items can share a model (D23, shared models). Two PRs: **4d1** shared model entries, each file opened once; **4d2** the conversions between item types and model slots in one place, and shared model data freed by its last user. |
 | 4e | Clear model loading errors | Client | MuMain | 4 | One message for missing model files and textures of item models that names the item, the model entry, the texture and the searched folders. |
 | 5 | Translation tooling | Client | MuMain | 2 | Translations editor (items × languages), missing names counted in the editor. The names themselves moved to phase 2 (D17). Done before phase 6. |
 | 6 | Editors | Client | MuMain | 2–5 | Focused MuEditor tools (section 9) on the rules of D26, including add/remove items and picking the looks of an item from lists. Takes over phase 5's item list. Done. |
 | 7 | Item sync, client side | Client | MuMain | 2, 6 | The exchange file of items and item formulas; MuEditor's Export, Import (step 1) and Update from server (step 4), the imports with a diff (section 6). The client-only fields of the item files (tags at first, `description`) are left out. |
-| B | Item sync, server side | Server | OpenMU | 7 (file format) | The item formulas as data (step 2), the read-only export endpoint (step 3) and the import page (step 5), as steps of phase 7 (section 6). |
+| B | Item sync, server side | Server | HNMO | 7 (file format) | The item formulas as data (step 2), the read-only export endpoint (step 3) and the import page (step 5), as steps of phase 7 (section 6). |
 | 8 | Data-driven tooltips | Client | MuMain | 2, 5 | Tooltip JSON converted from the `ItemTooltip*` files; `RenderItemInfo()` reads data; tooltip editor. Moved earlier if needed. In steps (#815): an item's own texts go into its item file (`description`, D15), shared texts and layouts into a tooltip file. Steps 1–5 done (#813–#836, #863), the item cases and the class line list too (#893). Left: the code's lines and layout presets (D72, D73), the rest of the ground label colours (D70, colour groups), and the tooltip editor (#815 step 6) after phases 9 and 10; see the phase details. |
-| 9 | Item option definitions | Both | MuMain + C | 2 | Option groups in their own JSON files matching OpenMU's `ItemOptionDefinition`; exchange file and editor. Design: [item options design](2026-11-04-item-options-design.md) (draft); in two parts, 9a (format, luck, additional option, excellent, ancient bonus, editor, exchange) before phase 10 and 9b (wings, harmony, guardian, sockets, pets, the tooltip lines) after it. |
-| 10 | Item sets | Both | MuMain + C | 2, 9a | Item sets in JSON matching OpenMU's `ItemSetGroup`; exchange file and editor; based on the `item-set-editor` branch. Moved earlier if needed. |
-| C | Option and set sync, server side | Server | OpenMU | 9, 10 | Admin panel import/export for the option definition and item set exchange files. |
-| 11 | Remaining item files | Both (per file) | MuMain, OpenMU as needed | 2 | `ItemAddOption`, `SocketItem`, `Mix`, `pet`, drop settings; one phase each, order decided later. |
+| 9 | Item option definitions | Both | MuMain + C | 2 | Option groups in their own JSON files matching HNMO's `ItemOptionDefinition`; exchange file and editor. Design: [item options design](2026-11-04-item-options-design.md) (draft); in two parts, 9a (format, luck, additional option, excellent, ancient bonus, editor, exchange) before phase 10 and 9b (wings, harmony, guardian, sockets, pets, the tooltip lines) after it. |
+| 10 | Item sets | Both | MuMain + C | 2, 9a | Item sets in JSON matching HNMO's `ItemSetGroup`; exchange file and editor; based on the `item-set-editor` branch. Moved earlier if needed. |
+| C | Option and set sync, server side | Server | HNMO | 9, 10 | Admin panel import/export for the option definition and item set exchange files. |
+| 11 | Remaining item files | Both (per file) | MuMain, HNMO as needed | 2 | `ItemAddOption`, `SocketItem`, `Mix`, `pet`, drop settings; one phase each, order decided later. |
 | 12 | New item groups *(to discuss again)* | Both | MuMain + D | 3, 4, 4d, A | Move items into new groups for the new client; level variants become items of their own; legacy ids for the original client (D21). |
-| D | Legacy item ids, server side *(to discuss again)* | Server | OpenMU | 12 | Legacy id on item definitions, mapping tool, Season 6 serializer sends legacy ids, serializer for the new client. |
+| D | Legacy item ids, server side *(to discuss again)* | Server | HNMO | 12 | Legacy id on item definitions, mapping tool, Season 6 serializer sends legacy ids, serializer for the new client. |
 | FX1 | Effect catalogue *([roadmap](2026-09-29-data-driven-content-roadmap-design.md))* | Client | MuMain | 4c | Every effect, particle, lightning and sprite type gets a name and its creation values in `Data/Effects/`; behavior stays code. |
 | 13 | Looks in data | Client | MuMain | 4c, 6, FX1 | What the named render styles and effects are made of moves from code into `Data/Effects/` as building blocks (D25), with the look editor in MuEditor (preview, bones, the items that use a look), named Style Editor. Design: [looks design](2026-11-01-looks-in-data-design.md) (draft). |
 | 14 | UI text translations | Client | MuMain | 5 | A MuEditor window for the `.resx` UI texts (Game, Dialog, Editor, Metadata): keys × languages with the missing texts counted per language and file, written back to `src/Localization`, with placeholder checks. Builds on the Item Translations window. |
@@ -696,7 +696,7 @@ server with original clients (after phases 6 and B).
 3. **Rules and categories into data**: flags and tags replace the hardcoded
    lists in `ItemCategories`, `TradeRestrictions` and `ShopRestrictions`.
    The resulting item lists are verified to be identical. Includes the
-   client ↔ OpenMU rule mapping.
+   client ↔ HNMO rule mapping.
 
    As built:
    - Item fields: `tags` (a list of names, a bitmask in memory),
@@ -721,7 +721,7 @@ server with original clients (after phases 6 and B).
      and 8 replace with model and tooltip data.
    - `IsPartChargeItem` became the tag `cashShop`, flattened. Only the
      old rules used it, so no client code reads the tag now; it stays as
-     information for the editors and the OpenMU exchange.
+     information for the editors and the HNMO exchange.
      `IsRareItemTicket` was only part of it and is gone.
    - `Check_ItemAction` and the separate repair lists in `RepairAllGold`
      and `RenderRepairInfo` became the rule flags too.
@@ -744,39 +744,39 @@ server with original clients (after phases 6 and B).
      the packed jewel list (`COMGEM`) and the tooltip class requirement
      list (`IsRequireClassRenderItem`, phase 8).
 
-   Client ↔ OpenMU mapping (input for A):
+   Client ↔ HNMO mapping (input for A):
 
-   | Client data | OpenMU today | For PR A |
+   | Client data | HNMO today | For PR A |
    |---|---|---|
    | `slot` | `ItemDefinition.ItemSlot` (an `ItemSlotType` with its slot numbers) | Exchange maps the names to slot types: `mainHand` ↔ types containing 0, `offHand` ↔ 1, …, `ring` ↔ 10/11 |
    | `wingTier` | None; wing values are power-ups and options per wing | Client-only for now; phase 9 (options) may replace it |
-   | `weaponKind` | Item groups: swords 0 (the Rage Fighter's gloves get `Stats.IsGloveWeaponEquipped` instead of the sword ones), axes 1, maces 2 (`ItemGroups.Scepters`), spears 3, bows and crossbows 4 (split by slot into `Stats.IsBowEquipped` and `IsCrossBowEquipped`), staffs 5 (`StaffItemGroup`; the books get `Stats.IsBookEquipped`, the summoner's sticks `IsStickEquipped`), shields 6 (`ShieldItemGroup`, `Stats.IsShieldEquipped`) | Derived from group, slot and class (ammunition has none); no new OpenMU field needed. OpenMU's sticks have no kind of their own in the client (they are staffs) |
+   | `weaponKind` | Item groups: swords 0 (the Rage Fighter's gloves get `Stats.IsGloveWeaponEquipped` instead of the sword ones), axes 1, maces 2 (`ItemGroups.Scepters`), spears 3, bows and crossbows 4 (split by slot into `Stats.IsBowEquipped` and `IsCrossBowEquipped`), staffs 5 (`StaffItemGroup`; the books get `Stats.IsBookEquipped`, the summoner's sticks `IsStickEquipped`), shields 6 (`ShieldItemGroup`, `Stats.IsShieldEquipped`) | Derived from group, slot and class (ammunition has none); no new HNMO field needed. HNMO's sticks have no kind of their own in the client (they are staffs) |
    | `sceptre`, `magicSword` | `ScepterRise` and `IsScepterEquipped` for group 2 items with Force Wave; `StaffRise` for group 0 items with Power Slash and magic power | Derived from skill and group; no new field |
-   | `transformationRing` | `IsTransformationRing`: a base power-up on `Stats.TransformationSkin`, on the same eight rings; read for durability and Chaos Castle only | Derived from the power-up; no new field. The client's ring rules (one dragged onto a ring slot, no Kanturu entry, no Icarus except with the panda and skeleton rings) have no server side; OpenMU's Icarus asks only for `Stats.CanFly` |
+   | `transformationRing` | `IsTransformationRing`: a base power-up on `Stats.TransformationSkin`, on the same eight rings; read for durability and Chaos Castle only | Derived from the power-up; no new field. The client's ring rules (one dragged onto a ring slot, no Kanturu entry, no Icarus except with the panda and skeleton rings) have no server side; HNMO's Icarus asks only for `Stats.CanFly` |
    | `shieldPotion` | `ItemConstants.SmallShieldPotion`, `MediumShieldPotion`, `LargeShieldPotion` | Client-only, like the other potion tags |
-   | `potionPriority` | None; OpenMU keeps a potion's strength in its consume handler plug-ins, and its offline leveling (`HealingHandler`) lists the healing and mana potions largest first in code | Client-only for now |
-   | `luckyItem` | None; OpenMU's Season 6 data has no lucky set armour (numbers 62 to 72 of groups 7 to 11) | Client-only until OpenMU has them |
-   | Level bonus tables of `Stats/ItemStats.json` | `ItemLevelBonusTable`, attached per item through `BasePowerUpAttributes`: `damageIncreaseWeapons` = Damage Increase (Weapons), `defenseIncreaseArmors` = Defense Increase (Armors), `defenseIncreaseShields` = Defense Increase (Shields), `defenseRateIncreaseShields` = Defense Rate Increase (Shields), `defenseBonus1stWings` = Defense Bonus (1st and 2nd Wings), `defenseBonus3rdWings` = Defense Bonus (3rd Wings) | Same values. `magicPowerIncrease` (T) is what OpenMU's rise tables are made of: Staff Rise even = ⌊T/2⌋ + 2L and odd = ⌈T/2⌉ + 2L, Scepter Rise the same without 2L. The client halves the sum of base, excellent and ancient part, so its table cannot be chosen by the base's parity per item as OpenMU does; the exchange expands it. `defenseBonus2ndWings` (2 per level up to +9) has no OpenMU table: OpenMU gives second tier wings and the capes the 3 per level table. `magicDefenseIncrease` is client-only (no shipped item has magic defense) |
-   | Excellent and ancient terms, `dropLevelBonus` | Hard-coded in `ItemPowerUpFactory` (with a TODO to make them configurable) | Client-only data; the exchange compares them with OpenMU's numbers. Same formulas except magic power's rounding (the client halves the sum, OpenMU each part) |
-   | `statProfile` | None; OpenMU picks the tables per item | The exchange expands the profile into the item's per-stat tables |
-   | `excellentBonus` (Chaos Dragon Axe 15, Chaos Nature Bow 30, Chaos Lightning Staff 25) | None; OpenMU uses the formula | Client-only; a difference to report |
-   | Requirement terms of `Stats/ItemStats.json` (`levelPerItemLevel`, `excellentLevelAdd`, the stat terms, `strengthPerOptionLevel`) | The base values are the item's `Requirements`; `ItemExtensions.GetRequirement` and `CalculateDropLevel` compute the rest in code | Same stat formula `20 + base * (drop level + 3 * level) * 3 / 100` (energy `* 4`) and the same book formula. Differences to report: OpenMU adds the ancient +30 before the excellent +25 (the client the other way round), computes command like the other stats (the client keeps the base), adds the option level's strength only when there is a strength requirement and 5 per level on armour, 4 on other items (the client 5 on all of groups 0 to 11 except ammunition), and neither grows the level requirement with the item level nor adds 20 for excellent items. Scrolls and orbs are not wearable in OpenMU; their requirement is computed once into the item (`OrbRequirements`), for scrolls from the level requirement like the client's `levelRequirement` basis |
-   | `excellentRaisesLevel` = false | None; OpenMU has no excellent +20 | Client-only |
+   | `potionPriority` | None; HNMO keeps a potion's strength in its consume handler plug-ins, and its offline leveling (`HealingHandler`) lists the healing and mana potions largest first in code | Client-only for now |
+   | `luckyItem` | None; HNMO's Season 6 data has no lucky set armour (numbers 62 to 72 of groups 7 to 11) | Client-only until HNMO has them |
+   | Level bonus tables of `Stats/ItemStats.json` | `ItemLevelBonusTable`, attached per item through `BasePowerUpAttributes`: `damageIncreaseWeapons` = Damage Increase (Weapons), `defenseIncreaseArmors` = Defense Increase (Armors), `defenseIncreaseShields` = Defense Increase (Shields), `defenseRateIncreaseShields` = Defense Rate Increase (Shields), `defenseBonus1stWings` = Defense Bonus (1st and 2nd Wings), `defenseBonus3rdWings` = Defense Bonus (3rd Wings) | Same values. `magicPowerIncrease` (T) is what HNMO's rise tables are made of: Staff Rise even = ⌊T/2⌋ + 2L and odd = ⌈T/2⌉ + 2L, Scepter Rise the same without 2L. The client halves the sum of base, excellent and ancient part, so its table cannot be chosen by the base's parity per item as HNMO does; the exchange expands it. `defenseBonus2ndWings` (2 per level up to +9) has no HNMO table: HNMO gives second tier wings and the capes the 3 per level table. `magicDefenseIncrease` is client-only (no shipped item has magic defense) |
+   | Excellent and ancient terms, `dropLevelBonus` | Hard-coded in `ItemPowerUpFactory` (with a TODO to make them configurable) | Client-only data; the exchange compares them with HNMO's numbers. Same formulas except magic power's rounding (the client halves the sum, HNMO each part) |
+   | `statProfile` | None; HNMO picks the tables per item | The exchange expands the profile into the item's per-stat tables |
+   | `excellentBonus` (Chaos Dragon Axe 15, Chaos Nature Bow 30, Chaos Lightning Staff 25) | None; HNMO uses the formula | Client-only; a difference to report |
+   | Requirement terms of `Stats/ItemStats.json` (`levelPerItemLevel`, `excellentLevelAdd`, the stat terms, `strengthPerOptionLevel`) | The base values are the item's `Requirements`; `ItemExtensions.GetRequirement` and `CalculateDropLevel` compute the rest in code | Same stat formula `20 + base * (drop level + 3 * level) * 3 / 100` (energy `* 4`) and the same book formula. Differences to report: HNMO adds the ancient +30 before the excellent +25 (the client the other way round), computes command like the other stats (the client keeps the base), adds the option level's strength only when there is a strength requirement and 5 per level on armour, 4 on other items (the client 5 on all of groups 0 to 11 except ammunition), and neither grows the level requirement with the item level nor adds 20 for excellent items. Scrolls and orbs are not wearable in HNMO; their requirement is computed once into the item (`OrbRequirements`), for scrolls from the level requirement like the client's `levelRequirement` basis |
+   | `excellentRaisesLevel` = false | None; HNMO has no excellent +20 | Client-only |
    | `requirementsByLevel` (Orb of Summoning energy, Transformation Ring level) | The ring: a second level requirement of 50 with `MinimumItemLevel` 3 (`TransformationRingConfiguration`). The Orb of Summoning: no energy requirement, maximum item level 6 | The exchange maps the ring's list to the two requirements; the orb's energy list is a difference to report |
    | `tradable`, `storable`, `personalShopSellable`, `sellable` = false | Only `IsBoundToCharacter`, which blocks all four at once (sell with a durability exception) | Separate rules, e.g. one `[Flags] ItemRestrictions` column with the six names; enforce in `MoveItemAction` (trade, vault, personal shop) and `SellItemToNpcAction`; `IsBoundToCharacter` stays for "only the owner can pick it up" |
    | `droppable` = false | None (`DropItemAction` drops everything) | Enforce in `DropItemAction` |
    | `repairable` = false | None (`ItemRepairAction` repairs any item below its maximum durability) | Enforce in `ItemRepairAction` |
-   | `droppableWhileRented`, `personalShopSellableWhileRented`, `sellableWhenRentalExpired` | None; OpenMU has no rental items | Client-only until OpenMU has rentals |
+   | `droppableWhileRented`, `personalShopSellableWhileRented`, `sellableWhenRentalExpired` | None; HNMO has no rental items | Client-only until HNMO has rentals |
    | Code exceptions (level, durability, GM) | Levels: none | Level variants move with phase 12/D |
    | `ammunition` | `IsAmmunition` | 1:1 |
    | `secondClassQuestItem`, `thirdClassQuestItem` | `IsQuestItem` (+ `StorageLimitPerCharacter` 1) | Both map to `IsQuestItem` |
    | `flying` | `Stats.CanFly` power-up on wings, Dinorant and Fenrir | Compare: the client also counts the Dark Horse |
-   | `jewel`, `mount`, `darkLordPet`, `guardianPet`, potions, socket items, … | Hardcoded `ItemConstants` checks | Client-only; OpenMU can take them over item by item |
+   | `jewel`, `mount`, `darkLordPet`, `guardianPet`, potions, socket items, … | Hardcoded `ItemConstants` checks | Client-only; HNMO can take them over item by item |
    | `cashShop`, `valuable`, `gemJewelry`, `luckyItemTicket`, … | None | Client-only (UI) |
 
-   **A (OpenMU):** new rule fields/tables with migration, initialization,
+   **A (HNMO):** new rule fields/tables with migration, initialization,
    update plug-in and server enforcement, based on the mapping above.
-   (Done: OpenMU has had the six rule flags since MUnique/OpenMU#983, with
+   (Done: HNMO has had the six rule flags since HNMO/HNMO#983, with
    these values, and gives the Dark Horse `CanFly`. The exchange of phase 7
    uses the table above with that.)
 
@@ -786,7 +786,7 @@ server with original clients (after phases 6 and B).
    As in phase 3, the code asks the item data instead of naming items, and a
    one-time test compares the old and the new code for every item type and
    item model slot before the lists go; intended behavior changes, if any,
-   get commits of their own. New tags that OpenMU checks in `ItemConstants`
+   get commits of their own. New tags that HNMO checks in `ItemConstants`
    go into the mapping for A. An inventory (2026-10-17) found 52 places
    (more than the estimated 35: the lucky items, SD potions and
    transformation rings, and conditions over several weapon groups), done
@@ -806,7 +806,7 @@ server with original clients (after phases 6 and B).
      touched anyway.
    - **3b-2** (done): bows, crossbows, spears and shields. One
      `weaponKind` field per item (`spear`, `bow`, `crossbow`, `shield`;
-     like `wingTier`, the kinds are exclusive and match OpenMU's item
+     like `wingTier`, the kinds are exclusive and match HNMO's item
      groups 3, 4 and 6, group 4 split by slot) instead of a tag per kind.
      13 places ask it: `CCharacterManager`'s bow and crossbow lists (four
      functions), the elf's arrows-only rule, the shield defense set
@@ -820,9 +820,9 @@ server with original clients (after phases 6 and B).
      keep a weapon kind that its group gives matching the group and slot, so
      new weapons get one; the game reads only the field.
    - **3b-3** (done): swords, gloves, axes, maces, staffs and books. The
-     weapon kinds `sword`, `glove` (the Rage Fighter's gloves, OpenMU's
+     weapon kinds `sword`, `glove` (the Rage Fighter's gloves, HNMO's
      `IsGloveWeaponEquipped`), `axe`, `mace`, `staff` and `book` (the
-     summoner's books, OpenMU's `IsBookEquipped`), plus the tags `sceptre`
+     summoner's books, HNMO's `IsBookEquipped`), plus the tags `sceptre`
      and `magicSword`. 21 places ask them: the sceptre list
      (`IsCepterItem`, its callers ask the tag), the magic sword checks
      (wizardry damage for the right-hand weapon, the left-hand weapon and
@@ -868,7 +868,7 @@ server with original clients (after phases 6 and B).
      `CheckRepair` and the lucky set constants are gone. The lucky set
      range also counted 7/71 and 10/72, which have no item data.
    The 38 items named "…-J" (copies of existing items with no model, unknown
-   to OpenMU; what "J" stands for is not known) followed their data; phase 6
+   to HNMO; what "J" stands for is not known) followed their data; phase 6
    removed them, since no player could get one (server data marks them not
    droppable, and no cash shop or lucky ticket list has them). Two lists
    the inventory found wrong are fixed on their own, not in 3b: the
@@ -880,7 +880,7 @@ server with original clients (after phases 6 and B).
    `Calc*` functions in `ZzzInfomation.cpp`; the formulas are listed under
    "Item-specific code that is left" → Item stats by level. They became
    named level bonus tables and formula parameters in data (D43 of the
-   roadmap), shared in the item exchange and matching OpenMU's
+   roadmap), shared in the item exchange and matching HNMO's
    `ItemLevelBonusTable` per stat. Checked like phase 3: a one-time test
    compared the old and the new values for every item at levels 0–15,
    normal, excellent and ancient. The differences 815b8828 and
@@ -889,19 +889,19 @@ server with original clients (after phases 6 and B).
    the empty level requirement range from the Wing of Dimension on, the
    ancient defense's second base, the maximum damage bonus from the maximum
    damage) were fixed first, with #683. The level bonus above +9, added once
-   from 2021 where the Season 6 client and OpenMU add it cumulatively, was
+   from 2021 where the Season 6 client and HNMO add it cumulatively, was
    fixed before this phase too (`GameLogic::Items::GetItemLevelBonus`), so
-   the tables can match OpenMU's. The fork
+   the tables can match HNMO's. The fork
    branch `fix-some-item-calculations`
    (January 2026, still in the old `Source Main 5.2` layout) holds fixes of
    these formulas after the Season 6 client and is compared when this phase
-   starts. **A (OpenMU):** the mapping of the tables to
-   `ItemLevelBonusTable`, and the formulas OpenMU does not have.
+   starts. **A (HNMO):** the mapping of the tables to
+   `ItemLevelBonusTable`, and the formulas HNMO does not have.
 
    Decided 2026-10-18 after comparing three shapes (rules over existing
-   data, per-stat table references as in OpenMU, and stat profiles): **stat
+   data, per-stat table references as in HNMO, and stat profiles): **stat
    profiles**. `Data/Items/Stats/ItemStats.json` holds the level bonus tables
-   (16 values or a step per level, named after OpenMU's tables where OpenMU
+   (16 values or a step per level, named after HNMO's tables where HNMO
    has one), a `default` that writes every stat's
    table, excellent and ancient terms and the requirement terms once, and
    named profiles that write only what differs. Each item names its profile
@@ -1174,7 +1174,7 @@ server with original clients (after phases 6 and B).
      `group,number` and the item type, the missing-name filter) is kept
      apart from ImGui, so the item browser builds on it, and
      `CItemDataHandler::SetItemName` edits a name in the item database for
-     any language. Importing names from OpenMU belongs to phase 7.
+     any language. Importing names from HNMO belongs to phase 7.
 6. **Editors (done)**: the MuEditor tools from section 9, including
    add/remove, on the rules of D26 (one selection, "used by", a warning with
    the list of users before a shared definition changes, copies for
@@ -1238,12 +1238,12 @@ server with original clients (after phases 6 and B).
      (the formula rounds down, so low drop levels have several).
    - Left out: the custom marker of section 7 (nothing reads it yet; phase
      7 and Q1), mixes and quests in "used by" (their loaded data has no way
-     to walk it), the last OpenMU import in the remove warning (phase 7),
+     to walk it), the last HNMO import in the remove warning (phase 7),
      the looks themselves (phase 13), and whether an item can be excellent,
-     ancient or how high its + level goes (OpenMU has `PossibleItemOptions`,
+     ancient or how high its + level goes (HNMO has `PossibleItemOptions`,
      item sets and `MaximumItemLevel`; maybe a phase after 12, once level
      variants are items of their own).
-   - Formula sync with OpenMU is part of phase 7 (section 6): only the
+   - Formula sync with HNMO is part of phase 7 (section 6): only the
      level bonus tables are data there today (`ItemLevelBonusTable`); the
      requirement formula, the excellent and ancient bonuses and the drop
      level bonus are C# code (`ItemExtensions.GetRequirement`,
@@ -1255,21 +1255,21 @@ server with original clients (after phases 6 and B).
       the diff, the known differences, and the orbs, crystals and scrolls
       keeping their requirements as values. A test takes every shipped item and the
       shipped formulas to the file and back unchanged.
-   2. **The item formulas as data (OpenMU).** Stat profiles, default terms
+   2. **The item formulas as data (HNMO).** Stat profiles, default terms
       and the drop level bonus in the game configuration, each item naming
       its profile; defaults equal to today's code, tested for every item and
       level; migration and update plug-in.
-   3. **The export endpoint (OpenMU).** `GET /api/items/exchange`, always
+   3. **The export endpoint (HNMO).** `GET /api/items/exchange`, always
       behind an API key, rate limited, cached with an ETag, and a download
       button.
    4. **Update from server (MuMain).** The download in MuEditor, the last
       server state and the three-way diff. The differences the first real
       diff shows are fixed on the side that is wrong, each in a change of
       its own.
-   5. **The import page (OpenMU).** The client's export with the same diff;
+   5. **The import page (HNMO).** The client's export with the same diff;
       new items take their server-only values from a template item.
 
-   **B (OpenMU):** steps 2, 3 and 5.
+   **B (HNMO):** steps 2, 3 and 5.
 8. **Data-driven tooltips** (D15), in steps (#815). Done in steps 1–5
    (#813–#836):
    - an item's own lines are its `description`, its names by level its
@@ -1341,7 +1341,7 @@ server with original clients (after phases 6 and B).
    lines come from the item sets.
 9. **Item option definitions** (D14): the option groups items link to
    (Luck, additional option, excellent, wing, harmony, guardian, socket, …)
-   get their own JSON files, matching OpenMU's `ItemOptionDefinition`, with
+   get their own JSON files, matching HNMO's `ItemOptionDefinition`, with
    their own exchange file and editor. The tooltip's option lines (luck,
    skill, the additional option, excellent, the 380 options, Jewel of
    Harmony, sockets) then read these definitions and become layout lines
@@ -1350,7 +1350,7 @@ server with original clients (after phases 6 and B).
    2026-11-04), which also moves the 380 part of `ItemAddOption.bmd` and
    `SocketItem_<lang>.bmd` here from phase 11 (its O13).
 10. **Item sets** (D11): `ItemSetType.bmd` / `ItemSetOption_<lang>.bmd` into
-    JSON, matching OpenMU's `ItemSetGroup`, with their own exchange file and
+    JSON, matching HNMO's `ItemSetGroup`, with their own exchange file and
     editor. Moved earlier if items cannot be made fully data-driven without
     them. The tooltip's set lines ("Set Item option info" and the set's
     options) come from these sets too, and the set item editor shows them
@@ -1380,11 +1380,11 @@ server with original clients (after phases 6 and B).
     The tooltip fix and the CMake change are unrelated to the data
     format and could be split into their own small PRs.
 
-    **C (OpenMU):** import and export for the option definition (phase 9)
+    **C (HNMO):** import and export for the option definition (phase 9)
     and item set (phase 10) exchange files.
 11. **Remaining item files** (D13): `ItemAddOption`, `SocketItem`, `Mix`,
     `pet` and drop settings, one phase each. Order decided when we get
-    there. Each one gets OpenMU work where the server has matching data.
+    there. Each one gets HNMO work where the server has matching data.
     The buff values and durations of `ItemAddOption` (potions, scrolls,
     seals, charms) move with the buffs instead (buffs design B13).
 12. **New item groups** (D21) — *to discuss again when we get here.*
@@ -1399,17 +1399,17 @@ server with original clients (after phases 6 and B).
       to original clients (answers Q1 for those items).
     - Client: more groups (`MAX_ITEM_TYPE`), the item editor shows and
       edits the legacy id, a new item encoding in the protocol for groups
-      above 15, and the new client identifies itself to OpenMU with its
+      above 15, and the new client identifies itself to HNMO with its
       own client version.
     - Cost: every hardcoded item id has to follow a move (client `ITEM_*`
-      constants and ranges, about 113 group/number checks in OpenMU), and
+      constants and ranges, about 113 group/number checks in HNMO), and
       the model ids (`MODEL_ITEM + type`) must not depend on the item type.
-      That is why this comes after phases 3 and 4 and OpenMU PR A. Phases 3
+      That is why this comes after phases 3 and 4 and HNMO PR A. Phases 3
       and 4 moved the rule lists and the looks, and 4d2 put the model slots
       in one place (`ToModelSlot`), but about 330 places in code still name
       items (see "Item-specific code that is left").
 
-    **D (OpenMU):**
+    **D (HNMO):**
     - legacy group and number on `ItemDefinition` (optional), filled by the
       exchange file and editable in the admin panel;
     - a **mapping tool**: checks that every moved item has a legacy id, that
@@ -1439,7 +1439,7 @@ server with original clients (after phases 6 and B).
     them by level (`GameLogic/Items/ItemLevelVariants.h`).
 
     Questions for then: the exact new groups and which items move; whether
-    the legacy id lives only in OpenMU or also in the client data; the
+    the legacy id lives only in HNMO or also in the client data; the
     protocol change for the new item encoding; and which level variants
     become items of their own. They are of three kinds:
     - **Different items** under one id: Box of Luck +1–7 and +13–15 (Star
@@ -1583,7 +1583,7 @@ types and model slots (4d2). 239 identify an item by its model slot
   code handler, `hotkeyGroup`. Section 3 already names usable/consumable,
   ticket and event as target fields.
 - **Bonuses computed in code** (about 20 places): the Demon's +40 %, the
-  Panda's +50 defense, charms. A `powerUps` field mapped to OpenMU (phase
+  Panda's +50 defense, charms. A `powerUps` field mapped to HNMO (phase
   7) and the pets (phase 11).
 - **Map and event rules** (about 19 places): items required or banned per
   map, for a maps area.
@@ -1598,11 +1598,11 @@ types and model slots (4d2). 239 identify an item by its model slot
   had before, except `CalcWingOptions`, which computes the wing options
   until phase 9. Here level is the item level
   (`ip->Level`, 0 to 15), drop level the kind's `Level` (`p->Level`,
-  OpenMU's `DropLevel`) and base the kind's value. The level bonus
+  HNMO's `DropLevel`) and base the kind's value. The level bonus
   (`GameLogic::Items::GetItemLevelBonus`) is `3 * min(9, level)` and,
   above +9, steps of 4, 5, 6, 7, 8 and 9 at +10 to +15, each on top of the
   ones below: 27 at +9, then 31, 36, 42, 49, 57 and 66, as in the Season 6
-  client and OpenMU's level bonus tables. From 2021 (d301eb1fb, a366bc05b)
+  client and HNMO's level bonus tables. From 2021 (d301eb1fb, a366bc05b)
   to its fix the client added only the last step to damage, magic power,
   defense and blocking (`level - 6`, so 31 to 36 at +10 to +15); magic
   defense kept adding them up, without the +14 step (87f3f72e0), until
@@ -1619,16 +1619,16 @@ types and model slots (4d2). 239 identify an item by its model slot
   - Blocking and magic defense get the level bonus like damage. 815b8828
     had made them use the drop level, so they never grew with the item
     level; #683 brought the item level back, as in the client before and in
-    OpenMU.
+    HNMO.
   - Excellent items add `base * 25 / drop level + 5` to damage (from the
     minimum damage, to minimum and maximum damage alike), magic power and
     blocking (three chaos weapons have fixed values for damage and magic
     power, `GetExcellentAddValue`) and
     `base * 12 / drop level + 4 + drop level / 5` to defense, not to
     shields. Excellent here means an excellent item that is not a wing, or
-    an ancient item, as in OpenMU: wings keep their wing options in the
+    an ancient item, as in HNMO: wings keep their wing options in the
     excellent flags. The client before 815b8828 had the same rule but also
-    left out the four archangel weapons; the client follows OpenMU there,
+    left out the four archangel weapons; the client follows HNMO there,
     which gives them the bonus with excellent options. 815b8828 had counted
     any excellent flag, so wings with a wing option got the defense bonus
     and ancient items lost the bonus, and it took the maximum damage bonus
@@ -1658,7 +1658,7 @@ types and model slots (4d2). 239 identify an item by its model slot
     `50 + 5 * level` for second tier wings and the capes, command
     `10 + 5 * level` for the Cape of Lord.
 
-  OpenMU keeps the same as data (`ItemLevelBonusTable` per stat), so these
+  HNMO keeps the same as data (`ItemLevelBonusTable` per stat), so these
   become named tables that a designer can change, shared in the item
   exchange.
 - **Smaller kinds:** weapon kind for stances (10), ground height and light
@@ -1700,7 +1700,7 @@ effect catalogue (FX1) there.
 ## Open questions
 
 - **Q1: Custom items on the original client** *(deferred; must be
-  discussed before the related PR lands).* What should OpenMU do with a
+  discussed before the related PR lands).* What should HNMO do with a
   custom item when the player uses the original Season 6 client? For
   example: never send it to that client (hide it in shops, drops and
   views), block such items on servers set up for the original client, or

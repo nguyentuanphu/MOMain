@@ -2,7 +2,7 @@
 // Story: 3.4.1 - Connection Error Messaging & Graceful Degradation
 //
 // AC-4 reserved message template (not triggered in this story):
-//   "Server handshake failed. Check OpenMU version compatibility."
+//   "Server handshake failed. Check HNMO version compatibility."
 // AC-5 reserved message template (not triggered in this story):
 //   "Login failed. Check credentials."
 
@@ -22,7 +22,7 @@
 #include "PacketFunctions_ConnectServer.h"
 #include "PacketFunctions_ClientToServer.h"
 
-mu::platform::LibraryHandle munique_client_library_handle = nullptr;
+mu::platform::LibraryHandle hnmo_client_library_handle = nullptr;
 
 void LoadManagedLibrary()
 {
@@ -30,7 +30,7 @@ void LoadManagedLibrary()
     if (attempted)
         return;
     attempted = true;
-    munique_client_library_handle = mu::platform::Load(ManagedLibraryPath().c_str());
+    hnmo_client_library_handle = mu::platform::Load(ManagedLibraryPath().c_str());
 }
 
 namespace
@@ -79,7 +79,7 @@ using GetManagedLibraryVersion = const char*(CORECLR_DELEGATE_CALLTYPE*)();
 void WriteLibraryVersion()
 {
     const auto getLibraryVersion = reinterpret_cast<GetManagedLibraryVersion>(
-        mu::platform::FindSymbol(munique_client_library_handle, "ConnectionManager_GetLibraryVersion"));
+        mu::platform::FindSymbol(hnmo_client_library_handle, "ConnectionManager_GetLibraryVersion"));
     const char* version = getLibraryVersion != nullptr ? getLibraryVersion() : nullptr;
     g_ErrorReport.Write(L"ClientLibrary \t\t: %hs\r\n",
                         version != nullptr ? version : "version unknown (older library)");
@@ -90,7 +90,7 @@ void WriteLibraryVersion()
 void InitializeDotNetBridge()
 {
     LoadManagedLibrary();
-    if (!munique_client_library_handle)
+    if (!hnmo_client_library_handle)
     {
         mu::log::Get("dotnet")->error("NET: InitializeDotNetBridge -- library not loaded, skipping");
         g_ErrorReport.Write(L"ClientLibrary \t\t: not loaded\r\n");
@@ -173,7 +173,7 @@ void ReportDotNetError(const char* detail, DotNetErrorKind kind)
 
 bool IsManagedLibraryAvailable()
 {
-    if (munique_client_library_handle)
+    if (hnmo_client_library_handle)
     {
         return true;
     }

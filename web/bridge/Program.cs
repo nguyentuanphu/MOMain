@@ -16,9 +16,9 @@ using System.Buffers;
 using System.Net;
 using System.Net.WebSockets;
 using Microsoft.Extensions.Logging.Abstractions;
-using MUnique.OpenMU.Network;
-using MUnique.OpenMU.Network.SimpleModulus;
-using MUnique.OpenMU.Network.Xor;
+using HNMO.Network;
+using HNMO.Network.SimpleModulus;
+using HNMO.Network.Xor;
 using Pipelines.Sockets.Unofficial;
 
 var builder = WebApplication.CreateBuilder(args);
