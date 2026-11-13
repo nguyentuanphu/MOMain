@@ -240,7 +240,7 @@ and where the time came from (computed or sent).
 
 ### 5. HNMO change
 
-A pull request to HNMO/HNMO, proposed separately:
+A pull request to HNMO, proposed separately:
 
 - At activation, and when `UpdateEffect` restarts an effect, the owner gets the
   time left and each power-up's current value (B2, B3).
@@ -347,7 +347,7 @@ A proposal; each one says what it changes in game.
 3. **Time and the strip.** Time tracking (B2, section 4), the bars and countdown
    (B4 to B6) with the player option (B14), the buff tooltip (B7, B8); fixes P1
    to P3.
-4. **HNMO** (HNMO/HNMO): time and values for the owner (section 5); any
+4. **HNMO** (HNMO): time and values for the owner (section 5); any
    time.
 5. **The client reads it** (B3): sent times and values win.
 

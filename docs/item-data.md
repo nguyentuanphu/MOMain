@@ -426,7 +426,7 @@ flight equipment cannot be taken off, neither by dragging it nor by
 right-clicking it.
 
 The Dark Horse flies, as in the original client. HNMO does not give it
-`CanFly` yet ([HNMO/HNMO#982](https://github.com/nguyentuanphu/HNMO/issues/982)),
+`CanFly` yet ([HNMO#982](https://github.com/nguyentuanphu/HNMO/issues/982)),
 so until that is fixed the server refuses a Dark Lord who only rides a Dark
 Horse into Icarus. Like HNMO, a broken item gives no power-ups. The client
 check only spares the player the fall; the server has to refuse the move as

@@ -776,7 +776,7 @@ server with original clients (after phases 6 and B).
 
    **A (HNMO):** new rule fields/tables with migration, initialization,
    update plug-in and server enforcement, based on the mapping above.
-   (Done: HNMO has had the six rule flags since HNMO/HNMO#983, with
+   (Done: HNMO has had the six rule flags since HNMO#983, with
    these values, and gives the Dark Horse `CanFly`. The exchange of phase 7
    uses the table above with that.)
 

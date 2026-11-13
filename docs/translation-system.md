@@ -271,7 +271,7 @@ text, so they stay untranslated.
 
 The German texts use the same terms as the German resources of the HNMO
 server (`src/**/Properties/*.de.resx` in
-[HNMO/HNMO](https://github.com/nguyentuanphu/HNMO)), so players see the same
+[HNMO](https://github.com/nguyentuanphu/HNMO)), so players see the same
 words in the client and in server messages. The player is addressed formally
 ("Sie"); NPC dialogues (`Dialog.de.resx`) keep their old-fashioned "Ihr/Euch".
 Some fixed terms:
