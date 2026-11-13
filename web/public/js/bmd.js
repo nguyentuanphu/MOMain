@@ -146,28 +146,38 @@ export function computeBoneMatrices(model, actionIndex, time, out) {
 const TRIANGLE_FAN = [[0, 1, 2], [0, 2, 3]];
 
 // Expands a mesh's triangles and quads into flat vertex arrays. Keeps each vertex's
-// bone and bind position, so an animated model can be re-posed every frame.
+// bone and bind position (and normal), so an animated model can be re-posed every frame.
 function expandMesh(mesh) {
   const nodes = [];
   const local = [];
+  const normalNodes = [];
+  const localNormals = [];
   const uvs = [];
   for (const tri of mesh.triangles) {
     const fans = tri.corners === 4 ? TRIANGLE_FAN : TRIANGLE_FAN.slice(0, 1);
     for (const fan of fans) {
       for (const corner of fan) {
         const vertex = mesh.vertices[tri.vertex[corner]];
-        const uv = mesh.texCoords[tri.texCoord[corner]] || [0, 0];
         if (!vertex) continue;
+        const uv = mesh.texCoords[tri.texCoord[corner]] || [0, 0];
+        const normal = mesh.normals[tri.normal[corner]] || { node: vertex.node, normal: [0, 0, 1] };
         nodes.push(vertex.node);
         local.push(vertex.position[0], vertex.position[1], vertex.position[2]);
+        normalNodes.push(normal.node);
+        localNormals.push(normal.normal[0], normal.normal[1], normal.normal[2]);
         uvs.push(uv[0], uv[1]);
       }
     }
   }
-  return { nodes: Int16Array.from(nodes), local: Float32Array.from(local), uvs: Float32Array.from(uvs) };
+  return {
+    nodes: Int16Array.from(nodes), local: Float32Array.from(local),
+    normalNodes: Int16Array.from(normalNodes), localNormals: Float32Array.from(localNormals),
+    uvs: Float32Array.from(uvs),
+  };
 }
 
 const tmpVec = new THREE.Vector3();
+const tmpNormalMatrix = new THREE.Matrix3();
 
 export function poseVertices(skin, boneMatrices, positions) {
   for (let i = 0; i < skin.nodes.length; i++) {
@@ -180,27 +190,45 @@ export function poseVertices(skin, boneMatrices, positions) {
   }
 }
 
+// Normals turn with their bone (rotation only), for the chrome glow passes.
+export function poseNormals(skin, boneMatrices, normals) {
+  for (let i = 0; i < skin.normalNodes.length; i++) {
+    tmpVec.set(skin.localNormals[i * 3], skin.localNormals[i * 3 + 1], skin.localNormals[i * 3 + 2]);
+    const bone = boneMatrices[skin.normalNodes[i]];
+    if (bone) tmpVec.applyMatrix3(tmpNormalMatrix.setFromMatrix4(bone));
+    normals[i * 3] = tmpVec.x;
+    normals[i * 3 + 1] = tmpVec.y;
+    normals[i * 3 + 2] = tmpVec.z;
+  }
+}
+
 // One geometry per mesh of the model, posed with the given bone matrices.
 export function buildGeometries(model, boneMatrices) {
-  return model.meshes.map((mesh) => {
+  return model.meshes.map((mesh, meshIndex) => {
     const skin = expandMesh(mesh);
     const positions = new Float32Array(skin.local.length);
+    const normals = new Float32Array(skin.localNormals.length);
     poseVertices(skin, boneMatrices, positions);
+    poseNormals(skin, boneMatrices, normals);
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
     geometry.setAttribute('uv', new THREE.BufferAttribute(skin.uvs, 2));
     geometry.computeBoundingSphere();
-    return { geometry, skin, textureName: mesh.textureName };
+    return { geometry, skin, textureName: mesh.textureName, meshIndex };
   });
 }
 
 // An animated model whose meshes follow a skeleton (its own, or a shared one such as Player.bmd).
+// Glow passes are extra meshes on the same geometry (see game/itemGlow.js).
 export class AnimatedModel {
   constructor(skeleton, parts, materials) {
     this.skeleton = skeleton;
     this.group = new THREE.Group();
     this.matrices = computeBoneMatrices(skeleton, 0, 0);
     this.parts = [];
+    this.glows = [];
+    this.lightFactor = null; // a function of time giving the light multiplier of the item level
     parts.forEach((part, index) => {
       const mesh = new THREE.Mesh(part.geometry, materials[index]);
       mesh.frustumCulled = false;
@@ -211,16 +239,31 @@ export class AnimatedModel {
 
   pose(actionIndex, time) {
     computeBoneMatrices(this.skeleton, actionIndex, time, this.matrices);
+    const withNormals = this.glows.length > 0;
     for (const part of this.parts) {
       const attribute = part.geometry.getAttribute('position');
       poseVertices(part.skin, this.matrices, attribute.array);
       attribute.needsUpdate = true;
+      if (withNormals) {
+        const normals = part.geometry.getAttribute('normal');
+        poseNormals(part.skin, this.matrices, normals.array);
+        normals.needsUpdate = true;
+      }
     }
   }
 
-  setLight(color) {
+  addGlow(glow) {
+    this.glows.push(glow);
+    for (const mesh of glow.meshes) this.group.add(mesh);
+  }
+
+  setLight(color, seconds = 0) {
     for (const part of this.parts) {
-      if (part.mesh.material.blending !== THREE.AdditiveBlending) part.mesh.material.color.copy(color);
+      if (part.mesh.material.blending === THREE.AdditiveBlending) continue;
+      part.mesh.material.color.copy(color);
+      const factor = part.lightFactor?.(seconds);
+      if (factor) part.mesh.material.color.multiply(factor);
     }
+    for (const glow of this.glows) glow.update(seconds);
   }
 }

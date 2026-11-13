@@ -54,6 +54,7 @@ export async function loadItemCatalog() {
         ...splitPath(model.file),
         textureDir: model.textureFolders?.length ? model.textureFolders : ['Item'],
         isGlowMesh: glowMeshRule(entry, model),
+        glow: entry.glow ?? {},
       });
     }
   });
@@ -86,12 +87,14 @@ export function itemsWithModels(group) {
 
 const NO_ITEM_GROUP = 0xf;
 const NO_ITEM_NUMBER = 0xfff;
+// OpenMU sends (level - 1) / 2; the client draws the level LevelConvert gives (ZzzCharacter.cpp).
+const LEVEL_OF_GLOW_STEP = [0, 3, 5, 7, 9, 11, 13, 15];
 
 function shinyItem(bytes, at) {
   const group = bytes[at] >> 4;
   const number = ((bytes[at] & 0xf) << 8) | bytes[at + 1];
   if (group === NO_ITEM_GROUP && number === NO_ITEM_NUMBER) return null;
-  return { group, number, glowLevel: bytes[at + 2] >> 4, excellent: (bytes[at + 2] & 0x08) !== 0, ancient: (bytes[at + 2] & 0x04) !== 0 };
+  return { group, number, glowLevel: LEVEL_OF_GLOW_STEP[(bytes[at + 2] >> 4) & 7], excellent: (bytes[at + 2] & 0x08) !== 0, ancient: (bytes[at + 2] & 0x04) !== 0 };
 }
 
 function plainItem(bytes, at) {

@@ -39,6 +39,13 @@
     #labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
     .label { position: absolute; left: 0; top: 0; font-size: 12px; white-space: nowrap; color: #f2f3f7; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
     .label.npc { color: #9fe0a8; }
+    .chat-log { position: fixed; left: 12px; bottom: 84px; width: min(460px, calc(100vw - 24px)); max-height: 30vh; overflow-y: auto; font-size: 13px; text-shadow: 0 1px 2px #000; pointer-events: none; display: grid; gap: 2px; }
+    .chat-log .system { color: #f0d27a; }
+    .chat-log .chat { color: #f2f3f7; }
+    .chat-form { position: fixed; left: 12px; bottom: 48px; width: min(460px, calc(100vw - 24px)); }
+    .chat-form input { width: 100%; box-sizing: border-box; background: rgba(10,12,20,.75); }
+    .map-picker { position: fixed; right: 12px; top: 12px; display: flex; gap: 8px; align-items: center; }
+    .map-picker label { color: var(--muted); font-size: 12px; }
     .wardrobe { position: fixed; right: 12px; top: 56px; width: min(260px, calc(100vw - 24px)); display: grid; gap: 4px; padding: 12px; }
     .wardrobe label { color: var(--muted); font-size: 12px; margin-top: 4px; }
     .wardrobe select { width: 100%; }
@@ -69,6 +76,9 @@
     <label for="rightHand">Right hand</label><select id="rightHand"></select>
     <label for="leftHand">Left hand</label><select id="leftHand"></select>
     <label for="wings">Wings</label><select id="wings"></select>
+    <label for="itemLevel">Item level</label><select id="itemLevel"></select>
+    <label class="check"><input type="checkbox" id="excellent"> Excellent</label>
+    <label class="check"><input type="checkbox" id="ancient"> Ancient</label>
     <label class="check"><input type="checkbox" id="holdWeapons"> Hold weapons in town</label>
     <div class="buttons"><button type="button" id="previousSet">◀ Set</button><button type="button" id="nextSet">Set ▶</button></div>
   </div>
@@ -97,6 +107,9 @@
       <p class="hint">OpenMU's test accounts use the account name as password, e.g. test300.</p>
     </form>
   </div>
+  <div id="chatLog" class="chat-log" hidden></div>
+  <form id="chatForm" class="chat-form" hidden autocomplete="off"><input id="chatInput" maxlength="60" placeholder="Enter to chat, e.g. /move devias" aria-label="Chat message"></form>
+  <div class="chip map-picker" id="mapPicker" hidden><label for="mapSelect">Map</label><select id="mapSelect"></select></div>
   <div id="loading" class="chip"><div id="status">Log in to an OpenMU server, or explore Lorencia offline.</div><div id="track"><div id="bar"></div></div></div>
   <script type="module" src="/js/main.js"></script>
 </body>

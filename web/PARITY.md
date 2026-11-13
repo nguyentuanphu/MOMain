@@ -29,7 +29,9 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 | Terrain: heights, two texture layers, alpha, light map | ✅ | |
 | Static objects with light-map tint | ✅ | Lorencia's model table, generic `ObjectNN.bmd` for other maps (untested) |
 | Walkability (`.att`) | ✅ | |
-| Other maps and map changes (warps, gates, `F3 1C`) | ⬜ | |
+| Other maps | ✅ | All 36 maps with data load (folders as `GetFilesFolder`, 24-bit heights) |
+| Map changes: warps and teleports (`1C 0F`), `ClientReadyAfterMapChange` | ✅ | Tested with `/move devias`, `/move noria`, `/move lorencia` |
+| Gates (walking into a gate), the move window (M) | ⬜ | |
 | Water, grass sway, animated objects (fountain, flags, birds, leaves) | ⬜ | |
 | Map-specific behavior (`World/GameMaps`: Atlans water, Icarus sky, …) | ⬜ | |
 | Day light mood, fog per map (`Data/Maps/LightMood.json`) | ⬜ | Fixed fog for now |
@@ -50,7 +52,7 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 | Wings | ✅ | Bone 47, animated, glowing meshes drawn additively |
 | Capes (Dark Lord, Rage Fighter) as cloth | 🟡 | Drawn stiff on the back bone; the client hangs them from bone 19 as cloth |
 | Pets and mounts (Guardian Angel, Imp, Horn of Fenrir, Dark Horse, …) | ⬜ | Read from the appearance, not drawn |
-| Item glow by level, excellent and ancient shine | ⬜ | Read from the appearance, not drawn |
+| Item glow by level (+3 to +15), excellent and ancient | ✅ | The passes of `RenderPartObjectEffect` with the chrome texture coordinates of the skinning shader; colors from `GlowColors.json`; the server's glow step converted with `LevelConvert`. Shines below +3 (seals, harmony) not yet |
 | Wardrobe (offline): try on any class, armour set, weapon and wings | ✅ | A developer tool, like the client's item previews |
 | NPCs drawn with the player model (guards, …) with their equipment | 🟡 | Drawn with a default body set |
 | Others' exact walking steps (`StepData`) | ⬜ | |
@@ -79,7 +81,7 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 | Feature | Status | Notes |
 |---|---|---|
 | HUD: health, mana, experience bar, skill bar | ⬜ | |
-| Chat window, whisper, party and guild chat, chat commands | ⬜ | |
+| Chat window, whisper, party and guild chat, chat commands | 🟡 | Public chat and commands (Enter), chat and server messages shown; whisper, party, guild not yet |
 | Inventory, character, skill tree and option windows | ⬜ | |
 | Tooltips | ⬜ | |
 | Themes and UI scaling | ⬜ | |

@@ -2,14 +2,16 @@
 // Lorencia offline. Left-click walks, right-drag turns the camera, the wheel zooms.
 
 import * as THREE from 'three';
-import { TERRAIN_SCALE } from './formats.js';
+import { TERRAIN_SCALE, TERRAIN_SIZE, TerrainFlag } from './formats.js';
 import { sampleHeight } from './terrain.js';
-import { loadWorldData, createWorld } from './world.js';
+import { loadWorldData, createWorld, mapName, KNOWN_MAPS } from './world.js';
 import { createPlayerCharacter } from './game/characters.js';
 import { findPath } from './game/pathfinding.js';
 import { loadMonsterCatalog } from './game/monsterData.js';
 import { loadItemCatalog, itemsWithModels, ItemGroup, ARMOR_GROUPS, WEAPON_GROUPS } from './game/items.js';
 import { OnlineWorld } from './game/online.js';
+import { Chat } from './game/chat.js';
+import { loadGlowColors } from './game/itemGlow.js';
 import { fetchServerList, fetchGameServerAddress, login, fetchCharacters, enterWorld, CLASSES } from './net/session.js';
 
 THREE.ColorManagement.enabled = false;
@@ -27,8 +29,10 @@ const ui = {
   login: $('login'), loginForm: $('loginForm'), loginError: $('loginError'), servers: $('servers'), characters: $('characters'),
   offline: $('offline'), hud: $('hud'), heroName: $('heroName'), labels: $('labels'), wardrobe: $('wardrobe'), bodySet: $('bodySet'),
   armorSet: $('armorSet'), rightHand: $('rightHand'), leftHand: $('leftHand'), wings: $('wings'), previousSet: $('previousSet'), nextSet: $('nextSet'),
-  holdWeapons: $('holdWeapons'),
+  holdWeapons: $('holdWeapons'), itemLevel: $('itemLevel'), excellent: $('excellent'), ancient: $('ancient'), mapPicker: $('mapPicker'), mapSelect: $('mapSelect'),
 };
+
+const chat = new Chat({ log: $('chatLog'), form: $('chatForm'), input: $('chatInput') });
 
 const renderer = new THREE.WebGLRenderer({ canvas: ui.canvas, antialias: true });
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -63,9 +67,8 @@ const toScene = (x, y, z) => new THREE.Vector3(x, z, -y);
 async function loadMap(mapNumber) {
   if (state.mapNumber === mapNumber) return;
   if (state.worldGroup) root.remove(state.worldGroup);
-  const worldNumber = mapNumber + 1;
-  setStatus(`Loading map ${worldNumber}…`, 0.05);
-  const data = await loadWorldData(worldNumber);
+  setStatus(`Loading ${mapName(mapNumber)}…`, 0.05);
+  const data = await loadWorldData(mapNumber);
   const world = await createWorld(data, FOG, (progress) => setStatus('Loading world objects…', 0.1 + progress * 0.8));
   state.world = { ...data, terrain: world.terrain };
   state.worldGroup = world.group;
@@ -227,7 +230,7 @@ async function playOnline(settings) {
   if (!characters.length) throw new Error('This account has no characters yet. Character creation is not in the web client yet.');
   const character = await chooseFrom(ui.characters, characters, (c) => `${c.name}<small>Level ${c.level} ${CLASSES[c.classIndex]}</small>`);
   ui.characters.hidden = true;
-  await Promise.all([loadMonsterCatalog(), loadItemCatalog()]);
+  await Promise.all([loadMonsterCatalog(), loadItemCatalog(), loadGlowColors()]);
   // The server sends who is in view right after the character information, while
   // the map is still loading: keep those packets and replay them once it's ready.
   const earlyPackets = [];
@@ -237,7 +240,19 @@ async function playOnline(settings) {
   await loadMap(info.MapId);
   await placeHero({ id: connection.playerId, name: character.name, bodySet: character.classIndex + 1, equipment: character.equipment, x: info.X, y: info.Y });
   stopBuffering();
-  state.online = new OnlineWorld({ connection, root, world: state.world, hero: state.hero, playerId: connection.playerId });
+  state.online = new OnlineWorld({
+    connection, root, world: state.world, hero: state.hero, playerId: connection.playerId,
+    onMessage: (text, kind) => chat.add(text, kind),
+    onMapChanged: async (map, x, y) => {
+      await loadMap(map);
+      state.online.world = state.world;
+      state.hero.placeAt(x, y);
+      chat.add(`Welcome to ${mapName(map)}.`, 'system');
+      setStatus(`${mapName(map)}. Enter opens the chat; /move <map> warps.`, 1);
+    },
+  });
+  chat.enable((text) => state.online.say(text));
+  chat.add(`Welcome to ${mapName(info.MapId)}. Try /move devias or /move noria.`, 'system');
   earlyPackets.forEach((bytes) => state.online.handle(bytes));
   connection.onClose = () => setStatus('Disconnected from the server. Reload the page to log in again.');
   setStatus(`${character.name} entered the world. Left-click to walk, right-drag to turn, wheel to zoom.`, 1);
@@ -270,14 +285,18 @@ function armorSetEquipment(number) {
   return equipment;
 }
 
+// The level and options every worn item gets, as the appearance bytes would carry them.
 function wardrobeEquipment() {
   const armor = selectedItem(ui.armorSet);
-  return {
+  const options = { glowLevel: Number(ui.itemLevel.value), excellent: ui.excellent.checked, ancient: ui.ancient.checked };
+  const withOptions = (item) => (item ? { ...item, ...options } : null);
+  const equipment = {
     ...armorSetEquipment(armor ? armor.number : null),
     rightHand: selectedItem(ui.rightHand),
     leftHand: selectedItem(ui.leftHand),
     wings: selectedItem(ui.wings),
   };
+  return Object.fromEntries(Object.entries(equipment).map(([slot, item]) => [slot, withOptions(item)]));
 }
 
 const WING_NAME = /wing|cape|cloak|mantle/i;
@@ -296,7 +315,8 @@ function initWardrobe() {
     const { x, y } = state.hero.cell;
     await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), equipment: wardrobeEquipment(), x, y });
   };
-  for (const select of [ui.bodySet, ui.armorSet, ui.rightHand, ui.leftHand, ui.wings]) select.addEventListener('change', redress);
+  for (let level = 0; level <= 15; level++) ui.itemLevel.append(new Option(`+${level}`, String(level)));
+  for (const select of [ui.bodySet, ui.armorSet, ui.rightHand, ui.leftHand, ui.wings, ui.itemLevel, ui.excellent, ui.ancient]) select.addEventListener('change', redress);
   ui.holdWeapons.addEventListener('change', () => { if (state.hero) state.hero.holdWeapons = ui.holdWeapons.checked; });
   const step = (delta) => {
     const count = ui.armorSet.options.length;
@@ -307,13 +327,47 @@ function initWardrobe() {
   ui.nextSet.addEventListener('click', () => step(1));
 }
 
+// Where to stand on a map without a server: the walkable cell nearest the middle,
+// preferring a safe zone (towns are safe zones).
+function offlineStartCell(world) {
+  const center = TERRAIN_SIZE / 2;
+  let best = null;
+  for (let y = 0; y < TERRAIN_SIZE; y++) {
+    for (let x = 0; x < TERRAIN_SIZE; x++) {
+      const flags = world.flags[y * TERRAIN_SIZE + x];
+      if (flags & (TerrainFlag.NOMOVE | TerrainFlag.NOGROUND)) continue;
+      const score = Math.hypot(x - center, y - center) - (flags & TerrainFlag.SAFEZONE ? 1000 : 0);
+      if (!best || score < best.score) best = { x, y, score };
+    }
+  }
+  return best ?? { x: center, y: center };
+}
+
+function initMapPicker() {
+  for (const map of KNOWN_MAPS) ui.mapSelect.append(new Option(mapName(map), String(map)));
+  ui.mapSelect.value = String(OFFLINE_START.map);
+  ui.mapPicker.hidden = false;
+  ui.mapSelect.addEventListener('change', async () => {
+    const map = Number(ui.mapSelect.value);
+    try {
+      await loadMap(map);
+      const cell = map === OFFLINE_START.map ? OFFLINE_START : offlineStartCell(state.world);
+      state.hero.placeAt(cell.x, cell.y);
+      setStatus(`Offline: ${mapName(map)}. Left-click to walk, right-drag to turn, wheel to zoom.`, 1);
+    } catch (error) {
+      setStatus(`${mapName(map)} couldn't be loaded: ${error.message}`);
+    }
+  });
+}
+
 async function playOffline() {
   ui.login.hidden = true;
-  await loadItemCatalog();
+  await Promise.all([loadItemCatalog(), loadGlowColors()]);
   initWardrobe();
   await loadMap(OFFLINE_START.map);
   await placeHero({ id: 0, name: 'Offline', bodySet: Number(ui.bodySet.value), equipment: wardrobeEquipment(), x: OFFLINE_START.x, y: OFFLINE_START.y });
   ui.wardrobe.hidden = false;
+  initMapPicker();
   setStatus('Offline: Lorencia without a server. Left-click to walk, right-drag to turn, wheel to zoom.', 1);
 }
 

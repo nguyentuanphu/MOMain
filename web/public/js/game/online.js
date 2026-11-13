@@ -13,10 +13,13 @@ const ID_MASK = 0x7fff;          // the high bit marks "just created" (WSclient.
 const MAX_STEPS_PER_WALK = 15;   // the step count is a 4-bit field
 const PING_INTERVAL_MS = 20000;
 
-const Code = { ADD_PLAYERS: 0x12, ADD_NPCS: 0x13, OUT_OF_SCOPE: 0x14, MOVED: 0x15, WALKED: 0xd4, PING_REQUEST: 0x71 };
+const Code = { CHAT: 0x00, SERVER_MESSAGE: 0x0d, ADD_PLAYERS: 0x12, ADD_NPCS: 0x13, OUT_OF_SCOPE: 0x14, MOVED: 0x15, MAP_CHANGED: 0x1c, WALKED: 0xd4, PING_REQUEST: 0x71 };
+const MAP_CHANGED_SUB_CODE = 0x0f;
 
 export class OnlineWorld {
-  constructor({ connection, root, world, hero, playerId, onChange }) {
+  constructor({ connection, root, world, hero, playerId, onChange, onMapChanged, onMessage }) {
+    this.onMapChanged = onMapChanged;
+    this.onMessage = onMessage;
     this.connection = connection;
     this.root = root;
     this.world = world;
@@ -30,8 +33,11 @@ export class OnlineWorld {
   }
 
   handle(bytes) {
-    const { code } = packetCode(bytes);
+    const { code, subCode } = packetCode(bytes);
     try {
+      if (code === Code.MAP_CHANGED && bytes[0] === 0xc3 && subCode === MAP_CHANGED_SUB_CODE) return this.mapChanged(read('ServerToClient', 'MapChanged', bytes));
+      if (code === Code.CHAT && bytes[0] === 0xc1) { const m = read('ServerToClient', 'ChatMessage', bytes); return this.onMessage?.(`${m.Sender}: ${m.Message}`, 'chat'); }
+      if (code === Code.SERVER_MESSAGE && bytes[0] === 0xc1 && bytes.length > 4) return this.onMessage?.(read('ServerToClient', 'ServerMessage', bytes).Message, 'system');
       if (code === Code.ADD_NPCS && bytes[0] === 0xc2) this.addNpcs(read('ServerToClient', 'AddNpcsToScope', bytes));
       else if (code === Code.ADD_PLAYERS && bytes[0] === 0xc2) this.addPlayer(read('ServerToClient', 'AddCharacterToScopeExtended', bytes));
       else if (code === Code.OUT_OF_SCOPE && bytes[0] === 0xc1) this.remove(read('ServerToClient', 'MapObjectOutOfScope', bytes));
@@ -101,6 +107,27 @@ export class OnlineWorld {
     if (id === this.playerId) this.goal = null;
     const character = id === this.playerId ? this.hero : this.characters.get(id);
     character?.placeAt(packet.PositionX, packet.PositionY);
+  }
+
+  // A warp: to another map (the client loads it), or a teleport on the same map.
+  // Mirrors ReceiveTeleport (WSclient.cpp), which ends with ClientReadyAfterMapChange.
+  async mapChanged(packet) {
+    this.goal = null;
+    this.clearCharacters();
+    if (packet.IsMapChange) await this.onMapChanged?.(packet.MapNumber, packet.PositionX, packet.PositionY);
+    else this.hero.placeAt(packet.PositionX, packet.PositionY);
+    this.connection.send('ClientToServer', 'ClientReadyAfterMapChange');
+  }
+
+  clearCharacters() {
+    for (const character of this.characters.values()) this.root.remove(character.group);
+    this.characters.clear();
+    this.pending.clear();
+    this.onChange?.();
+  }
+
+  say(text) {
+    this.connection.send('ClientToServer', 'PublicChatMessage', { Character: this.hero.name, Message: text });
   }
 
   // Walks the player to a cell and tells the server, as the client's SendRequestMove does.

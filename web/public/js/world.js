@@ -37,7 +37,36 @@ export function worldModelFiles(worldNumber) {
   return files;
 }
 
-export async function loadWorldData(worldNumber) {
+// The data folder a server map loads from (CMapManager::GetFilesFolder): events with
+// several maps share one folder.
+const SHARED_FOLDERS = [
+  { maps: [11, 12, 13, 14, 15, 16, 17, 52], folder: 12 }, // Blood Castle
+  { maps: [18, 19, 20, 21, 22, 23, 53], folder: 19 },     // Chaos Castle
+  { maps: [24, 25, 26, 27, 28, 29, 36], folder: 25 },     // Kalima
+  { maps: [45, 46, 47, 48, 49, 50], folder: 47 },         // Illusion Temple
+];
+
+export function filesFolder(mapNumber) {
+  return SHARED_FOLDERS.find((entry) => entry.maps.includes(mapNumber))?.folder ?? mapNumber + 1;
+}
+
+const MAP_NAMES = {
+  0: 'Lorencia', 1: 'Dungeon', 2: 'Devias', 3: 'Noria', 4: 'Lost Tower', 6: 'Arena', 7: 'Atlans', 8: 'Tarkan',
+  9: 'Devil Square', 10: 'Icarus', 11: 'Blood Castle', 18: 'Chaos Castle', 24: 'Kalima', 30: 'Valley of Loren',
+  31: 'Land of Trials', 33: 'Aida', 34: 'Crywolf Fortress', 37: 'Kanturu', 38: 'Kanturu Relics', 39: 'Kanturu Refinery Tower',
+  40: 'Silent Map', 41: 'Barracks of Balgass', 42: 'Balgass Refuge', 45: 'Illusion Temple', 51: 'Elveland',
+  56: 'Swamp of Calmness', 57: 'Raklion', 58: 'Raklion Hatchery', 62: 'Santa Village', 63: 'Vulcanus', 64: 'Duel Arena',
+  65: 'Doppelganger', 69: 'Imperial Guardian', 79: 'Loren Market', 80: 'Karutan 1', 81: 'Karutan 2',
+};
+
+export const KNOWN_MAPS = Object.keys(MAP_NAMES).map(Number);
+
+export function mapName(mapNumber) {
+  return MAP_NAMES[mapNumber] ?? `Map ${mapNumber}`;
+}
+
+export async function loadWorldData(mapNumber) {
+  const worldNumber = filesFolder(mapNumber);
   const dir = `World${worldNumber}`;
   const [mapBytes, attBytes, objBytes, heightBytes, light] = await Promise.all([
     fetchBytes(`/data/${dir}/EncTerrain${worldNumber}.map`),
@@ -47,6 +76,7 @@ export async function loadWorldData(worldNumber) {
     loadLightMap(`${dir}/TerrainLight.jpg`),
   ]);
   return {
+    mapNumber,
     worldNumber,
     dir,
     mapping: parseTerrainMapping(mapBytes),

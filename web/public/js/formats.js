@@ -57,9 +57,22 @@ const OZB_PREFIX_BYTES = 4;
 const BMP_HEADER_BYTES = 1080;
 const HEIGHT_FACTOR = 1.5;
 
-// TerrainHeight.OZB: an 8-bit grayscale BMP after a 4-byte prefix; each level is 1.5 units.
+const EXTENDED_HEIGHT_HEADER_BYTES = 14 + 40; // BITMAPFILEHEADER + BITMAPINFOHEADER
+const EXTENDED_MIN_HEIGHT = -500;             // g_fMinHeight
+
+// TerrainHeight.OZB: an 8-bit grayscale BMP after a 4-byte prefix, 1.5 units per
+// level (OpenTerrainHeight); a few maps use a 24-bit BMP with the height in its three
+// bytes (OpenTerrainHeightNew).
 export function parseTerrainHeight(bytes) {
   const heights = new Float32Array(CELLS);
+  if (bytes.length >= OZB_PREFIX_BYTES + EXTENDED_HEIGHT_HEADER_BYTES + CELLS * 3) {
+    const start = OZB_PREFIX_BYTES + EXTENDED_HEIGHT_HEADER_BYTES;
+    for (let i = 0; i < CELLS; i++) {
+      const at = start + i * 3;
+      heights[i] = (bytes[at + 2] | (bytes[at + 1] << 8) | (bytes[at] << 16)) + EXTENDED_MIN_HEIGHT;
+    }
+    return heights;
+  }
   const start = OZB_PREFIX_BYTES + BMP_HEADER_BYTES;
   for (let i = 0; i < CELLS; i++) heights[i] = bytes[start + i] * HEIGHT_FACTOR;
   return heights;

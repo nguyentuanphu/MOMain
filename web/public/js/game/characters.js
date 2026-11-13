@@ -7,6 +7,7 @@ import { loadModel, buildGeometries, computeBoneMatrices, createMaterial, Animat
 import { sampleHeight, sampleLight } from '../terrain.js';
 import { describeMonster, MonsterAction } from './monsterData.js';
 import { itemModel, ItemGroup } from './items.js';
+import { addItemGlow } from './itemGlow.js';
 
 export const PlayerAction = { STOP: 1, WALK: 15 }; // PLAYER_STOP_MALE, PLAYER_WALK_MALE
 const PLAYER_KEYS_PER_SECOND = { [PlayerAction.STOP]: 6, [PlayerAction.WALK]: 9 };
@@ -30,7 +31,7 @@ const BODY_PART_SLOTS = { Helm: 'helm', Armor: 'armor', Pant: 'pants', Glove: 'g
 function bodyPartSource(part, bodySet, equipment) {
   const item = equipment?.[BODY_PART_SLOTS[part]];
   const model = item ? itemModel(item.group, item.number) : null;
-  if (model) return { dir: model.dir, fileName: model.fileName, textureDir: model.textureDir };
+  if (model) return { dir: model.dir, fileName: model.fileName, textureDir: model.textureDir, item, glow: model.glow };
   return { dir: 'Player', fileName: `${part}Class${String(bodySet).padStart(2, '0')}.bmd`, textureDir: 'Player' };
 }
 
@@ -49,7 +50,16 @@ export async function createPlayerModel(bodySet, equipment) {
       return { geometries: [], materials: [] };
     }
   }));
-  return new AnimatedModel(skeleton, loaded.flatMap((part) => part.geometries), loaded.flatMap((part) => part.materials));
+  const animated = new AnimatedModel(skeleton, loaded.flatMap((part) => part.geometries), loaded.flatMap((part) => part.materials));
+  // Each worn item glows by its own level and options, on its own meshes.
+  let first = 0;
+  await Promise.all(loaded.map((part, index) => {
+    const parts = animated.parts.slice(first, first + part.geometries.length);
+    first += part.geometries.length;
+    const source = sources[index];
+    return source.item ? addItemGlow(animated, parts, source.glow, source.item) : null;
+  }));
+  return animated;
 }
 
 // ---------- weapons and wings ----------
@@ -80,7 +90,9 @@ async function createItemModel(item) {
   const model = await loadModel(source.dir, source.fileName);
   const parts = buildGeometries(model, computeBoneMatrices(model, 0, 0));
   const materials = await Promise.all(parts.map((part, index) => createMaterial(source.textureDir, part.textureName, { glow: source.isGlowMesh?.(index) })));
-  return new AnimatedModel(model, parts, materials);
+  const animated = new AnimatedModel(model, parts, materials);
+  await addItemGlow(animated, animated.parts, source.glow, item);
+  return animated;
 }
 
 class Attachment {
@@ -182,12 +194,12 @@ export class Character {
     this.model.pose(this.action, this.time);
     this.clock += dt;
     const light = sampleLight(world.light, x, y, this.light);
-    this.model.setLight(light);
+    this.model.setLight(light, this.clock);
     // Players carry their weapons on the back in a safe zone (AreWeaponsOnBack).
     this.weaponsOnBack = !this.holdWeapons && (world.flags[this.cell.y * TERRAIN_SIZE + this.cell.x] & TerrainFlag.SAFEZONE) !== 0;
     for (const attachment of this.attachments) {
       attachment.place(this.model.matrices, this.weaponsOnBack, this.clock);
-      attachment.model.setLight(light);
+      attachment.model.setLight(light, this.clock);
     }
   }
 
