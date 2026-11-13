@@ -1,5 +1,5 @@
 // Grid pathfinding over the map's walkability flags, in the eight directions the
-// protocol knows. Directions use the packet values of OpenMU's Direction enum minus
+// protocol knows. Directions use the packet values of the server's Direction enum minus
 // one (GameLogic/DirectionExtensions.cs).
 
 import { TERRAIN_SIZE, TerrainFlag } from '../formats.js';

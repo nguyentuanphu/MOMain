@@ -87,7 +87,7 @@ export function itemsWithModels(group) {
 
 const NO_ITEM_GROUP = 0xf;
 const NO_ITEM_NUMBER = 0xfff;
-// OpenMU sends (level - 1) / 2; the client draws the level LevelConvert gives (ZzzCharacter.cpp).
+// the server sends (level - 1) / 2; the client draws the level LevelConvert gives (ZzzCharacter.cpp).
 const LEVEL_OF_GLOW_STEP = [0, 3, 5, 7, 9, 11, 13, 15];
 
 function shinyItem(bytes, at) {
@@ -104,8 +104,8 @@ function plainItem(bytes, at) {
   return { group, number };
 }
 
-// OpenMU's extended appearance (AppearanceSerializerExtended, 27 bytes), which it
-// sends to MuMain in character lists and when players come into view.
+// the server's extended appearance (AppearanceSerializerExtended, 27 bytes), which it
+// sends to the desktop client in character lists and when players come into view.
 export function parseAppearance(bytes) {
   if (!bytes || bytes.length < 27) return { classNumber: bytes?.[0] ?? 0, equipment: {} };
   const items = 2;

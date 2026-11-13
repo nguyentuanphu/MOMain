@@ -3,7 +3,7 @@
 # HNMO.Web (web server + relay), ready to start with one click. Nothing has to be
 # installed on the computer that runs it: .NET is included.
 #
-# Usage: web/tools/package-hnmo.sh <path to the server source (OpenMU)> [runtime] [output folder] [--no-data]
+# Usage: web/tools/package-hnmo.sh <path to the server source (the HNMO server)> [runtime] [output folder] [--no-data]
 #   runtime: win-x64 (default), linux-x64, osx-arm64, ...
 #   --no-data: leave the game data out (copy src/bin/Data into HNMO/Data yourself)
 # Environment:
@@ -12,7 +12,7 @@
 #     uses POSTGRES_BIN (default /usr/lib/postgresql/16/bin), a PostgreSQL installed on the computer.
 set -euo pipefail
 
-SERVER_SOURCE="${1:?Give the path of the server source (the OpenMU repository)}"
+SERVER_SOURCE="${1:?Give the path of the server source (the the HNMO server repository)}"
 RUNTIME="${2:-win-x64}"
 WEB="$(cd "$(dirname "$0")/.." && pwd)"
 CLIENT_REPO="$(cd "$WEB/.." && pwd)"

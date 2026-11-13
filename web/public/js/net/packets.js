@@ -1,5 +1,5 @@
 // Reads and writes packets using the generated definitions (packets.generated.js).
-// Field indexes count from the start of the packet, header included, as in OpenMU's XML.
+// Field indexes count from the start of the packet, header included, as in the server's XML.
 
 import { PACKETS } from './packets.generated.js';
 

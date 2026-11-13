@@ -1,12 +1,12 @@
 # HNMO web client (experimental)
 
 A browser version of the client that reads the game data in `src/bin/Data`
-directly and plays on an OpenMU server. It is being built up to match the desktop
+directly and plays on the HNMO server. It is being built up to match the desktop
 client one to one; [PARITY.md](PARITY.md) tracks what works and what's next.
 
 ## What it does
 
-- Logs in to OpenMU: server list, login, character list, entering the world.
+- Logs in to the HNMO server: server list, login, character list, entering the world.
 - Draws the map the server puts you on: terrain, light map and all static objects.
 - Shows the players, NPCs and monsters in view, with their models and animations
   from `Data/Monsters`, and keeps them in sync as they come, go and walk.
@@ -32,7 +32,7 @@ The GitHub workflow "HNMO package" builds the Windows folder as a download.
 ### From source (developers)
 
 You need the .NET 10 SDK, Node.js (for `npm install` only) and a running server,
-e.g. `dotnet MUnique.OpenMU.Startup.dll -demo -autostart -resolveIP:loopback`.
+e.g. the server program started with `-demo -autostart -resolveIP:loopback`.
 
 ```bash
 cd web
@@ -51,11 +51,11 @@ ours to publish.
 
 ## Packets
 
-`public/js/net/packets.generated.js` is generated from OpenMU's packet
+`public/js/net/packets.generated.js` is generated from the server's packet
 definitions, so every packet the server knows can be read and written by name:
 
 ```bash
-node tools/generate-packets.mjs <OpenMU>/src/Network/Packets
+node tools/generate-packets.mjs <the HNMO server>/src/Network/Packets
 ```
 
 ## How the files are read

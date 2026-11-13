@@ -6,7 +6,7 @@ import { read } from './packets.js';
 import { PACKETS } from './packets.generated.js';
 import { parseAppearance } from '../game/items.js';
 
-// The client identity MuMain sends (Network/Server/WSclient.cpp: Version, Serial).
+// The client identity the desktop client sends (Network/Server/WSclient.cpp: Version, Serial).
 const CLIENT_VERSION = new TextEncoder().encode('20404');
 const CLIENT_SERIAL = new TextEncoder().encode('k1Pk2jcET48mxL3b');
 const XOR3_KEYS = [0xfc, 0xcf, 0xab];
@@ -81,7 +81,7 @@ export async function login(relayUrl, gameServer, username, password) {
   return connection;
 }
 
-// Character classes by OpenMU's class number >> 2, with the body set the client draws.
+// Character classes by the server's class number >> 2, with the body set the client draws.
 export const CLASSES = ['Dark Wizard', 'Dark Knight', 'Fairy Elf', 'Magic Gladiator', 'Dark Lord', 'Summoner', 'Rage Fighter'];
 
 export function classOfAppearance(appearance) {
@@ -100,7 +100,7 @@ export async function fetchCharacters(connection) {
   }));
 }
 
-// Creates a character (CharacterScene / CharMakeWin). The class goes as OpenMU's class
+// Creates a character (CharacterScene / CharMakeWin). The class goes as the server's class
 // number, four apart for each base class. Classes the account hasn't unlocked yet
 // (e.g. Magic Gladiator) are refused by the server.
 export async function createCharacter(connection, name, classIndex) {

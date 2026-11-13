@@ -2,7 +2,7 @@
 
 The goal is a web client that matches the desktop client (`src/source`) one to one.
 This list follows the client's source folders and is worked through top to bottom:
-each item is done when it behaves like the desktop client against OpenMU.
+each item is done when it behaves like the desktop client against the HNMO server.
 
 Status: ✅ done · 🟡 partly · ⬜ not started
 
@@ -10,8 +10,8 @@ Status: ✅ done · 🟡 partly · ⬜ not started
 
 | Feature | Status | Notes |
 |---|---|---|
-| Relay between browser and server (WebSocket ↔ TCP, SimpleModulus + Xor32) | ✅ | `web/bridge`, uses OpenMU's own network library like `ClientLibrary` |
-| All packet definitions | ✅ | Generated from OpenMU's XML: 609 packets (`tools/generate-packets.mjs`) |
+| Relay between browser and server (WebSocket ↔ TCP, SimpleModulus + Xor32) | ✅ | `web/bridge`, uses the server's own network library like `ClientLibrary` |
+| All packet definitions | ✅ | Generated from the server's XML: 609 packets (`tools/generate-packets.mjs`) |
 | Server list, game server address | ✅ | |
 | Login (Xor3 credentials, version `20404`, serial) | ✅ | Error texts for each login result |
 | Character list | ✅ | Name, level, class |

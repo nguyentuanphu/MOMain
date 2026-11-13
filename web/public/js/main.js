@@ -1,4 +1,4 @@
-// The web client: log in through the relay and play on an OpenMU server, or explore
+// The web client: log in through the relay and play on the HNMO server, or explore
 // Lorencia offline. Left-click walks, right-drag turns the camera, the wheel zooms.
 
 import * as THREE from 'three';
