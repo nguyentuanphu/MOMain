@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MuMain Web Client</title>
+  <title>HNMO</title>
   <style>
     :root { --panel: rgba(10, 12, 20, .86); --line: rgba(255, 255, 255, .14); --gold: #c9a24a; --text: #e6e8ef; --muted: #9aa0b2; --error: #ef7a6c; }
     [hidden] { display: none !important; }
@@ -84,7 +84,7 @@
   </div>
   <div id="login">
     <form class="panel" id="loginForm" autocomplete="on">
-      <h1>MU Online</h1>
+      <h1>HNMO</h1>
       <fieldset>
         <div class="row"><label for="username">Account</label><input id="username" name="username" required maxlength="10" autocomplete="username"></div>
         <div class="row"><label for="password">Password</label><input id="password" name="password" type="password" required maxlength="20" autocomplete="current-password"></div>
@@ -104,13 +104,13 @@
       <p id="loginError" role="alert" hidden></p>
       <div class="choices" id="servers" hidden></div>
       <div class="choices" id="characters" hidden></div>
-      <p class="hint">OpenMU's test accounts use the account name as password, e.g. test300.</p>
+      <p class="hint">The test accounts use the account name as password, e.g. test300.</p>
     </form>
   </div>
   <div id="chatLog" class="chat-log" hidden></div>
   <form id="chatForm" class="chat-form" hidden autocomplete="off"><input id="chatInput" maxlength="60" placeholder="Enter to chat, e.g. /move devias" aria-label="Chat message"></form>
   <div class="chip map-picker" id="mapPicker" hidden><label for="mapSelect">Map</label><select id="mapSelect"></select></div>
-  <div id="loading" class="chip"><div id="status">Log in to an OpenMU server, or explore Lorencia offline.</div><div id="track"><div id="bar"></div></div></div>
+  <div id="loading" class="chip"><div id="status">Log in to the HNMO server, or explore offline.</div><div id="track"><div id="bar"></div></div></div>
   <script type="module" src="/js/main.js"></script>
 </body>
 </html>

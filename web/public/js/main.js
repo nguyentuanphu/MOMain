@@ -21,7 +21,7 @@ const FOG = { color: new THREE.Color(0x0a0d14), near: 2600, far: 4200 };
 const CAMERA = { distance: 1250, minDistance: 500, maxDistance: 2600, pitch: 48 * Math.PI / 180, yaw: -45 * Math.PI / 180 };
 const LABEL_RANGE_CELLS = 18;
 const MAX_FRAME_SECONDS = 0.5; // a hidden tab still catches up on walks, but not on minutes
-const SETTINGS_KEY = 'mu-web-login';
+const SETTINGS_KEY = 'hnmo-login';
 
 const $ = (id) => document.getElementById(id);
 const ui = {
@@ -389,7 +389,8 @@ function startGame(play) {
 
 function initLogin() {
   const saved = loadSettings();
-  const defaults = { relay: `ws://${location.hostname}:8081/relay`, host: '127.0.0.1', port: 44406, username: '' };
+  // HNMO.Web serves the page and the relay from the same address.
+  const defaults = { relay: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/relay`, host: '127.0.0.1', port: 44406, username: '' };
   for (const [key, value] of Object.entries({ ...defaults, ...saved })) {
     const input = ui.loginForm.elements.namedItem(key);
     if (input) input.value = value;

@@ -1,11 +1,12 @@
 {
-  "name": "mumain-web-viewer",
+  "name": "hnmo-web",
   "version": "0.1.0",
   "private": true,
-  "description": "Experimental browser renderer for the MuMain game data (Path B prototype).",
+  "description": "HNMO web client.",
   "type": "module",
   "scripts": {
-    "start": "node server.mjs"
+    "start": "dotnet run --project bridge -c Release",
+    "generate-packets": "node tools/generate-packets.mjs"
   },
   "dependencies": {
     "three": "0.160.0"

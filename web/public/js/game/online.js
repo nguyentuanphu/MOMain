@@ -37,7 +37,8 @@ export class OnlineWorld {
     try {
       if (code === Code.MAP_CHANGED && bytes[0] === 0xc3 && subCode === MAP_CHANGED_SUB_CODE) return this.mapChanged(read('ServerToClient', 'MapChanged', bytes));
       if (code === Code.CHAT && bytes[0] === 0xc1) { const m = read('ServerToClient', 'ChatMessage', bytes); return this.onMessage?.(`${m.Sender}: ${m.Message}`, 'chat'); }
-      if (code === Code.SERVER_MESSAGE && bytes[0] === 0xc1 && bytes.length > 4) return this.onMessage?.(read('ServerToClient', 'ServerMessage', bytes).Message, 'system');
+      // The client reads every notice with the layout of PRECEIVE_NOTICE: type, count, delay, color, speed, text (ReceiveNotice).
+      if (code === Code.SERVER_MESSAGE && bytes[0] === 0xc1 && bytes.length > 13) return this.onMessage?.(read('ServerToClient', 'SlideNotice', bytes).Message, 'system');
       if (code === Code.ADD_NPCS && bytes[0] === 0xc2) this.addNpcs(read('ServerToClient', 'AddNpcsToScope', bytes));
       else if (code === Code.ADD_PLAYERS && bytes[0] === 0xc2) this.addPlayer(read('ServerToClient', 'AddCharacterToScopeExtended', bytes));
       else if (code === Code.OUT_OF_SCOPE && bytes[0] === 0xc1) this.remove(read('ServerToClient', 'MapObjectOutOfScope', bytes));

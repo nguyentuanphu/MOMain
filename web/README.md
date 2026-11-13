@@ -1,4 +1,4 @@
-# Web client (experimental)
+# HNMO web client (experimental)
 
 A browser version of the client that reads the game data in `src/bin/Data`
 directly and plays on an OpenMU server. It is being built up to match the desktop
@@ -16,29 +16,38 @@ client one to one; [PARITY.md](PARITY.md) tracks what works and what's next.
 
 ## Run it
 
-You need Node.js 18+, the .NET 10 SDK and a running OpenMU server (for example
-`dotnet MUnique.OpenMU.Startup.dll -demo -autostart -resolveIP:loopback`).
+### The HNMO folder (players)
+
+`tools/package-hnmo.sh` builds one folder with the game server, its admin panel, the
+web client and the game data; nothing has to be installed where it runs (.NET is
+included). Start it with `Start HNMO.bat` (Windows) or `start-hnmo.sh`. Its
+`README.txt` explains how friends join.
 
 ```bash
-# 1. The relay between the browser and the game servers (port 8081)
-cd web/bridge
-dotnet run -c Release
-
-# 2. The web client (port 8080), in a second terminal
-cd web
-npm install
-npm start
+web/tools/package-hnmo.sh <path to the server repository> win-x64
 ```
 
-Open <http://127.0.0.1:8080/> and log in, e.g. with OpenMU's test account
-`test300` / `test300`. The connect server and relay addresses are under "Server".
+The GitHub workflow "HNMO package" builds the Windows folder as a download.
 
-Browsers can't open TCP connections, so everything goes through the relay. It only
-connects to the hosts in `bridge/appsettings.json` (`Relay:AllowedHosts`, plus
-loopback addresses), so it can't be used to reach anything else.
+### From source (developers)
 
-The web server binds to localhost on purpose: the game data is not ours to
-publish, so don't expose it to the internet.
+You need the .NET 10 SDK, Node.js (for `npm install` only) and a running server,
+e.g. `dotnet MUnique.OpenMU.Startup.dll -demo -autostart -resolveIP:loopback`.
+
+```bash
+cd web
+npm install
+npm start        # HNMO.Web: the client, the game data and the relay on port 8081
+```
+
+Open <http://127.0.0.1:8081/> and log in, e.g. with the test account `test300` /
+`test300`.
+
+`HNMO.Web` (`bridge/`) serves the page, the game data (`/data`) and the relay
+(`/relay`) from one address. The relay only connects to the hosts in
+`bridge/appsettings.json` (`Relay:AllowedHosts`, plus loopback addresses), so it can't
+be used to reach anything else. Don't expose it to the internet: the game data is not
+ours to publish.
 
 ## Packets
 

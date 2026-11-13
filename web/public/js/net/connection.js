@@ -4,11 +4,14 @@
 
 import { read, write, packetCode } from './packets.js';
 
+const MAX_BACKLOG = 64;
+
 export class Connection {
   constructor(relayUrl, { host, port, encrypted }) {
     this.url = `${relayUrl}?host=${encodeURIComponent(host)}&port=${port}&encrypted=${encrypted ? 1 : 0}`;
     this.handlers = new Set();
     this.waiters = [];
+    this.backlog = []; // packets no waiter took yet, for a waiter that starts a moment later
     this.closed = false;
     this.onClose = null;
   }
@@ -32,12 +35,15 @@ export class Connection {
 
   dispatch(bytes) {
     for (const handler of this.handlers) handler(bytes);
-    this.waiters = this.waiters.filter((waiter) => {
-      if (!waiter.matches(bytes)) return true;
-      clearTimeout(waiter.timer);
-      waiter.resolve(bytes);
-      return false;
-    });
+    const waiter = this.waiters.find((w) => w.matches(bytes));
+    if (!waiter) {
+      this.backlog.push(bytes);
+      if (this.backlog.length > MAX_BACKLOG) this.backlog.shift();
+      return;
+    }
+    clearTimeout(waiter.timer);
+    this.waiters = this.waiters.filter((w) => w !== waiter);
+    waiter.resolve(bytes);
   }
 
   onPacket(handler) {
@@ -52,6 +58,11 @@ export class Connection {
         const header = packetCode(bytes);
         return header.code === code && (subCode === undefined || header.subCode === subCode);
       };
+      const early = this.backlog.findIndex(matches);
+      if (early >= 0) {
+        resolve(this.backlog.splice(early, 1)[0]);
+        return;
+      }
       const waiter = { matches, resolve, reject };
       waiter.timer = setTimeout(() => {
         this.waiters = this.waiters.filter((w) => w !== waiter);

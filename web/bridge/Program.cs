@@ -1,5 +1,8 @@
-// Relays game connections between a browser and OpenMU.
+// HNMO.Web: everything the browser needs from one address.
+//  - the web client (WebRoot) and the game's data files (/data, see GameFiles.cs);
+//  - /relay, the relay between the browser and the game servers, described below.
 //
+// Relays game connections between a browser and the game server.
 // Browsers can only open WebSockets, while the game servers speak MU's own packet
 // protocol over TCP. The browser opens /relay?host=..&port=..&encrypted=0|1, and
 // this program connects to that server like the desktop client's ClientLibrary does:
@@ -20,6 +23,10 @@ using Pipelines.Sockets.Unofficial;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
+var contentRoot = app.Environment.ContentRootPath;
+var webRoot = Path.GetFullPath(Path.Combine(contentRoot, app.Configuration["HNMO:WebRoot"] ?? "../public"));
+var gameFiles = new GameFiles(Path.Combine(contentRoot, app.Configuration["HNMO:DataPath"] ?? "../../src/bin/Data"));
+var vendorRoot = Path.GetFullPath(Path.Combine(contentRoot, app.Configuration["HNMO:VendorPath"] ?? "../node_modules"));
 var allowedHosts = app.Configuration.GetSection("Relay:AllowedHosts").Get<string[]>() ?? ["127.0.0.1", "localhost"];
 var allowLoopback = app.Configuration.GetValue("Relay:AllowLoopback", true);
 var connectTimeout = TimeSpan.FromSeconds(app.Configuration.GetValue("Relay:ConnectTimeoutSeconds", 10));
@@ -28,6 +35,21 @@ const int MaximumPacketSize = 0xFFFF;
 app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(20) });
 
 app.MapGet("/health", () => "ok");
+
+// The web client and its libraries, then the game's data files.
+app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(webRoot) });
+app.UseStaticFiles(new StaticFileOptions { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(webRoot) });
+if (Directory.Exists(Path.Combine(vendorRoot, "three")))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        RequestPath = "/vendor/three",
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(vendorRoot, "three")),
+    });
+}
+
+app.MapGet("/data/{**path}", (HttpContext context, string path) => gameFiles.ServeAsync(context, path));
+app.Logger.LogInformation("Web client: {WebRoot}. Game data: {DataRoot}.", webRoot, gameFiles.Root);
 
 app.Map("/relay", async context =>
 {
