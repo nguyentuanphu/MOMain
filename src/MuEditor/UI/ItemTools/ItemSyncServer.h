@@ -10,17 +10,17 @@
 #include <string_view>
 #include <thread>
 
-// Update from server of the Item Sync window (phase 7 step 4): downloads OpenMU's item exchange
+// Update from server of the Item Sync window (phase 7 step 4): downloads HNMO's item exchange
 // file from its admin panel, GET <admin panel URL>/api/items/exchange with the API key in the
 // X-Api-Key header. The key is typed into the window, or comes from the environment variable
-// MU_OPENMU_API_KEY; Remember keeps it in the system's key store (SecretStore), never in a file
+// MU_HNMO_API_KEY; Remember keeps it in the system's key store (SecretStore), never in a file
 // or a log. The download runs on a thread of its own and can be cancelled.
 namespace MuEditor::Items
 {
 // The environment variable with the API key of the admin panel (the Viewer role is enough).
-constexpr const char* OpenMUApiKeyVariable = "MU_OPENMU_API_KEY";
+constexpr const char* HNMOApiKeyVariable = "MU_HNMO_API_KEY";
 // The path of the exchange file below the admin panel's address.
-constexpr const char* OpenMUExchangePath = "/api/items/exchange";
+constexpr const char* HNMOExchangePath = "/api/items/exchange";
 
 // Why an update from the server has no file.
 enum class ServerUpdateProblem : uint8_t
@@ -37,7 +37,7 @@ enum class ServerUpdateProblem : uint8_t
     KeyRefused,
     // 403: the key lacks the Viewer role, or the admin panel has no user yet.
     NotAllowed,
-    // 404: the admin panel has no exchange file (an OpenMU without it).
+    // 404: the admin panel has no exchange file (an HNMO without it).
     NoEndpoint,
     // 429: too many requests.
     TooManyRequests,
@@ -54,10 +54,10 @@ std::optional<std::string> GetExchangeUrl(std::string_view adminPanelUrl, Server
 // The problem an answer's HTTP status gives; None for 200.
 ServerUpdateProblem ProblemOfStatus(long status);
 
-// The API key from MU_OPENMU_API_KEY; empty when it is not set.
-std::string ReadOpenMUApiKey();
+// The API key from MU_HNMO_API_KEY; empty when it is not set.
+std::string ReadHNMOApiKey();
 // The name the key store keeps the API key of the admin panel at `adminPanelUrl` under: one key
-// per address ("OpenMU API key https://admin.example.org").
+// per address ("HNMO API key https://admin.example.org").
 std::string GetApiKeySecretName(std::string_view adminPanelUrl);
 
 struct ServerDownload

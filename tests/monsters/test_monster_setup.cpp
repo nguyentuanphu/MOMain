@@ -1250,11 +1250,11 @@ TEST_CASE("Monster setup: a Blood Castle's monsters are bigger by castle (P13) [
     scope.SetServerMap(0, 0);
 }
 
-// The numbers without a creator that OpenMU sends (P2, Q-MN42): the Imperial
+// The numbers without a creator that HNMO sends (P2, Q-MN42): the Imperial
 // Guardian's traps 523 have no body (model none, the trap kind), the renewed
 // Illusion Temple's statues 658 to 668 the Stone Statue's look, 658 the
 // monster kind (attackable), 659 to 668 the NPC kind.
-TEST_CASE("Monster setup: the traps and statues OpenMU sends have their looks (P2) [monsters][creation]")
+TEST_CASE("Monster setup: the traps and statues HNMO sends have their looks (P2) [monsters][creation]")
 {
     MonsterRecorder::CreationScope scope(0);
     scope.SetServerMap(69, 0);

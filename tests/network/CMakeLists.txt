@@ -134,8 +134,8 @@ if(WIN32 AND TARGET ClientLibrary)
     add_dependencies(test_connection_open ClientLibrary)
     add_custom_command(TARGET test_connection_open PRE_LINK
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_BINARY_DIR}/src/MUnique.Client.Library.dll"
-            "$<TARGET_FILE_DIR:test_connection_open>/MUnique.Client.Library.dll"
+            "${CMAKE_BINARY_DIR}/src/HNMO.Client.Library.dll"
+            "$<TARGET_FILE_DIR:test_connection_open>/HNMO.Client.Library.dll"
         COMMENT "Staging ClientLibrary beside the connection test"
         VERBATIM
     )

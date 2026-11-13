@@ -6,7 +6,7 @@
 
 // Reconnects quietly when a server drops the client on the login screen.
 //
-// The connect server closes connections that stay idle (OpenMU: after one minute
+// The connect server closes connections that stay idle (HNMO: after one minute
 // by default), and a router can cut an idle game-server connection the same way.
 // An open server list asks for a fresh one now and then, which keeps its connection
 // up; when the connect server's limit of lists per connection is near, the list

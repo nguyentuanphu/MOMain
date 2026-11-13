@@ -36,7 +36,7 @@ See [the build guide](../README.md) for shared concepts.
 
 Set the debug target to `Main.exe` and its **working directory** to the build
 output, e.g. `out/build/windows-x64-mueditor/src/Debug/`. The post-build step
-copies the assets and `MUnique.Client.Library.dll` there.
+copies the assets and `HNMO.Client.Library.dll` there.
 
 > Visual Studio cannot open projects from the WSL filesystem
 > (`\\wsl.localhost\...`). Use a repository checked out on a Windows drive.

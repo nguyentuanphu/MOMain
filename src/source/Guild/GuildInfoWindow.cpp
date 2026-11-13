@@ -904,7 +904,7 @@ int mu::ui::window::CGuildInfoWindow::GetUnionCount()
 void mu::ui::window::CGuildInfoWindow::ReceiveGuildRelationShip(GuildRelationshipType relationshipType,
                                                                 GuildRequestType requestType, WORD requesterKey)
 {
-    // The reply carries the requester's key as the server sent it; OpenMU keeps the request pending until it arrives.
+    // The reply carries the requester's key as the server sent it; HNMO keeps the request pending until it arrives.
     const auto reply = [relationshipType, requestType, requesterKey](BYTE result)
     {
         SocketClient->ToGameServer()->SendGuildRelationshipChangeResponse(relationshipType, requestType, result,

@@ -127,3 +127,7 @@ docs/reviews/
 # In-game test runner output (docs/in-game-tests.md)
 in-game-test-results/
 __pycache__/
+dist/
+
+# The HNMO server checkout for the packet definitions (CI)
+.hnmo-server/

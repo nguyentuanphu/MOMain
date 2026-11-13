@@ -15,7 +15,7 @@ namespace
 using Network::Packets::DecodeIllusionTempleClass;
 using Network::Packets::ParseIllusionTempleResult;
 
-// Expected values from OpenMU's ToIllusionTempleCharacterClass and CharacterClassNumber.
+// Expected values from HNMO's ToIllusionTempleCharacterClass and CharacterClassNumber.
 constexpr std::array<std::array<std::uint8_t, 2>, 18> Classes{{
     {0x00, 0},
     {0x20, 2},
@@ -59,7 +59,7 @@ std::vector<std::uint8_t> TwoPlayers()
 }
 } // namespace
 
-TEST_CASE("Temple result decodes all 18 OpenMU packed classes [network][temple-result]")
+TEST_CASE("Temple result decodes all 18 HNMO packed classes [network][temple-result]")
 {
     for (const auto& [wireClass, serverClass] : Classes)
     {

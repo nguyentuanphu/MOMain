@@ -96,7 +96,7 @@ namespace MUHelper
 		std::set<std::wstring> aExtraItems;
 
 		// Client-local settings (byte index 33, bits 0-3).
-		// The server (OpenMU) stores MuHelperConfiguration as byte[] echoed
+		// The server (HNMO) stores MuHelperConfiguration as byte[] echoed
 		// unchanged. It does not parse or enforce these bits. Adding new bits
 		// in unused positions is safe. However, changing existing bits will
 		// break offline leveling bots, since the server side bot relies on the

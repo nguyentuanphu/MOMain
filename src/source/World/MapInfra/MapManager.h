@@ -109,7 +109,7 @@ public:
     // hero loads the world only when not. Not WorldActive == serverMap: Devil
     // Square 5-7 (32) is loaded as world 9, the world of Devil Square 1-4.
     bool IsServerMapLoaded(int serverMap) const;
-    // The stage the server sent with the map (OpenMU's discriminator, monsters
+    // The stage the server sent with the map (HNMO's discriminator, monsters
     // design, D67): the stage of Devil Square, 1 to 7; 0 when it sent none.
     // Where WorldActive was set alone, 0.
     void SetServerStage(int stage);

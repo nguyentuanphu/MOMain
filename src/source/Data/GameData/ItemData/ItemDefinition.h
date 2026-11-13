@@ -47,7 +47,7 @@ enum class WingTier : BYTE
     Third,
 };
 
-// The kind of weapon, as OpenMU's item groups give it: swords and the Rage
+// The kind of weapon, as HNMO's item groups give it: swords and the Rage
 // Fighter's gloves (group 0), axes (1), maces and sceptres (2), spears (3),
 // bows and crossbows (group 4: bows have the slot offHand, crossbows
 // mainHand; arrows and bolts are neither), staffs, sticks and the summoner's

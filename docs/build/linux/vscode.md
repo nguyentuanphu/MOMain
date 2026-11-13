@@ -24,7 +24,7 @@ prerequisites (system packages and the .NET SDK) and shared concepts, see
 ## Run
 
 The simplest way to get the right working directory (so the client finds its
-assets and `MUnique.Client.Library.so`) is to launch from the terminal:
+assets and `HNMO.Client.Library.so`) is to launch from the terminal:
 
 ```bash
 cd build/src && ./Main

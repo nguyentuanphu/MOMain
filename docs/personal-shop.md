@@ -1,7 +1,7 @@
 # Personal shop prices in items and account coins
 
 A personal shop sells its items for zen. When the server allows it (the
-OpenMU plugin *Player shop currencies*), the price of each item can also be
+HNMO plugin *Player shop currencies*), the price of each item can also be
 set in:
 
 - items which the server configured as price items, by default the Jewels of
@@ -29,7 +29,7 @@ A long menu takes two columns. Choosing a currency, or closing the menu, returns
 to the price dialog and keeps the typed amount. Zen prices below the item's value
 still ask for a confirmation; the other currencies don't.
 
-Which items can be prices is the server's choice: OpenMU offers the five jewels
+Which items can be prices is the server's choice: HNMO offers the five jewels
 Bless, Soul, Chaos, Creation and Life by default, and its administrators can add
 any other item.
 

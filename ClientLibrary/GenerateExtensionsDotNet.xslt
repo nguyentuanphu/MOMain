@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:msxsl="urn:schemas-microsoft-com:xslt" exclude-result-prefixes="msxsl"
-    xmlns:pd="http://www.munique.net/OpenMU/PacketDefinitions"
+    xmlns:pd="https://github.com/nguyentuanphu/HNMO/PacketDefinitions"
 >
   <xsl:param name="subNamespace" />
   <xsl:output method="text" indent="yes" />
   <xsl:include href="Common.xslt" />
 
   <xsl:template match="pd:PacketDefinitions">
-	  <xsl:text>// &lt;copyright file="ConnectionManager.cs" company="MUnique"&gt;
+	  <xsl:text>// &lt;copyright file="ConnectionManager.cs" company="HNMO"&gt;
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // &lt;/copyright&gt;
 
@@ -27,16 +27,16 @@
 // ReSharper disable UseObjectOrCollectionInitializer
 
 #nullable enable
-namespace MUnique.Client.Library;
+namespace HNMO.Client.Library;
 
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using MUnique.OpenMU.Network;
-using MUnique.OpenMU.Network.Packets;
-using MUnique.OpenMU.Network.Packets.</xsl:text><xsl:value-of select="$subNamespace"/><xsl:text>;
+using HNMO.Network;
+using HNMO.Network.Packets;
+using HNMO.Network.Packets.</xsl:text><xsl:value-of select="$subNamespace"/><xsl:text>;
 
 /// &lt;summary&gt;
 /// Extension methods to start writing messages of this namespace on a &lt;see cref="IConnection"/&gt;.

@@ -53,7 +53,7 @@ Use `cmake/toolchains/mingw-w64-i686.cmake` and the i686 turbojpeg path for a
 ## The network library (`.dll`)
 
 Native AOT cannot cross-OS compile: a **Linux** `dotnet` cannot produce the
-Windows `MUnique.Client.Library.dll`. Two options:
+Windows `HNMO.Client.Library.dll`. Two options:
 
 - **With Windows `dotnet.exe` via WSL interop** (`/mnt/c/Program
   Files/dotnet/dotnet.exe` on `PATH`): CMake uses it to build the real `.dll`,

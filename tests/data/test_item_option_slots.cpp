@@ -178,7 +178,7 @@ TEST_CASE("A Dark Horse keeps one defense slot over pet info updates [items]")
     }
 }
 
-// The Dark Horse's defense counts all of the character's agility, as OpenMU does (Pets.cs, Stats.TotalAgility): its
+// The Dark Horse's defense counts all of the character's agility, as HNMO does (Pets.cs, Stats.TotalAgility): its
 // base agility and the agility its items, sets and sockets add.
 TEST_CASE("A Dark Horse's defense counts the agility from items [items]")
 {
@@ -196,7 +196,7 @@ TEST_CASE("A Dark Horse's defense counts the agility from items [items]")
 }
 
 // An option's value has more than a byte: the Dark Horse's defense passes 255 at 3020 agility with a horse at level 50,
-// and OpenMU adds all of it (Pets.cs, DefenseBase + 5 + horse level * 2 + agility / 20).
+// and HNMO adds all of it (Pets.cs, DefenseBase + 5 + horse level * 2 + agility / 20).
 TEST_CASE("An option keeps a value above 255 [items]")
 {
     HeroScope hero;
@@ -559,7 +559,7 @@ TEST_CASE("The additional option's tooltip lines come from its texts [data][item
     CHECK(MakeItemWithOption(ITEM_LOCHS_FEATHER, 2).SpecialNum == 0);
 }
 
-// The option type the server sends picks the option of that number, as OpenMU reads it: the additional options are
+// The option type the server sends picks the option of that number, as HNMO reads it: the additional options are
 // numbered 0, so another type turns none of them on.
 TEST_CASE("An additional option turns on only for its number [data][items]")
 {
@@ -630,7 +630,7 @@ TEST_CASE("A magic sword's damage option raises the wizardry damage by its effec
     CHECK_FALSE(GameLogic::Items::DamageOptionRaisesWizardry(MakeItemWithOption(ITEM_WINGS_OF_SATAN, 4)));
 }
 
-// The strength requirement grows by the level the additional option counts at, as OpenMU adds it for the option the
+// The strength requirement grows by the level the additional option counts at, as HNMO adds it for the option the
 // item has: nothing without one, the list's last level above the list.
 TEST_CASE("The strength requirement grows by the additional option's counted level [data][items]")
 {

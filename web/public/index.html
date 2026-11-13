@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HNMO</title>
+  <style>
+    :root { --panel: rgba(10, 12, 20, .86); --line: rgba(255, 255, 255, .14); --gold: #c9a24a; --text: #e6e8ef; --muted: #9aa0b2; --error: #ef7a6c; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; margin: 0; background: #0a0d14; color: var(--text); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    #stage { position: fixed; inset: 0; }
+    #view { width: 100%; height: 100%; display: block; }
+    .hud { position: fixed; left: 12px; right: 12px; top: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; pointer-events: none; }
+    .chip { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; font-variant-numeric: tabular-nums; }
+    .chip label, .chip select { pointer-events: auto; }
+    select, input { background: #151a26; color: inherit; border: 1px solid #2c3446; border-radius: 4px; padding: 6px 8px; font: inherit; }
+    #loading { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); width: min(520px, 86vw); }
+    #track { height: 4px; background: rgba(255, 255, 255, .12); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+    #bar { height: 100%; width: 0; background: var(--gold); transition: width .2s; }
+    body.ready #track { display: none; }
+    #login { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at center, #1a1f2e 0%, #07090f 70%); }
+    .panel { width: min(380px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 14px; }
+    .panel h1 { margin: 0; font-size: 20px; letter-spacing: .04em; color: var(--gold); }
+    fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .row { display: grid; gap: 4px; }
+    .row label { color: var(--muted); font-size: 12px; }
+    .split { display: grid; grid-template-columns: 1fr 90px; gap: 8px; }
+    details summary { color: var(--muted); cursor: pointer; font-size: 12px; }
+    details[open] { display: grid; gap: 10px; }
+    .buttons { display: flex; gap: 8px; }
+    button { font: inherit; border-radius: 6px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--line); background: #1b2131; color: var(--text); }
+    button.primary { background: var(--gold); color: #1a1408; border-color: var(--gold); font-weight: 600; flex: 1; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+    .choices { display: grid; gap: 6px; }
+    .choice { text-align: left; display: flex; justify-content: space-between; gap: 8px; }
+    .choice small { color: var(--muted); }
+    #loginError { color: var(--error); margin: 0; }
+    .hint { color: var(--muted); font-size: 12px; margin: 0; }
+    #labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .label { position: absolute; left: 0; top: 0; font-size: 12px; white-space: nowrap; color: #f2f3f7; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+    .label.npc { color: #9fe0a8; }
+    .chat-log { position: fixed; left: 12px; bottom: 84px; width: min(460px, calc(100vw - 24px)); max-height: 30vh; overflow-y: auto; font-size: 13px; text-shadow: 0 1px 2px #000; pointer-events: none; display: grid; gap: 2px; }
+    .chat-log .system { color: #f0d27a; }
+    .chat-log .chat { color: #f2f3f7; }
+    .chat-form { position: fixed; left: 12px; bottom: 48px; width: min(460px, calc(100vw - 24px)); }
+    .chat-form input { width: 100%; box-sizing: border-box; background: rgba(10,12,20,.75); }
+    .map-picker { position: fixed; right: 12px; top: 12px; display: flex; gap: 8px; align-items: center; }
+    .map-picker label { color: var(--muted); font-size: 12px; }
+    .wardrobe { position: fixed; right: 12px; top: 56px; width: min(260px, calc(100vw - 24px)); display: grid; gap: 4px; padding: 12px; }
+    .wardrobe label { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .wardrobe select { width: 100%; }
+    .wardrobe .check { display: flex; gap: 6px; align-items: center; color: var(--text); }
+    .wardrobe .buttons { margin-top: 8px; }
+    .wardrobe .buttons button { flex: 1; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="stage"><canvas id="view"></canvas></div>
+  <div id="labels"></div>
+  <div class="hud" id="hud" hidden>
+    <span class="chip" id="heroName">-</span>
+    <span class="chip">Cell <span id="position">-</span></span>
+    <span class="chip" id="fps">- fps</span>
+  </div>
+  <div class="chip wardrobe" id="wardrobe" hidden>
+    <strong>Wardrobe</strong>
+    <label for="bodySet">Class</label>
+    <select id="bodySet">
+      <option value="1">Dark Wizard</option><option value="2" selected>Dark Knight</option><option value="3">Fairy Elf</option>
+      <option value="4">Magic Gladiator</option><option value="5">Dark Lord</option><option value="6">Summoner</option><option value="7">Rage Fighter</option>
+    </select>
+    <label for="armorSet">Armour set</label><select id="armorSet"></select>
+    <label for="rightHand">Right hand</label><select id="rightHand"></select>
+    <label for="leftHand">Left hand</label><select id="leftHand"></select>
+    <label for="wings">Wings</label><select id="wings"></select>
+    <label for="itemLevel">Item level</label><select id="itemLevel"></select>
+    <label class="check"><input type="checkbox" id="excellent"> Excellent</label>
+    <label class="check"><input type="checkbox" id="ancient"> Ancient</label>
+    <label class="check"><input type="checkbox" id="holdWeapons"> Hold weapons in town</label>
+    <div class="buttons"><button type="button" id="previousSet">◀ Set</button><button type="button" id="nextSet">Set ▶</button></div>
+  </div>
+  <div id="login">
+    <form class="panel" id="loginForm" autocomplete="on">
+      <h1>HNMO</h1>
+      <fieldset>
+        <div class="row"><label for="username">Account</label><input id="username" name="username" required maxlength="10" autocomplete="username"></div>
+        <div class="row"><label for="password">Password</label><input id="password" name="password" type="password" required maxlength="20" autocomplete="current-password"></div>
+        <details>
+          <summary>Server</summary>
+          <div class="split">
+            <div class="row"><label for="host">Connect server</label><input id="host" name="host" required></div>
+            <div class="row"><label for="port">Port</label><input id="port" name="port" type="number" min="1" max="65535" required></div>
+          </div>
+          <div class="row"><label for="relay">Relay</label><input id="relay" name="relay" required></div>
+        </details>
+        <div class="buttons">
+          <button class="primary" type="submit">Connect</button>
+          <button type="button" id="offline">Explore offline</button>
+        </div>
+      </fieldset>
+      <p id="loginError" role="alert" hidden></p>
+      <div class="choices" id="servers" hidden></div>
+      <div class="choices" id="characters" hidden></div>
+      <p class="hint">No account yet? <a href="/account.html" style="color:var(--gold)">Create one</a> (free coins included). Test accounts: test300 / test300.</p>
+    </form>
+  </div>
+  <div id="chatLog" class="chat-log" hidden></div>
+  <form id="chatForm" class="chat-form" hidden autocomplete="off"><input id="chatInput" maxlength="60" placeholder="Enter to chat, e.g. /move devias" aria-label="Chat message"></form>
+  <div class="chip map-picker" id="mapPicker" hidden><label for="mapSelect">Map</label><select id="mapSelect"></select></div>
+  <div id="loading" class="chip"><div id="status">Log in to the HNMO server, or explore offline.</div><div id="track"><div id="bar"></div></div></div>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

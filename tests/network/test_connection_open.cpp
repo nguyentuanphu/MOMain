@@ -114,7 +114,7 @@ private:
 void RequireLibrary()
 {
     LoadManagedLibrary();
-    REQUIRE(munique_client_library_handle != nullptr);
+    REQUIRE(hnmo_client_library_handle != nullptr);
 }
 } // namespace
 

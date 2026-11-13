@@ -2660,7 +2660,7 @@
     <value>Plus {0}, level weight {1}, percent {2}</value>
   </data>
   <data name="The server keeps its own formulas" xml:space="preserve">
-    <value>The server (OpenMU) keeps its own formulas until they are synced: what it checks and computes can differ from what these give.</value>
+    <value>The server (HNMO) keeps its own formulas until they are synced: what it checks and computes can differ from what these give.</value>
   </data>
   <data name="Items keep their values until made again" xml:space="preserve">
     <value>Items your character already has keep their values until they are made again (e.g. after logging in again).</value>
@@ -3253,8 +3253,8 @@
   <data name="Import from {0}" xml:space="preserve">
     <value>Import from {0}</value>
   </data>
-  <data name="From OpenMU, server {0}" xml:space="preserve">
-    <value>From OpenMU, server {0}</value>
+  <data name="From HNMO, server {0}" xml:space="preserve">
+    <value>From HNMO, server {0}</value>
   </data>
   <data name="The diff counts" xml:space="preserve">
     <value>{0} added, {1} changed items; {2} formula entries</value>
@@ -3316,8 +3316,8 @@
   <data name="The marks are not saved while {0} cannot be read" xml:space="preserve">
     <value>The marks are not saved while {0} cannot be read (see the console). Fix or remove the file, then close this window and open it again.</value>
   </data>
-  <data name="OpenMU keeps the drop level in a byte (at most 255)" xml:space="preserve">
-    <value>OpenMU keeps the drop level in a byte (at most 255)</value>
+  <data name="HNMO keeps the drop level in a byte (at most 255)" xml:space="preserve">
+    <value>HNMO keeps the drop level in a byte (at most 255)</value>
   </data>
   <data name="It has no model yet" xml:space="preserve">
     <value>It has no model yet</value>
@@ -3989,10 +3989,10 @@
     <value>Downloading {0} ...</value>
   </data>
   <data name="What Update from server does" xml:space="preserve">
-    <value>Update from server downloads the items of an OpenMU server from its admin panel and lists how they differ from the client's, as Import does. Enter an API key of the admin panel; Remember keeps it for the address in the system's key store. Without one, the environment variable {0} fills the field.</value>
+    <value>Update from server downloads the items of an HNMO server from its admin panel and lists how they differ from the client's, as Import does. Enter an API key of the admin panel; Remember keeps it for the address in the system's key store. Without one, the environment variable {0} fills the field.</value>
   </data>
-  <data name="Enter the address of the OpenMU admin panel" xml:space="preserve">
-    <value>Enter the address of the OpenMU admin panel, e.g. https://admin.example.org or http://localhost:8080.</value>
+  <data name="Enter the address of the HNMO admin panel" xml:space="preserve">
+    <value>Enter the address of the HNMO admin panel, e.g. https://admin.example.org or http://localhost:8080.</value>
   </data>
   <data name="The admin panel address must be https" xml:space="preserve">
     <value>The admin panel's address must start with https://; http:// only works for this computer (localhost, 127.0.0.1, [::1]).</value>
@@ -4004,7 +4004,7 @@
     <value>The API key may not download the items (403): it needs the Viewer role, and the admin panel needs a user.</value>
   </data>
   <data name="The admin panel has no item exchange" xml:space="preserve">
-    <value>The admin panel has no item exchange file (404): it needs a newer OpenMU.</value>
+    <value>The admin panel has no item exchange file (404): it needs a newer HNMO.</value>
   </data>
   <data name="Too many requests, try again in a minute" xml:space="preserve">
     <value>Too many requests (429): try again in a minute.</value>

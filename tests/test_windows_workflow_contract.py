@@ -467,7 +467,7 @@ check(
 native_validation = step(native_job, "build-windows", "Validate artifacts")
 for required in (
     '"$runtimeDirectory/Main.exe"',
-    '"$runtimeDirectory/MUnique.Client.Library.dll"',
+    '"$runtimeDirectory/HNMO.Client.Library.dll"',
     '"$runtimeDirectory/config.ini"',
     '"$runtimeDirectory/shaders"',
     '"$runtimeDirectory/Data"',
@@ -607,7 +607,7 @@ linux_validation = step(linux_job, "build-linux", "Validate runtime")
 for required in (
     'runtime_directory="out/build/linux-ci/src/Release"',
     '"$runtime_directory/Main"',
-    '"$runtime_directory/MUnique.Client.Library.so"',
+    '"$runtime_directory/HNMO.Client.Library.so"',
     '"$runtime_directory/config.ini"',
     '"$runtime_directory/shaders"',
 ):
@@ -907,7 +907,7 @@ macos_validation = step(macos_job, "build-macos", "Validate runtime")
 for required in (
     'runtime_directory="out/build/macos-ci/src/Release/Main.app/Contents/MacOS"',
     '"$runtime_directory/Main"',
-    '"$runtime_directory/MUnique.Client.Library.dylib"',
+    '"$runtime_directory/HNMO.Client.Library.dylib"',
     '"$runtime_directory/config.ini"',
     '"$runtime_directory/shaders"',
 ):

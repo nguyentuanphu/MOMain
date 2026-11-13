@@ -9,7 +9,7 @@ useful for both:
   `-DCMAKE_TOOLCHAIN_FILE=.../toolchain-x64.cmake -DENABLE_EDITOR=ON`, build with
   MSVC, and point the run configuration's working directory at the build
   output's `src/<config>` folder.
-- **C# network library** (`ClientLibrary/MUnique.Client.Library.csproj`): Rider
+- **C# network library** (`ClientLibrary/HNMO.Client.Library.csproj`): Rider
   is the most comfortable editor for the managed networking code - editing,
   refactoring, analysis, and debugging.
 

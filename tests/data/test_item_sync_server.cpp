@@ -31,7 +31,7 @@ TEST_CASE("Update from server downloads from the admin panel's address [data][it
     CHECK(UrlFor("https://admin.example.org", problem) == "https://admin.example.org/api/items/exchange");
     CHECK(problem == ServerUpdateProblem::None);
     // A trailing slash, a path below a reverse proxy and spaces around it.
-    CHECK(UrlFor(" https://example.org/openmu/ ", problem) == "https://example.org/openmu/api/items/exchange");
+    CHECK(UrlFor(" https://example.org/hnmo/ ", problem) == "https://example.org/hnmo/api/items/exchange");
     CHECK(UrlFor("HTTPS://Example.org", problem) == "HTTPS://Example.org/api/items/exchange");
     // Plain http only to this computer.
     CHECK(UrlFor("http://localhost:8080", problem) == "http://localhost:8080/api/items/exchange");

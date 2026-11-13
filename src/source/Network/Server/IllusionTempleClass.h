@@ -9,7 +9,7 @@
 
 namespace Network::Packets
 {
-// OpenMU's GameServer/RemoteView/MiniGames/Extensions.cs::ToIllusionTempleCharacterClass
+// HNMO's GameServer/RemoteView/MiniGames/Extensions.cs::ToIllusionTempleCharacterClass
 // encodes BF04 classes as evolution:line nibbles. Plain server class numbers are not this format
 // and cannot be auto-detected: their values overlap valid packed base classes.
 constexpr std::optional<SERVER_CLASS_TYPE> DecodeIllusionTempleClass(std::uint8_t wireClass)

@@ -10,7 +10,7 @@
 #include <string_view>
 
 // The terms of a stat profile with where each comes from, for the formula lines
-// of the item tools (and later the export to OpenMU). See docs/item-data.md,
+// of the item tools (and later the export to HNMO). See docs/item-data.md,
 // "Item stats by level".
 namespace MuEditor::Items
 {

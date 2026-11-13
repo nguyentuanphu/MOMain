@@ -2732,7 +2732,7 @@
     <value>Plus {0}, Stufengewicht {1}, Prozent {2}</value>
   </data>
   <data name="The server keeps its own formulas" xml:space="preserve">
-    <value>Der Server (OpenMU) behält seine eigenen Formeln, bis sie abgeglichen werden: Was er prüft und berechnet, kann von dem abweichen, was diese ergeben.</value>
+    <value>Der Server (HNMO) behält seine eigenen Formeln, bis sie abgeglichen werden: Was er prüft und berechnet, kann von dem abweichen, was diese ergeben.</value>
   </data>
   <data name="Items keep their values until made again" xml:space="preserve">
     <value>Gegenstände, die Ihr Charakter schon hat, behalten ihre Werte, bis sie neu erzeugt werden (z. B. nach erneutem Einloggen).</value>
@@ -3034,8 +3034,8 @@
   <data name="Import from {0}" xml:space="preserve">
     <value>Import aus {0}</value>
   </data>
-  <data name="From OpenMU, server {0}" xml:space="preserve">
-    <value>Von OpenMU, Server {0}</value>
+  <data name="From HNMO, server {0}" xml:space="preserve">
+    <value>Von HNMO, Server {0}</value>
   </data>
   <data name="The diff counts" xml:space="preserve">
     <value>{0} hinzugefügte, {1} geänderte Items; {2} Formeleinträge</value>
@@ -3097,8 +3097,8 @@
   <data name="The marks are not saved while {0} cannot be read" xml:space="preserve">
     <value>Die Markierungen werden nicht gespeichert, solange {0} nicht gelesen werden kann (siehe Konsole). Datei korrigieren oder entfernen und dieses Fenster schließen und wieder öffnen.</value>
   </data>
-  <data name="OpenMU keeps the drop level in a byte (at most 255)" xml:space="preserve">
-    <value>OpenMU speichert die Drop-Stufe in einem Byte (höchstens 255)</value>
+  <data name="HNMO keeps the drop level in a byte (at most 255)" xml:space="preserve">
+    <value>HNMO speichert die Drop-Stufe in einem Byte (höchstens 255)</value>
   </data>
   <data name="It has no model yet" xml:space="preserve">
     <value>Es hat noch kein Modell</value>
@@ -3770,10 +3770,10 @@
     <value>{0} wird heruntergeladen ...</value>
   </data>
   <data name="What Update from server does" xml:space="preserve">
-    <value>Vom Server aktualisieren lädt die Items eines OpenMU-Servers aus seinem Admin-Panel herunter und listet wie Import auf, worin sie sich von denen des Clients unterscheiden. Geben Sie einen API-Schlüssel des Admin-Panels ein; Merken behält ihn für die Adresse im Schlüsselspeicher des Systems. Ohne einen füllt die Umgebungsvariable {0} das Feld.</value>
+    <value>Vom Server aktualisieren lädt die Items eines HNMO-Servers aus seinem Admin-Panel herunter und listet wie Import auf, worin sie sich von denen des Clients unterscheiden. Geben Sie einen API-Schlüssel des Admin-Panels ein; Merken behält ihn für die Adresse im Schlüsselspeicher des Systems. Ohne einen füllt die Umgebungsvariable {0} das Feld.</value>
   </data>
-  <data name="Enter the address of the OpenMU admin panel" xml:space="preserve">
-    <value>Geben Sie die Adresse des OpenMU-Admin-Panels ein, z. B. https://admin.example.org oder http://localhost:8080.</value>
+  <data name="Enter the address of the HNMO admin panel" xml:space="preserve">
+    <value>Geben Sie die Adresse des HNMO-Admin-Panels ein, z. B. https://admin.example.org oder http://localhost:8080.</value>
   </data>
   <data name="The admin panel address must be https" xml:space="preserve">
     <value>Die Adresse des Admin-Panels muss mit https:// beginnen; http:// geht nur für diesen Computer (localhost, 127.0.0.1, [::1]).</value>
@@ -3785,7 +3785,7 @@
     <value>Der API-Schlüssel darf die Items nicht herunterladen (403): Er braucht die Rolle Viewer, und das Admin-Panel braucht einen Benutzer.</value>
   </data>
   <data name="The admin panel has no item exchange" xml:space="preserve">
-    <value>Das Admin-Panel hat keine Item-Austauschdatei (404): Es braucht ein neueres OpenMU.</value>
+    <value>Das Admin-Panel hat keine Item-Austauschdatei (404): Es braucht ein neueres HNMO.</value>
   </data>
   <data name="Too many requests, try again in a minute" xml:space="preserve">
     <value>Zu viele Anfragen (429): Versuchen Sie es in einer Minute erneut.</value>

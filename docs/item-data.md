@@ -6,7 +6,7 @@ group; the item models are in `src/bin/Data/Items/Models/` (see
 [Item models](#item-models)). The client loads them once at startup into an in-memory item
 database; `Item_<lang>.bmd` is no longer read by the game.
 
-The data matches OpenMU's `ItemDefinition` where both sides have the same
+The data matches HNMO's `ItemDefinition` where both sides have the same
 fields, so it can be exchanged with the server (see [Item Sync](#item-sync)).
 
 ---
@@ -127,7 +127,7 @@ never shown; loading warns about them. Item Translations edits the forms.
 **Pick All** collects every eligible drop. **Selected** applies the enabled
 categories and Extra Items; with neither mode selected, retained filters collect
 nothing. Pick All takes precedence if an older save has both modes set, matching
-the original client and OpenMU's offline leveling.
+the original client and HNMO's offline leveling.
 
 Extra Items uses case-sensitive substrings of the localized inventory-style name,
 including names selected by level. For example, `Box of Luck` does not match
@@ -149,7 +149,7 @@ discarded when saving and will be absent after relog. Use short substrings such 
 option string. The Zen category selects money; other enabled categories and extra
 keywords remain independent.
 
-OpenMU's offline leveling reads the same saved list but uses its own rules:
+HNMO's offline leveling reads the same saved list but uses its own rules:
 case-insensitive server item-definition names, without these localized level
 variants or option words. An online keyword need not select the same items offline.
 
@@ -168,8 +168,8 @@ variants or option words. An online keyword need not select the same items offli
 | `width`, `height` | Size in inventory slots |
 | `slot` | Equipment slot: `mainHand`, `offHand`, `helm`, `armor`, `pants`, `gloves`, `boots`, `wings`, `pet`, `pendant`, `ring`. Left out = not equippable |
 | `wingTier` | Only for wings: `small`, `first`, `second`, `third`. The wing formulas (defense, defense per level, damage increase, absorption) depend on it; excellent second and third tier wings get no extra durability, and the chaos mix knows a wing's tier from it |
-| `weaponKind` | Only for weapons and shields: `sword`, `glove`, `axe`, `mace`, `spear`, `bow`, `crossbow`, `staff`, `book`, `shield`, as OpenMU's item groups 0 to 6: swords and the Rage Fighter's gloves (group 0; gloves are the items only the Rage Fighter may use), axes (1), maces and sceptres (2), spears (3), bows and crossbows (4: bows have the slot `offHand`, crossbows `mainHand`; arrows and bolts have no weapon kind), staffs, sticks and books (5: books have the slot `offHand`) and shields (6). While an item has the weapon kind its group gives, the bmd import and the item editor (also when it moves an item to another number) keep it matching the group, the slot and, in group 0, the class requirements (a group gives its kind only on that kind's slot, and in group 4 only to two-handed items), so a new weapon gets one too; a kind written in the file that differs from the group's stays as long as it differs. Which bow or crossbow a character holds (its animations, arrows and damage), the elf's arrows-only rule, a spear's reach and Impale, the shield defense set option, the bonus of leveled arrows and bolts, a staff's damage (it counts for the left hand), which right-hand weapons a summoner may hold in the left hand (not staffs or books), the character window's wizardry line, the tooltip's magic power line, the knight skills that need a weapon without a staff or book, Death Stab, Death Cannon and Spiral Slash, the weapon in the left hand that adds its magic options, the dual wield of Dark Knights, Magic Gladiators and Rage Fighters, and the weapon that moves into an empty right hand depend on it |
-| `potionPriority` | Only for potions with the `healingPotion`, `manaPotion`, `complexPotion` or `shieldPotion` tag: which one of a kind the game takes first, the higher the earlier (0 or left out = last; equal ones take the higher group and number first). The shipped potions count up with their size, so the largest is taken first. A client-only field (OpenMU has none); the bmd import keeps it |
+| `weaponKind` | Only for weapons and shields: `sword`, `glove`, `axe`, `mace`, `spear`, `bow`, `crossbow`, `staff`, `book`, `shield`, as HNMO's item groups 0 to 6: swords and the Rage Fighter's gloves (group 0; gloves are the items only the Rage Fighter may use), axes (1), maces and sceptres (2), spears (3), bows and crossbows (4: bows have the slot `offHand`, crossbows `mainHand`; arrows and bolts have no weapon kind), staffs, sticks and books (5: books have the slot `offHand`) and shields (6). While an item has the weapon kind its group gives, the bmd import and the item editor (also when it moves an item to another number) keep it matching the group, the slot and, in group 0, the class requirements (a group gives its kind only on that kind's slot, and in group 4 only to two-handed items), so a new weapon gets one too; a kind written in the file that differs from the group's stays as long as it differs. Which bow or crossbow a character holds (its animations, arrows and damage), the elf's arrows-only rule, a spear's reach and Impale, the shield defense set option, the bonus of leveled arrows and bolts, a staff's damage (it counts for the left hand), which right-hand weapons a summoner may hold in the left hand (not staffs or books), the character window's wizardry line, the tooltip's magic power line, the knight skills that need a weapon without a staff or book, Death Stab, Death Cannon and Spiral Slash, the weapon in the left hand that adds its magic options, the dual wield of Dark Knights, Magic Gladiators and Rage Fighters, and the weapon that moves into an empty right hand depend on it |
+| `potionPriority` | Only for potions with the `healingPotion`, `manaPotion`, `complexPotion` or `shieldPotion` tag: which one of a kind the game takes first, the higher the earlier (0 or left out = last; equal ones take the higher group and number first). The shipped potions count up with their size, so the largest is taken first. A client-only field (HNMO has none); the bmd import keeps it |
 | `statProfile` | The item's profile in the [item stat file](#item-stats-by-level): what its + level, excellent options, ancient set and option level add to its stats and requirements. `"default"` names the default. The [profile rules](#item-stats-by-level) of the item stat file say which profile an item's data gives it: in the shipped file `sceptre` for the items with the `sceptre` tag, `book` for summoner books, `shield` for shields, `weapon` for the other items with a weapon kind (not arrows and bolts), `armor` for helms, armour, pants, gloves and boots, `scroll` for the items of group 15 with requirements, `orb` for the items of group 12 with stat requirements (the orbs, crystals and the Dark Lord's scrolls), `helper` for the items of groups 13 and 14 with a base level requirement (`requirements.level`; the Transformation Ring's comes from `requirementsByLevel`, so it has the default), and a wing tier's profile for wings (`firstTierWing`, `secondTierWing`, `secondTierCape` for the second tier capes, `thirdTierWing`, `smallWing`). While an item has the profile its data gives, the bmd import and the item editor keep it matching (also when it moves an item to another number); a profile written in the file that differs from it stays as long as it differs: the Horn of Fenrir's data gives `helper`, and it names `"default"`. A left-out profile always follows the data; while the data gives one, the item has the default and loading warns about it, as for item files saved before the field. An item whose data stops giving its profile loses the profile's terms: a bow made one-handed, which is then no bow, loses the `weapon` profile's strength per option level |
 | `options` | The [option definitions](#item-options) the item can have, by name: `["luck"]`. The game reads only this list: an item without it has no options. An item file saved before the field has no lists, and the item editor keeps an empty list as it keeps any list that differs from the rules, so such a file needs its lists written into it (the shipped files have them). The [option rules](#option-rules) say which list an item's data gives it; while an item has that list, the bmd import and the item editor keep it matching (also when they move an item to another number), and a list written in the file that differs from it stays as long as it differs, an empty one too. Saving writes it in the order the game takes the definitions in (by type, then by name) |
 | `twoHanded` | Weapon needs both hands |
@@ -183,7 +183,7 @@ variants or option words. An online keyword need not select the same items offli
 | `attackType` | Attack type used by the client |
 | `sellValue` | Value factor used by the price calculation of some items |
 | `buyPrice` | Fixed price; when set, it replaces the calculated price |
-| `requirements` | `level`, `strength`, `dexterity`, `energy`, `vitality`, `leadership`. The stat requirements of the orbs, crystals and scrolls (groups 12 and 15, without a slot) are the values the game asks for, as OpenMU stores them: their profiles keep them as they are. The original client's bmd files hold weights for them, which Import from bmd turns into the values and Export as bmd and Export as S6E3 turn back (the smallest weight that gives each value). Which ones convert follows the item's profile: a requirement it keeps as it is while the default grows it (an orb given the default profile holds weights like any item) |
+| `requirements` | `level`, `strength`, `dexterity`, `energy`, `vitality`, `leadership`. The stat requirements of the orbs, crystals and scrolls (groups 12 and 15, without a slot) are the values the game asks for, as HNMO stores them: their profiles keep them as they are. The original client's bmd files hold weights for them, which Import from bmd turns into the values and Export as bmd and Export as S6E3 turn back (the smallest weight that gives each value). Which ones convert follows the item's profile: a requirement it keeps as it is while the default grows it (an orb given the default profile holds weights like any item) |
 | `requirementsByLevel` | A requirement for each item level 0 to 15 (one number for all of them, or 16), instead of the [item stat file's](#item-stats-by-level) formula; above +15 the +15 value counts. The Orb of Summoning has `{"energy": [30, 60, 90, 130, 170, 210, 300, 500, 0, ...]}` and the Transformation Ring `{"level": [20, 20, 20, 50, ...]}`. The base value of that requirement is not used. The bmd import keeps it |
 | `classRequirements` | Per class (`darkWizard`, `darkKnight`, `fairyElf`, `magicGladiator`, `darkLord`, `summoner`, `rageFighter`): 0 = cannot use, otherwise the class level needed, 1 to 3 (first to third class; above 3 is a warning, as no character reaches it) |
 | `resistances` | `ice`, `poison`, `lightning`, `fire`, `earth`, `wind`, `water` |
@@ -218,7 +218,7 @@ can have several tags; the file lists them in the order below.
 | `sceptre` | The Dark Lord's sceptres |
 | `magicSword` | The Magic Gladiator's swords with magic power |
 | `luckyItem` | The lucky set armour (numbers 62 to 72 of groups 7 to 11): no repair cost and no price, a maximum durability of 255, no stat requirements in the tooltip (the shipped ones also have `excellentRaisesLevel: false`); only Jerridon's mix and the lucky item window's refinery take them, and of the jewels only the Jewels of Extension and Elevation act on them |
-| `cashShop` | Items from the cash shop. Only information for now (for the editors and the OpenMU exchange); no client code reads it |
+| `cashShop` | Items from the cash shop. Only information for now (for the editors and the HNMO exchange); no client code reads it |
 | `gambleItem` | Gamble items |
 | `gemJewelry` | The gem rings and necklaces from the cash shop |
 | `luckyItemTicket` | Lucky item tickets |
@@ -425,10 +425,10 @@ without it the character cannot warp or move there, and in Icarus the last
 flight equipment cannot be taken off, neither by dragging it nor by
 right-clicking it.
 
-The Dark Horse flies, as in the original client. OpenMU does not give it
-`CanFly` yet ([MUnique/OpenMU#982](https://github.com/MUnique/OpenMU/issues/982)),
+The Dark Horse flies, as in the original client. HNMO does not give it
+`CanFly` yet ([HNMO#982](https://github.com/nguyentuanphu/HNMO/issues/982)),
 so until that is fixed the server refuses a Dark Lord who only rides a Dark
-Horse into Icarus. Like OpenMU, a broken item gives no power-ups. The client
+Horse into Icarus. Like HNMO, a broken item gives no power-ups. The client
 check only spares the player the fall; the server has to refuse the move as
 well.
 
@@ -740,7 +740,7 @@ and are in the code (`GameLogic/Items/TradeRestrictions.cpp`,
 - **GM Gift:** only a game master can trade it.
 
 These checks only decide what the client allows. The server has its own
-checks; the design document lists how the flags map to OpenMU.
+checks; the design document lists how the flags map to HNMO.
 
 ## Item stats by level
 
@@ -787,9 +787,9 @@ defense and magic defense, and how its requirements grow. It is in a folder of i
 - **Tables** (`tables`) hold what the + level adds: `values` has one value
   for each item level 0 to 15 (or one number for all of them), and
   `perLevel` adds that much for every level. Above +15 the +15 value of
-  `values` counts, while `perLevel` keeps growing. The names follow OpenMU's
-  level bonus tables (`ItemLevelBonusTable`) where OpenMU has the table:
-  OpenMU's first and second tier wings share one, which the client splits
+  `values` counts, while `perLevel` keeps growing. The names follow HNMO's
+  level bonus tables (`ItemLevelBonusTable`) where HNMO has the table:
+  HNMO's first and second tier wings share one, which the client splits
   into `defenseBonus1stWings` and `defenseBonus2ndWings`, and
   `magicPowerIncrease` and `magicDefenseIncrease` are the client's own.
 - **The default** (`default`) writes the terms of every stat:
@@ -826,7 +826,7 @@ defense and magic defense, and how its requirements grow. It is in a folder of i
     level the additional option counts at (also when the item has no
     strength requirement): none when no option turns on (no option linked,
     or an option type that picks none), the value list's last level above
-    the list, as OpenMU adds it for the option the item has. The wings'
+    the list, as HNMO adds it for the option the item has. The wings'
     options, still code, count at their option level, the Horn of
     Dinorant's (flags, not a level) at none.
 - **Profiles** (`profiles`) write only what differs from the default. A term
@@ -922,7 +922,7 @@ a profile no item names is a warning.
 
 ## Item options
 
-The option groups an item can have are data, as OpenMU's item option
+The option groups an item can have are data, as HNMO's item option
 definitions: the files of `Data/Items/Options` hold the definitions, one
 file per option group, and each item names the ones it can have in its
 `options` list. Which of them an item has comes from the server: its item
@@ -941,7 +941,7 @@ still code and move into data one group at a time.
       "name": "luck",
       "type": "luck",
       "displayName": {"en": "Luck", "de": "Glück"},
-      "openMu": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
+      "hnmo": {"id": "00000083-0001-0000-0000-000000000000", "name": "Luck"},
       "server": {"addsRandomly": true, "addChance": 0.25, "maximumOptionsPerItem": 1},
       "options": [
         {"attribute": "criticalDamageChance", "percent": {"values": 5}, "text": ["luckJewelOfSoul", "luckCriticalDamage"]}
@@ -954,7 +954,7 @@ still code and move into data one group at a time.
 - `name`: what items link, unique across the files. Which file a
   definition is in is a convention: its type says what it is.
 - `type`: which part of the server's item data turns its options on, as
-  OpenMU's option types: `luck` is the luck flag, with one option without
+  HNMO's option types: `luck` is the luck flag, with one option without
   a number; `option` is the additional option's level (the option byte's
   low four bits, 1 to 15; Season 6 sends 1 to 4), its options numbered
   (`"number": 0`) by the option type the server sends in the byte's high
@@ -963,11 +963,11 @@ still code and move into data one group at a time.
   Each option group brings its type when it moves into data. An item links
   at most one definition of a type.
 - `displayName`: the definition's name by language, English first.
-- `openMu` and `server`: OpenMU's labels of the same definition (its GUID
+- `hnmo` and `server`: HNMO's labels of the same definition (its GUID
   and its English name, which the exchange with the server will match by)
   and its values only the server reads (whether and how often a dropped
   item gets the options). The game reads neither.
-- `options`: each names the attribute it raises (OpenMU's `Stats` name)
+- `options`: each names the attribute it raises (HNMO's `Stats` name)
   and adds its value as it is (`add`), after the other additions
   (`addFinal`) or in per cent (`percent`). The value is an object:
   `{"values": 5}` is 5 at every level, `{"values": [4, 8, 12, 16]}` one
@@ -990,8 +990,8 @@ the price and the mixes count as before and the character window adds up
 into the [critical damage rate](#critical-damage-rate). An attribute the
 client does not compute still shows its lines and adds nothing.
 
-`Options/Option.json` holds the additional options, as OpenMU's (all with
-OpenMU's server values: a 25 % chance, one per item):
+`Options/Option.json` holds the additional options, as HNMO's (all with
+HNMO's server values: a 25 % chance, one per item):
 
 | Definition | Attribute | Value by level | Lines | Items |
 |---|---|---|---|---|
@@ -1009,11 +1009,11 @@ The lists end where Season 6 does; a level above a list counts as its
 last value, and a longer list gives a server that sends more its own
 values. A magic sword's one option fills one slot and shows two lines. The
 other items of group 13 (the Transformation Rings, the quest items, Loch's
-Feather and the others) have no additional option, as on OpenMU. The
+Feather and the others) have no additional option, as on HNMO. The
 wings, the capes and the Horn of Dinorant keep their additional options in
 code until they move into data.
 
-`Options/Excellent.json` holds the excellent options, as OpenMU's (OpenMU's
+`Options/Excellent.json` holds the excellent options, as HNMO's (HNMO's
 server values: a 0.1 % chance, two per item). Each option is the byte's bit
 number - 1; the tooltip lists them from number 6 down, as before.
 
@@ -1035,11 +1035,11 @@ The defensive options go to groups 6 to 11 and the rings 13/8, 13/9 and
 13/21 to 13/24; the physical attack options to groups 0 to 4 and the
 pendants 13/13, 13/26 and 13/28; the wizardry attack options to group 5
 (the summoner's books too, whose stats add them to the curse damage, a
-known difference from OpenMU) and the pendants 13/12, 13/25 and 13/27.
-Arrows and bolts have none, as on Season 6 and OpenMU.
+known difference from HNMO) and the pendants 13/12, 13/25 and 13/27.
+Arrows and bolts have none, as on Season 6 and HNMO.
 
-The Zen option is +30 %, Season 6's value; OpenMU has +40 %. "Level / 20"
-divides the hero's level, as the client did; OpenMU divides level plus
+The Zen option is +30 %, Season 6's value; HNMO has +40 %. "Level / 20"
+divides the hero's level, as the client did; HNMO divides level plus
 master level (`totalLevel`).
 
 "Excellent" (the name's prefix and green colour, the excellent +15
@@ -1081,7 +1081,7 @@ UI's language, English where a text has no translation.
 
 The character window shows the critical damage rate under the strength's
 lines: the chance that a hit is critical, which deals the maximum damage. The
-server rolls it (OpenMU's `CriticalDamageChance`), and the client adds it up
+server rolls it (HNMO's `CriticalDamageChance`), and the client adds it up
 the same way to show it:
 
 | Part | Adds |
@@ -1090,7 +1090,7 @@ the same way to show it:
 | Set options | The active ancient set options "Increase critical damage rate" (the full Warrior set: 5 %) |
 | Socket options | The seed spheres' option "Critical damage rate" (Lightning: 8 % to 12 % by sphere level), while the item is not broken |
 | Own buff | While it is on: the Wizard's Expansion of Wizardry Mastery or the Dark Lord's Critical Damage Increase with its third power-up. It adds the value of that master skill, as the server sends it with the master skill tree |
-| Scroll of Battle | While its buff is on: 20 % (OpenMU's buff items) |
+| Scroll of Battle | While its buff is on: 20 % (HNMO's buff items) |
 
 No stat changes the rate; stats only change how much a critical hit adds
 (the Dark Lord's Critical Damage Increase). The line shows what the worn
@@ -1106,7 +1106,7 @@ with the hero's, and a buff the hero can't cast isn't counted, since its
 value comes from the caster's master skill.
 
 Luck and the other options count while the hero meets the item's
-requirements, as everywhere in the client. OpenMU counts every worn item that
+requirements, as everywhere in the client. HNMO counts every worn item that
 is not broken, so the two differ while the hero wears an item whose
 requirements a lost stat bonus (a set's, a buff's) no longer meets.
 
@@ -1124,7 +1124,7 @@ and their total:
 |---|---|
 | Set options | The active ancient set options "Increase critical damage" (the Cloud set: 50) |
 | Harmony options | A weapon's or staff's harmony option "Increase critical damage", while the item's level reaches the option's level |
-| Socket options | The seed spheres' option "Critical damage" (Lightning: 30 to 50 by sphere level in the client's data; OpenMU has 15 to 40, a known difference), while the item is not broken |
+| Socket options | The seed spheres' option "Critical damage" (Lightning: 30 to 50 by sphere level in the client's data; HNMO has 15 to 40, a known difference), while the item is not broken |
 | Own buff | While it is on: the Dark Lord's Increase Critical Damage, 1 per 30 energy and 1 per 25 command, plus its first power-up's value. The damage line takes the colour for buffs meanwhile |
 
 The excellent damage bonus comes from ancient set options and seed spheres.
@@ -1189,7 +1189,7 @@ an option without `attribute` or with none or more than one of `add`,
 without exactly one of `times` and `divisor` (whole numbers from 1), a
 number used twice in a definition, an additional option's number above 15,
 an excellent option's number outside 1 to 6, a luck definition with more
-than one option or a numbered one, OpenMU
+than one option or a numbered one, HNMO
 labels or server values of the wrong kind, and a rule naming a
 definition that does not exist or a condition it does not have. Errors:
 an item linking a definition that does not exist (the link is left out)
@@ -1221,14 +1221,14 @@ number and a value:
 | Number | Option |
 |---|---|
 | 0 to 23 | Strength, agility, energy, stamina, command; min and max damage; wizardry damage; damage; attack success rate; defense; max life, mana and AG; AG recovery; critical damage rate and critical damage; excellent damage rate and excellent damage; skill damage; double damage rate; ignore the enemy's defense; defense with a shield; damage with a two-handed weapon |
-| 24 to 28 | Not supported. In the original client these were class bonuses that grew with a stat; no set uses them, in the shipped data or in OpenMU. A set that has one gets nothing for it and shows no line |
+| 24 to 28 | Not supported. In the original client these were class bonuses that grew with a stat; no set uses them, in the shipped data or in HNMO. A set that has one gets nothing for it and shows no line |
 | 29 to 35 | Damage of one element's skills (the skill's mastery type): 29 ice, 30 poison, 31 lightning, 32 fire, 33 earth, 34 wind, 35 water |
 
 The element options (29 to 35) count only for a class the set names in its
 class requirement: 1 for the class as it is, 2 only once it has its second
 class (Soul Master, Blade Knight, Muse Elf, Bloody Summoner), as in the
 original client. A set that names no class gives them to nobody. The client
-adds them to the skill damage it shows; OpenMU has no such option, so the
+adds them to the skill damage it shows; HNMO has no such option, so the
 server's damage does not include them.
 
 Typing a set's name after `/` in the chat shows the set's options with their
@@ -1914,7 +1914,7 @@ shows it in the others.
 - **Item Tooltip**: how the item is shown, see [Item Tooltip](#item-tooltip).
 - **Item Formulas**: the item stat file, see [Item Formulas](#item-formulas).
 - **Item Sync**: Export and Import of the items and item formulas with an
-  OpenMU server, see [Item Sync](#item-sync).
+  HNMO server, see [Item Sync](#item-sync).
 - **Item Translations**: the names in all languages, see
   [translation-system.md → In the item editor](translation-system.md#in-the-item-editor).
 
@@ -2296,9 +2296,9 @@ values until they are made again.
 
 ### Item Sync
 
-Item Sync exchanges the items and the item formulas with an OpenMU server
+Item Sync exchanges the items and the item formulas with an HNMO server
 through a file, the *item exchange file*. The server stays authoritative:
-the client never writes to it. (OpenMU's import page is a later step of
+the client never writes to it. (HNMO's import page is a later step of
 phase 7; see the
 [design](superpowers/specs/2026-09-25-data-driven-items-design.md).)
 
@@ -2310,7 +2310,7 @@ phase 7; see the
   the checked rows into the client as one step of the undo history; Save
   Items writes the files, as for any edit.
 - **Export…** writes the client's items and formulas into the file it
-  picks, without a diff: OpenMU's import page shows what the file changes
+  picks, without a diff: HNMO's import page shows what the file changes
   on the server, and Import shows what one changes in the client. A new
   file is written right away ("Exported 911 items and all formulas to
   …"). A file that is there is replaced after a confirmation that says what
@@ -2321,7 +2321,7 @@ phase 7; see the
 - **Update from server** downloads the server's file from its admin panel
   and goes on as Import (the summary says "Update from …"). Enter the admin
   panel's address next to the button (e.g. `https://admin.example.org`; it
-  is kept in `MuEditor/MuEditor.ini`, `[OpenMU] AdminPanelUrl`). The address
+  is kept in `MuEditor/MuEditor.ini`, `[HNMO] AdminPanelUrl`). The address
   must be https; plain http only works for this computer (`localhost`,
   `127.0.0.1`, `[::1]`). The editor asks for
   `<address>/api/items/exchange` with the API key in the **API key** field:
@@ -2330,12 +2330,12 @@ phase 7; see the
   (the Windows Credential Manager, the macOS Keychain, or the Linux keyring
   when MuEditor was built with libsecret), so the field has it again at the
   next start; unchecking it removes it there. Without a remembered key, the
-  environment variable `MU_OPENMU_API_KEY` fills the field. The key is never
+  environment variable `MU_HNMO_API_KEY` fills the field. The key is never
   written to a file or a log. The download runs in
   the background and can be cancelled; the window says why one failed (no
   address, no key, the server cannot be reached, 401 unknown key, 403 the
   key lacks the Viewer role or the admin panel has no user yet, 404 an
-  OpenMU without the file, 429 too many requests). After Apply, the window
+  HNMO without the file, 429 too many requests). After Apply, the window
   compares the downloaded file again without downloading it again.
 - **Compare two files** (folded under the path field) compares two exchange
   files, e.g. a client export with a server export, without the client's
@@ -2375,7 +2375,7 @@ number, fields with their default value left out, LF line endings.
 ```json
 {
   "formatVersion": 1,
-  "source": "OpenMU",
+  "source": "HNMO",
   "server": "…",
   "gameVersion": "season6",
   "formulas": {
@@ -2390,12 +2390,12 @@ number, fields with their default value left out, LF line endings.
 }
 ```
 
-- `source` is `MuMain` or `OpenMU`; `server`, only in a file from OpenMU,
+- `source` is `MuMain` or `HNMO`; `server`, only in a file from HNMO,
   names the server's installation.
 - Only `season6` data is exchanged; a file of another `gameVersion` is
   refused, as is a `formatVersion` the client does not know.
 - `fields` (format version 2) lists the item fields the file carries, by
-  their keys (`"fields": ["width", "height"]`). OpenMU's export adds its
+  their keys (`"fields": ["width", "height"]`). HNMO's export adds its
   fields one at a time, so it names the ones it has. Only these fields are
   compared and taken; the client keeps its values of the others, and a file
   that does not list `name` has items without one. A file without `fields`
@@ -2444,7 +2444,7 @@ number, fields with their default value left out, LF line endings.
   fields with a note: the size and slot of an
   item your character wears or an item window shows (they stay; such an
   item is not removed either, nor added when the client has no data for it
-  yet), and a drop level above 255, which OpenMU keeps in a byte.
+  yet), and a drop level above 255, which HNMO keeps in a byte.
 - **Check all** and **Check none** take every row, also the items only
   the client has; the confirmation of the import says how many items it
   removes, and Undo brings them back with their models. **A field in all items** checks or
@@ -2455,7 +2455,7 @@ number, fields with their default value left out, LF line endings.
   the side marked wrong (*Client* or *Server*: the whole item's mark, or the
   one all its fields have; empty otherwise; not for a comparison of two
   files, which has no marks). Paste
-  it into an issue, e.g. one asking OpenMU for the items it lacks or to fix
+  it into an issue, e.g. one asking HNMO for the items it lacks or to fix
   the items marked wrong in the server.
 - **Names**: only the client's UI languages are taken from the file; a
   language the file lacks stays as it is, and no language is removed.
@@ -2478,7 +2478,7 @@ number, fields with their default value left out, LF line endings.
   or a tag such as `cape` may be missing).
 - **Removed items** go with their model entry, as Remove item does; the row
   lists what goes with the item and what uses it at its number.
-- An item a file has more than once (OpenMU does not keep the group and
+- An item a file has more than once (HNMO does not keep the group and
   number unique) is a locked row: the import leaves it as it is.
 - Before the import is applied, the data as it would be gets the checks of
   a save. With fatal problems nothing changes; they are listed and the rows
@@ -2501,7 +2501,7 @@ leaves its box as it is, so whether Apply takes the server's value stays
 your choice; *Wrong in server* unchecks it and shows it
 grey, so the client keeps its value (checking it by hand applies it after
 all, and it is no longer grey; clearing the mark or switching to *Wrong in
-client* gives the box its default back, as a new comparison starts it). A locked field or item, and a drop level OpenMU cannot
+client* gives the box its default back, as a new comparison starts it). A locked field or item, and a drop level HNMO cannot
 keep, start unchecked either way (the drop level's box still takes it). The marks count in every comparison, also after a
 new download. Apply takes out the marks of what it applied, either side's
 (on a changed item marked as a whole, once all its fields were applied):

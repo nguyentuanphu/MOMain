@@ -10,13 +10,13 @@
 #include <vector>
 
 // The option groups an item can have (luck, the additional option, excellent, ...) as data: the definitions of
-// Data/Items/Options/*.json, each with its options, as OpenMU's ItemOptionDefinition. An item links the definitions
+// Data/Items/Options/*.json, each with its options, as HNMO's ItemOptionDefinition. An item links the definitions
 // it can have by name ("options" in its item file); which byte of the server's item data turns an option on is the
 // definition's type. See docs/item-data.md, "Item options".
 namespace Data::Items
 {
 // What a definition is: which byte of the server's item data holds its options and what their number means. The
-// names are OpenMU's ItemOptionTypes in camelCase. Each type comes with the pull request that reads its byte.
+// names are HNMO's ItemOptionTypes in camelCase. Each type comes with the pull request that reads its byte.
 enum class ItemOptionType : BYTE
 {
     // The luck flag; one option.
@@ -33,7 +33,7 @@ constexpr int MaxExcellentOptionNumber = 6;
 // The excellent byte with every excellent option on.
 constexpr BYTE AllExcellentOptionFlags = (1 << MaxExcellentOptionNumber) - 1;
 
-// How an option's value adds to its attribute: as it is, after the other additions (OpenMU's AddFinal), or in per
+// How an option's value adds to its attribute: as it is, after the other additions (HNMO's AddFinal), or in per
 // cent.
 enum class ItemOptionAdd : BYTE
 {
@@ -103,9 +103,9 @@ struct ItemOptionValue
 
 struct ItemOption
 {
-    // OpenMU's ItemOption.Number; 0 for the types with one option.
+    // HNMO's ItemOption.Number; 0 for the types with one option.
     int number = 0;
-    // The attribute it raises, OpenMU's Stats name in camelCase ("criticalDamageChance").
+    // The attribute it raises, HNMO's Stats name in camelCase ("criticalDamageChance").
     std::string attribute;
     ItemOptionAdd add = ItemOptionAdd::Add;
     ItemOptionValue value;
@@ -115,9 +115,9 @@ struct ItemOption
     bool operator==(const ItemOption& other) const = default;
 };
 
-// OpenMU's labels of the same definition, which the exchange matches by: its GUID where OpenMU's is fixed, and its
-// English name, by which OpenMU's code looks it up. The game doesn't read them.
-struct ItemOptionOpenMuLabels
+// HNMO's labels of the same definition, which the exchange matches by: its GUID where HNMO's is fixed, and its
+// English name, by which HNMO's code looks it up. The game doesn't read them.
+struct ItemOptionHnmoLabels
 {
     std::string id;
     std::string name;
@@ -127,10 +127,10 @@ struct ItemOptionOpenMuLabels
         return id.empty() && name.empty();
     }
 
-    bool operator==(const ItemOptionOpenMuLabels& other) const = default;
+    bool operator==(const ItemOptionHnmoLabels& other) const = default;
 };
 
-// OpenMU's values the server alone reads: whether and how often the definition adds its options to a dropped item.
+// HNMO's values the server alone reads: whether and how often the definition adds its options to a dropped item.
 // The game doesn't read them; the exchange carries them.
 struct ItemOptionServerValues
 {
@@ -148,7 +148,7 @@ struct ItemOptionDefinition
     std::string name;
     ItemOptionType type = ItemOptionType::Luck;
     LocalizedString displayName;
-    ItemOptionOpenMuLabels openMu;
+    ItemOptionHnmoLabels hnmo;
     std::optional<ItemOptionServerValues> server;
     std::vector<ItemOption> options;
     // The file of Data/Items/Options it is read from and written to ("Luck.json"); not in the file itself.

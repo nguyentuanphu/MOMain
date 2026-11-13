@@ -1,4 +1,4 @@
-﻿// <copyright file="PacketBindings.h" company="MUnique">
+﻿// <copyright file="PacketBindings.h" company="HNMO">
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -33,6 +33,8 @@ SeedCrafting = 11, ///< The storage of the seed crafting dialog.
 SeedSphereCrafting = 12, ///< The storage of the seed sphere crafting dialog.
 SeedMountCrafting = 13, ///< The storage of the seed sphere mount dialog.
 SeedUnmountCrafting = 14, ///< The storage of the seed sphere unmount dialog.
+LuckyItemTrade = 15, ///< The storage of the lucky item exchange dialog of the david npc.
+LuckyItemRefinery = 16, ///< The storage of the lucky item refinery dialog of the david npc.
 };
 
 enum class LegacyQuestState : uint32_t

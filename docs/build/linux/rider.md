@@ -7,7 +7,7 @@ client and a C# library:
   as CLion. Configuration is identical to [linux/clion.md](clion.md) - set
   `-DENABLE_EDITOR=ON`, native toolchain, and point the run configuration's
   working directory at `<build-dir>/src`.
-- **C# network library** (`ClientLibrary/MUnique.Client.Library.csproj`): open
+- **C# network library** (`ClientLibrary/HNMO.Client.Library.csproj`): open
   the `.csproj` to edit, refactor, or debug the managed networking code. Rider
   is the most comfortable editor for that part.
 

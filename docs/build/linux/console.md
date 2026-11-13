@@ -57,7 +57,7 @@ cmake -S . -B build-linux -G Ninja \
 cmake --build build-linux -j"$(nproc)"
 ```
 
-This builds the engine, the `linux-x64` `MUnique.Client.Library.so`, and copies
+This builds the engine, the `linux-x64` `HNMO.Client.Library.so`, and copies
 the assets and the library next to the executable. Drop `-DENABLE_EDITOR=ON`
 (or set it `OFF`) for a player build. Add `-DENABLE_CONTROL_SOCKET=ON` when
 test scripts need to drive the client (see `docs/control-socket.md`); it is
@@ -108,7 +108,7 @@ cd build-linux/src
 ```
 
 Run from `build-linux/src` so the client finds its assets, `config.ini`, and
-`MUnique.Client.Library.so` (loaded from the working directory). Set the server
+`HNMO.Client.Library.so` (loaded from the working directory). Set the server
 in `config.ini` (`ServerIP` / `ServerPort`).
 
 SDL diagnostics are also written to `MuError.log`; set `SDL_LOGGING` to control their verbosity.

@@ -172,7 +172,7 @@ TEST_CASE("Item level variants have their own rules [data][items][rules]")
     CHECK(PersonalShopBan(ITEM_BOX_OF_LUCK, {13}));
     CHECK(SellingBan(ITEM_BOX_OF_LUCK));
 
-    // The Wizard's Ring is bound to the character on the server (OpenMU), so it
+    // The Wizard's Ring is bound to the character on the server (HNMO), so it
     // can't be traded, stored or sold at any level; it can still be dropped.
     for (int level : {0, 1, 2})
     {

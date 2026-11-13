@@ -4,7 +4,7 @@
 #include <cstdint>
 
 // The skill hotkeys in the key configuration the server stores per character: each hotkey holds a
-// skill number, big-endian. 0xFFFF marks a free hotkey; OpenMU seeds new characters with zeros,
+// skill number, big-endian. 0xFFFF marks a free hotkey; HNMO seeds new characters with zeros,
 // which aren't a skill either, so they must not bind the hotkey to an empty skill slot.
 namespace GameLogic::Skills::HotkeyConfiguration
 {

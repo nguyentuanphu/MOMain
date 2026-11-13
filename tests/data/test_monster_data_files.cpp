@@ -111,7 +111,7 @@ TEST_CASE("Shipped monster list: names are plain text, the Kalima gates too [dat
 
 // The renewed Illusion Temple's statues (P2, Q-MN42b): the Cursed Statue 658
 // is attacked, the ten Stone Statues are NPCs.
-TEST_CASE("Shipped monster list: OpenMU's statues 658-668 have its English names, 658 the monster kind "
+TEST_CASE("Shipped monster list: HNMO's statues 658-668 have its English names, 658 the monster kind "
           "[data][monsters]")
 {
     const Data::Monsters::MonsterDataLoadResult loaded =

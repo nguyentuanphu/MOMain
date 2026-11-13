@@ -8,7 +8,7 @@ The MU Editor is a C++ ImGui-based in-game editor that provides real-time game e
 - **Item Tools**: Browse, add, duplicate, move and remove items and edit their data and models while the game runs, with undo and checks before saving (docs/item-data.md, "Editing items")
 - **Item Translations**: Item names in every language side by side
 - **Monster Tools**: Browse, add, copy and remove monster numbers, set their kind, translate their names (with import and export of the old NpcName txt files), edit their models' files, folders, animation speeds and cues, edit the sound sets they play, preview a model's animations with their sounds, choose the animation each skill plays, and check them while the game runs, with undo (docs/monster-data.md, "Editing monsters")
-- **Item Sync**: Import and Export of the items and item formulas with an OpenMU server through a file; an import shows a diff whose checked rows are applied (docs/item-data.md, "Item Sync")
+- **Item Sync**: Import and Export of the items and item formulas with an HNMO server through a file; an import shows a diff whose checked rows are applied (docs/item-data.md, "Item Sync")
 
 ## Key Features
 - ✅ Completely wrapped in `#ifdef _EDITOR` - **excluded from release builds**
@@ -51,7 +51,7 @@ stores it when a field is left.
 - **MuItemTooltipUI** - Item Tooltip: the item's name in the tooltip and on the ground (its ground label), previewed at a level and with options by the game's own functions, and the item's own label rules
 - **TooltipLineLooks.h/cpp** - The tooltip colors of each TEXT_COLOR_* in the active UI theme, as RmlUi computes them in the game's tooltip document (line colors, highlight bars, box), for Item Tooltip's tooltip row
 - **ItemLayoutChangeNotes.h/cpp** - Item Tooltip's rows for an item's own tooltip layout changes: the line ids it hides and each line it adds, numbered under the line it follows
-- **MuItemSyncUI** - Import and Export of the item exchange file with OpenMU: the import's diff of the items and formulas with a box per field (ItemSyncDiff, which also keeps the known differences), applied as one undo step after a confirmation; the export of the client's data, confirmed when it replaces a file (ItemSyncApply); and a read-only comparison of two files
+- **MuItemSyncUI** - Import and Export of the item exchange file with HNMO: the import's diff of the items and formulas with a box per field (ItemSyncDiff, which also keeps the known differences), applied as one undo step after a confirmation; the export of the client's data, confirmed when it replaces a file (ItemSyncApply); and a read-only comparison of two files
 - **ItemToolWindow** - What every item tool window shares: its title, the selected item, and the item edit history as the editor bar's undo target
 
 ### Item Actions (UI/ItemEditor)
@@ -212,7 +212,7 @@ main.exe --editor
 - **Console** - Dual-panel console with auto-scroll and copy/clear
 - **Item Tools** - Live editing of items and their models
 - **Monster Tools** - Live editing of monster names, kinds, models, sound sets and attacks, and a preview of a model's animations
-- **Item Sync** - Export and Import of the item data with OpenMU
+- **Item Sync** - Export and Import of the item data with HNMO
 - **Input Blocking** - Game input blocked when hovering UI
 - **No Separate Console** - All output in ImGui, no Windows console window
 

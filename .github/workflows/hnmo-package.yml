@@ -1,0 +1,45 @@
+name: HNMO package
+
+# Builds the HNMO folder for Windows (game server + admin panel + web client + game
+# data) and offers it as a download on the run's page.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/magical-goldberg-hsbtda]
+    paths: ['web/**', '.github/workflows/hnmo-package.yml']
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: client
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/MOnline
+          ref: claude/magical-goldberg-hsbtda
+          path: server
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the web client's library
+        run: npm ci --prefix client/web
+      - name: Get a portable PostgreSQL for Windows (the save game database)
+        run: |
+          for version in 16.9-1 16.8-1 16.6-1 16.4-1; do
+            if curl -fsSL -o pg.zip "https://get.enterprisedb.com/postgresql/postgresql-$version-windows-x64-binaries.zip"; then echo "PostgreSQL $version"; break; fi
+          done
+          unzip -q pg.zip -d pg
+          # Only what the database needs; leave out pgAdmin, StackBuilder, docs and headers
+          rm -rf pg/pgsql/pgAdmin* pg/pgsql/StackBuilder pg/pgsql/doc pg/pgsql/include pg/pgsql/symbols
+      - name: Build the HNMO folder
+        run: POSTGRES_DIR="$GITHUB_WORKSPACE/pg/pgsql" client/web/tools/package-hnmo.sh "$GITHUB_WORKSPACE/server" win-x64 "$GITHUB_WORKSPACE/HNMO"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HNMO-windows
+          path: HNMO
+          retention-days: 14

@@ -10,7 +10,7 @@
       aren't found otherwise -- see vcpkg.json). Set $env:VCPKG_ROOT or pass
       -VcpkgRoot; defaults to C:\tmp\vcpkg if present.
     - the VS Installer directory on PATH, or the .NET Native AOT build
-      (MUnique.Client.Library.csproj) fails calling vswhere.exe internally.
+      (HNMO.Client.Library.csproj) fails calling vswhere.exe internally.
       vcvarsall.bat alone doesn't put it there.
     - a runtime GPU backend choice, via $env:SDL_GPU_DRIVER (SDL_GPU has no
       OpenGL backend on this branch -- it's vulkan/direct3d12/metal only).
@@ -117,7 +117,7 @@ function Import-VcVars {
     }
 
     # vcvarsall alone doesn't put the VS Installer directory (vswhere.exe) on
-    # PATH. The .NET Native AOT link step for MUnique.Client.Library.csproj
+    # PATH. The .NET Native AOT link step for HNMO.Client.Library.csproj
     # shells out to vswhere internally to find link.exe -- without this it
     # fails with "'vswhere.exe' is not recognized" partway through the build.
     $installerDir = Split-Path -Parent $vswhere

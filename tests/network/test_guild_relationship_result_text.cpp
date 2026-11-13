@@ -1,4 +1,4 @@
-// Tests of the chat text for OpenMU's E6 guild relationship result.
+// Tests of the chat text for HNMO's E6 guild relationship result.
 
 #include "Guild/GuildRelationshipResultText.h"
 #include "I18N/Game.h"
@@ -46,7 +46,7 @@ TEST_CASE("a failed change shows the reason [network][guild]")
           I18N::Game::MaximumNoOfGuildAllianceIs7);
 }
 
-TEST_CASE("0x10 shows the Castle Siege text, though OpenMU sends it for a missing guild too [network][guild]")
+TEST_CASE("0x10 shows the Castle Siege text, though HNMO sends it for a missing guild too [network][guild]")
 {
     CHECK(RelationshipResultText(Change(GR::Alliance, GR::Join, 0x10)) ==
           I18N::Game::AllianceFunctionWillBeRestrictedDueToTheCastleSiege);

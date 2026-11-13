@@ -299,11 +299,11 @@ std::string DescribeServerProblem(const ServerDownload& download)
     switch (download.problem)
     {
     case ServerUpdateProblem::NoUrl:
-        return I18N::Editor::EnterTheAddressOfTheOpenMUAdminPanel;
+        return I18N::Editor::EnterTheAddressOfTheHNMOAdminPanel;
     case ServerUpdateProblem::InsecureUrl:
         return I18N::Editor::TheAdminPanelAddressMustBeHttps;
     case ServerUpdateProblem::NoKey:
-        return I18N::Format(I18N::Editor::EnterAnApiKeyOfTheAdminPanel0, {OpenMUApiKeyVariable});
+        return I18N::Format(I18N::Editor::EnterAnApiKeyOfTheAdminPanel0, {HNMOApiKeyVariable});
     case ServerUpdateProblem::NoConnection:
         return I18N::Format(I18N::Editor::TheAdminPanelCouldNotBeReached0, {download.detail});
     case ServerUpdateProblem::KeyRefused:
@@ -336,13 +336,13 @@ void CountRows(const ItemSyncDiff& diff, int& added, int& changed, int& removed)
     }
 }
 
-// The file's path, and the server it is from when OpenMU wrote it.
+// The file's path, and the server it is from when HNMO wrote it.
 void RenderFileLine(const char* format, const std::string& path, const Data::Items::ItemExchangeFile& file)
 {
     ImGui::TextUnformatted(I18N::Format(format, {path}).c_str());
-    if (file.source == Data::Items::ItemExchangeSourceOpenMU)
+    if (file.source == Data::Items::ItemExchangeSourceHNMO)
     {
-        ImGui::TextDisabled("%s", I18N::Format(I18N::Editor::FromOpenMUServer0,
+        ImGui::TextDisabled("%s", I18N::Format(I18N::Editor::FromHNMOServer0,
                                                {file.server.empty() ? std::string(NoValue) : file.server})
                                       .c_str());
     }
@@ -502,12 +502,12 @@ void CMuItemSyncUI::LoadServerSettings()
     {
         return;
     }
-    m_adminPanelUrl = g_MuEditorConfig.GetOpenMUAdminPanelUrl();
+    m_adminPanelUrl = g_MuEditorConfig.GetHNMOAdminPanelUrl();
     m_adminPanelUrlLoaded = true;
     LoadApiKey();
 }
 
-// The key the store keeps for the address, else the field's text, else MU_OPENMU_API_KEY.
+// The key the store keeps for the address, else the field's text, else MU_HNMO_API_KEY.
 void CMuItemSyncUI::LoadApiKey()
 {
     m_apiKeyMessage.clear();
@@ -520,7 +520,7 @@ void CMuItemSyncUI::LoadApiKey()
     }
     else if (m_apiKey.empty())
     {
-        m_apiKey = ReadOpenMUApiKey();
+        m_apiKey = ReadHNMOApiKey();
     }
 }
 
@@ -631,7 +631,7 @@ void CMuItemSyncUI::RenderServer()
     InputString(I18N::Editor::AdminPanelAddress, m_adminPanelUrl);
     if (ImGui::IsItemDeactivatedAfterEdit())
     {
-        g_MuEditorConfig.SetOpenMUAdminPanelUrl(m_adminPanelUrl);
+        g_MuEditorConfig.SetHNMOAdminPanelUrl(m_adminPanelUrl);
         g_MuEditorConfig.Save();
         LoadApiKey();
     }
@@ -653,7 +653,7 @@ void CMuItemSyncUI::RenderServer()
     }
     else
     {
-        ImGui::TextDisabled("%s", I18N::Format(I18N::Editor::WhatUpdateFromServerDoes, {OpenMUApiKeyVariable}).c_str());
+        ImGui::TextDisabled("%s", I18N::Format(I18N::Editor::WhatUpdateFromServerDoes, {HNMOApiKeyVariable}).c_str());
     }
     ImGui::PopTextWrapPos();
 }

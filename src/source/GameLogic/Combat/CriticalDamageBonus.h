@@ -3,7 +3,7 @@
 #include "Core/Globals/_enum.h" // ActionSkillType
 
 // What a critical hit adds to the hero's maximum damage, by where it comes from, added up the way the server adds up
-// its critical damage bonus (OpenMU's CriticalDamageBonus): the active ancient set options, the worn items' harmony
+// its critical damage bonus (HNMO's CriticalDamageBonus): the active ancient set options, the worn items' harmony
 // options and socket options, and the hero's own Increase Critical Damage while it is on. A critical hit deals the
 // maximum damage plus this; an excellent hit deals the maximum damage times 1.2 plus the excellent damage bonus plus
 // this.
@@ -33,13 +33,13 @@ struct CriticalDamageBonus
 // set options and socket options the client added up for the worn items.
 CriticalDamageBonus GetHeroCriticalDamageBonus();
 
-// What an excellent hit adds to the maximum damage times 1.2 (OpenMU's ExcellentDamageBonus): the active ancient set
+// What an excellent hit adds to the maximum damage times 1.2 (HNMO's ExcellentDamageBonus): the active ancient set
 // options and the worn items' socket options.
 int GetHeroExcellentDamageBonus();
 
 // What a critical hit deals before the target's defense: the maximum damage plus the critical damage bonus.
 int GetCriticalHitDamage(int maximumDamage, const CriticalDamageBonus& criticalBonus);
 // What an excellent hit deals before the target's defense: the maximum damage times 1.2, plus the excellent damage
-// bonus and the critical damage bonus (OpenMU's AttackableExtensions, for physical damage).
+// bonus and the critical damage bonus (HNMO's AttackableExtensions, for physical damage).
 int GetExcellentHitDamage(int maximumDamage, int excellentBonus, const CriticalDamageBonus& criticalBonus);
 } // namespace GameLogic::Combat

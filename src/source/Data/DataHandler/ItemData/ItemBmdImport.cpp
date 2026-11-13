@@ -128,7 +128,7 @@ std::string Windows1252ToUtf8(std::string_view text)
 }
 
 // Some names were typed on Korean systems, where a right single quote is the
-// byte pair A1 AF (CP949). It becomes a plain apostrophe, as in OpenMU.
+// byte pair A1 AF (CP949). It becomes a plain apostrophe, as in HNMO.
 std::string ReplaceKoreanQuotes(std::string_view text)
 {
     constexpr std::string_view KoreanRightQuote = "\xA1\xAF";

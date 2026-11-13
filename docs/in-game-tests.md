@@ -42,7 +42,7 @@ The rest of this page explains each part.
   tests presets is not known yet.
 - podman or docker with compose for the test server below (on Windows and
   macOS a running `podman machine`), or any other
-  [OpenMU](https://github.com/MUnique/OpenMU) server with its test data.
+  [HNMO](https://github.com/nguyentuanphu/HNMO) server with its test data.
 - The .NET 10 runtime, which comes with the SDK the client build needs anyway.
   On Linux, a .NET installed with Microsoft's `dotnet-install.sh` sits in a
   folder the tester does not look in. The build targets tell it where; to
@@ -68,18 +68,18 @@ turn both off.
 
 ## The test server
 
-`tools/InGameTests/docker-compose.yml` runs OpenMU 0.9.10 in demo mode (`-demo`): it
-uses no database, keeps all data in memory and creates OpenMU's test data on
+`tools/InGameTests/docker-compose.yml` builds and runs the HNMO server in demo mode (`-demo`): it
+uses no database, keeps all data in memory and creates HNMO's test data on
 every start. Recreating the container therefore brings back the same accounts,
 characters and items, whatever the last run changed; the `InGameTests` build
 target does that before every run.
 
 The image is pinned, because the scenarios depend on the exact test data; move
-it to a newer OpenMU release on purpose, once the tests pass with it. Only the
+it to a newer HNMO release on purpose, once the tests pass with it. Only the
 game server of channel 1 is published, on `127.0.0.1:56901` (the test
 accounts have public passwords, so it is not reachable from the network). The test
 clients log in to it directly, without the connect server, so no IP resolver
-setting is needed, and a local OpenMU on its default ports can keep running
+setting is needed, and a local HNMO on its default ports can keep running
 next to it.
 
 ```sh
@@ -94,21 +94,21 @@ list` is empty); the runner then connects as `podman machine inspect` describes
 the machine, so nothing has to be set up by hand.
 
 Marlon, whom the hero status and combo quests need, wanders between four
-spots in Devias, Lorencia, Noria and Atlans: OpenMU puts him on a random one
+spots in Devias, Lorencia, Noria and Atlans: HNMO puts him on a random one
 some 20 seconds after it starts and moves him every one to three hours. The
-compose file has OpenMU log each of his moves (Debug level for its
+compose file has HNMO log each of his moves (Debug level for its
 `WanderingMerchantsPlugIn`, with the game server in every line), and the
 tester reads the container's log to walk straight to him; without the log it
 looks on his spots, which takes about a minute.
 
 The tests also run against any other
-OpenMU with the test data, but then they start from whatever state the last
+HNMO with the test data, but then they start from whatever state the last
 run left: `trade`, for one, moves a jewel from `test300Dl` to `socketElf`
 each time.
 
 ## Test accounts
 
-Every scenario logs in with characters of its own from OpenMU's test data
+Every scenario logs in with characters of its own from HNMO's test data
 (the password is the account name), so two scenarios never share one. The game
 master account `testgm` stays free for people; `testgm2`'s Dimension Master is
 the only character that wears something in all twelve equipment slots, so
@@ -136,13 +136,13 @@ scenarios need `--fresh-server` (or **Recreate the test server**) to run again.
 | `quest-hero-status-wizard`, `quest-hero-status-elf`, `quest-evidence-of-strength` | `quest3` | `quest3Dw`, `quest3Elf` (level 400, with Sebina's items and the Ring of Honor), `quest3Dl` (with Devin's three items) |
 
 A new scenario takes a character no other scenario uses. When the test data
-has no character with what a scenario needs, OpenMU's test data gets a new one
+has no character with what a scenario needs, HNMO's test data gets a new one
 (`VersionSeasonSix/TestAccounts`).
 
-OpenMU gives an item of a level above 0, an excellent or an ancient item its
+HNMO gives an item of a level above 0, an excellent or an ancient item its
 base durability, so such items in the test data start worn, below their
 maximum: that is what `repair` repairs. An item at 0 durability cannot be made
-in the game without OpenMU's admin panel.
+in the game without HNMO's admin panel.
 
 ## Running them
 
@@ -204,7 +204,7 @@ to 25 MB in a comment; the tester warns when a report is bigger):
   client was built with changes that were not committed.
 - What was tested against what: the git commit the client was built from
   (and whether it had changes that were not committed), and the server's
-  OpenMU version and commit. The client says its commit itself (`ping`); the
+  HNMO version and commit. The client says its commit itself (`ping`); the
   test server's version and commit are labels in its compose file, so another
   server shows as unknown.
 - A table of every scenario there is, with PASS, FAIL, or SKIPPED for the ones
@@ -421,4 +421,4 @@ several captioned pictures with `context.PictureAsync`.
   quest characters of the test data cannot do in a test.
 - The item rule flags, e.g. that an item with `"tradable": false` cannot be put
   into the trade window.
-- Running the tests in CI next to an OpenMU container.
+- Running the tests in CI next to an HNMO container.

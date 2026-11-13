@@ -8,7 +8,7 @@ if (args.Length != 3)
 }
 
 const string packetDefinition = """
-    <PacketDefinitions xmlns="http://www.munique.net/OpenMU/PacketDefinitions">
+    <PacketDefinitions xmlns="https://github.com/nguyentuanphu/HNMO/PacketDefinitions">
       <Packets>
         <Packet>
           <Name>Probe</Name>

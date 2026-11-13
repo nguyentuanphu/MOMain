@@ -123,8 +123,8 @@ if(WIN32 AND TARGET ClientLibrary)
     add_dependencies(test_helper_attack_rotation ClientLibrary)
     add_custom_command(TARGET test_helper_attack_rotation PRE_LINK
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_BINARY_DIR}/src/MUnique.Client.Library.dll"
-            "$<TARGET_FILE_DIR:test_helper_attack_rotation>/MUnique.Client.Library.dll"
+            "${CMAKE_BINARY_DIR}/src/HNMO.Client.Library.dll"
+            "$<TARGET_FILE_DIR:test_helper_attack_rotation>/HNMO.Client.Library.dll"
         COMMENT "Staging ClientLibrary beside the combat test"
         VERBATIM
     )

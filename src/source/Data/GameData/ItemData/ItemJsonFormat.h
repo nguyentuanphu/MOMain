@@ -61,7 +61,7 @@ const RemovedTooltipTag* FindRemovedTooltipTag(std::string_view tag);
 std::string DescribeRemovedTooltipTag(const RemovedTooltipTag& removed);
 
 // One item as the item files have it, without its group, which the file has. The item
-// exchange file with OpenMU (ItemExchangeFile) has its items so too.
+// exchange file with HNMO (ItemExchangeFile) has its items so too.
 Json::OrderedJson WriteItemJson(const ItemDefinition& definition);
 // Reads what WriteItemJson writes into `definition`, an item of `group`; false with fatal problems.
 // The problems are added to `issues`. Without `nameRequired`, an item without a name is read

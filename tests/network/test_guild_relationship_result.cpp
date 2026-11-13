@@ -1,4 +1,4 @@
-// Tests of reading OpenMU's E6 guild relationship result.
+// Tests of reading HNMO's E6 guild relationship result.
 
 #include "Network/Server/GuildRelationshipResult.h"
 

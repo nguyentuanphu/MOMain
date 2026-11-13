@@ -144,7 +144,7 @@ void CCharInfoBalloon::SetInfo()
 
     CopyWideString(m_szName, m_pCharInfo->ID);
 
-    // A guild status without a rank text (OpenMU sends only the five ranks) shows no rank.
+    // A guild status without a rank text (HNMO sends only the five ranks) shows no rank.
     const wchar_t* guildStatusText = GetGuildStatusText(m_pCharInfo->GuildStatus);
     if (guildStatusText != nullptr)
         mu_swprintf_s(m_szGuild, L"(%ls)", guildStatusText);

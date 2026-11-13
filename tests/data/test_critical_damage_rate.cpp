@@ -39,10 +39,10 @@ using GameLogic::Combat::CriticalDamageRate;
 using GameLogic::Combat::GetHeroCriticalDamageBonus;
 using GameLogic::Combat::GetHeroCriticalDamageRate;
 
-// The Lightning seed sphere option "Critical damage rate": its seed id in the item's socket byte (OpenMU: the
+// The Lightning seed sphere option "Critical damage rate": its seed id in the item's socket byte (HNMO: the
 // Lightning option 3, CriticalDamageChance +8 % to +12 % by sphere level).
 constexpr BYTE CriticalRateSeed = 32;
-// The Lightning options "Critical damage" and "Excellent damage" (OpenMU's options 2 and 0).
+// The Lightning options "Critical damage" and "Excellent damage" (HNMO's options 2 and 0).
 constexpr BYTE CriticalDamageSeed = 31;
 constexpr BYTE ExcellentDamageSeed = 29;
 // The weapons' harmony option "Increase critical damage".
@@ -78,7 +78,7 @@ ItemCreationParams Item(int group, int number, bool luck = false)
     return params;
 }
 
-// A piece of the Warrior set (the ancient Leather set, OpenMU: the full set adds 5 % critical damage chance).
+// A piece of the Warrior set (the ancient Leather set, HNMO: the full set adds 5 % critical damage chance).
 ItemCreationParams WarriorPiece(int group, int number, bool luck)
 {
     ItemCreationParams params = Item(group, number, luck);
@@ -344,7 +344,7 @@ TEST_CASE("The character window's critical damage rate line and its hint [data][
 
 // The Cloud set (the Brass Helm's set 1 and the Brass Pants' set 2) adds 50 and 20 %, a weapon's harmony option
 // "Increase critical damage" its value while the item's level reaches the option's, and the Lightning seed sphere
-// "Critical damage" its value (the client's 30 at level 1; OpenMU has 15, a known difference). The excellent damage
+// "Critical damage" its value (the client's 30 at level 1; HNMO has 15, a known difference). The excellent damage
 // bonus has its own seed sphere option.
 TEST_CASE("The critical damage bonus adds up the worn items' set, harmony and socket options [data][items]")
 {

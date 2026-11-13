@@ -23,7 +23,7 @@ class PacketFunctions_ClientToServer;
 // library beside the running executable. Windows keeps its native executable-directory search.
 inline std::string ManagedLibraryPath()
 {
-    const auto libraryName = "MUnique.Client.Library" + std::string(MU_DOTNET_LIB_EXT);
+    const auto libraryName = "HNMO.Client.Library" + std::string(MU_DOTNET_LIB_EXT);
 #ifdef _WIN32
     return libraryName;
 #else
@@ -39,7 +39,7 @@ inline std::string ManagedLibraryPath()
 }
 
 // Null until LoadManagedLibrary, and after it when the library is missing.
-extern mu::platform::LibraryHandle munique_client_library_handle;
+extern mu::platform::LibraryHandle hnmo_client_library_handle;
 
 // Loads the network library once, at startup after the client has chosen its folders; later calls do nothing.
 void LoadManagedLibrary();
@@ -65,7 +65,7 @@ template <typename T> T LoadManagedSymbol(const char* name)
         return nullptr;
     }
 
-    const auto symbol = reinterpret_cast<T>(mu::platform::GetSymbol(munique_client_library_handle, name));
+    const auto symbol = reinterpret_cast<T>(mu::platform::GetSymbol(hnmo_client_library_handle, name));
     if (!symbol)
     {
         ReportDotNetError(name, DotNetErrorKind::SymbolNotFound);

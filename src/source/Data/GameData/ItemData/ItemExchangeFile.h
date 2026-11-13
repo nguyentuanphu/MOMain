@@ -15,7 +15,7 @@
 #include <utility>
 #include <vector>
 
-// The item exchange file with OpenMU (phase 7, the items design's section 6): the item data
+// The item exchange file with HNMO (phase 7, the items design's section 6): the item data
 // both sides have and the item formulas, one JSON file in the layout of the item files.
 //
 //   {
@@ -28,13 +28,13 @@
 //     ]
 //   }
 //
-// The items have the fields of the item files that OpenMU has too, in their names and
-// meanings, and their group; a file from OpenMU also names the server ("server"). The formulas
+// The items have the fields of the item files that HNMO has too, in their names and
+// meanings, and their group; a file from HNMO also names the server ("server"). The formulas
 // are the item stat file without its profile rules, which stay with the client. Items are
 // written sorted by group and number.
 //
 // A file of format version 2 can name the item fields it carries ("fields": ["width",
-// "height"]): OpenMU's export adds its fields one at a time. Only these fields of its items are
+// "height"]): HNMO's export adds its fields one at a time. Only these fields of its items are
 // compared and taken; the client keeps its values of the others. A client that reads only
 // version 1 refuses such a file instead of reading the fields it lacks as their defaults.
 namespace Data::Items
@@ -44,13 +44,13 @@ constexpr int ItemExchangeFormatVersion = 1;
 // The newest version the client reads.
 constexpr int ItemExchangeMaxFormatVersion = 2;
 constexpr const char* ItemExchangeSourceMuMain = "MuMain";
-constexpr const char* ItemExchangeSourceOpenMU = "OpenMU";
+constexpr const char* ItemExchangeSourceHNMO = "HNMO";
 constexpr const char* ItemExchangeGameVersion = "season6";
 
 struct ItemExchangeFile
 {
     std::string source = ItemExchangeSourceMuMain;
-    // Only in a file from OpenMU: the server's installation.
+    // Only in a file from HNMO: the server's installation.
     std::string server;
     std::string gameVersion = ItemExchangeGameVersion;
     // The item fields the file carries (its "fields" list), by their keys in the item files.
@@ -60,12 +60,12 @@ struct ItemExchangeFile
     std::optional<ItemStatFile> formulas;
     // The shared fields only (ToExchangeItem).
     std::vector<ItemDefinition> items;
-    // Read from a file: the (group, number) pairs it has more than once (OpenMU does not keep
+    // Read from a file: the (group, number) pairs it has more than once (HNMO does not keep
     // them unique). None of those items is in `items`.
     std::vector<std::pair<int, int>> repeatedItems;
 };
 
-// The tags the exchange file has, as OpenMU has them too (IsAmmunition, IsQuestItem); the client's
+// The tags the exchange file has, as HNMO has them too (IsAmmunition, IsQuestItem); the client's
 // other tags stay with it.
 inline constexpr ItemTag ExchangeTags[] = {ItemTag::Ammunition, ItemTag::SecondClassQuestItem,
                                            ItemTag::ThirdClassQuestItem};

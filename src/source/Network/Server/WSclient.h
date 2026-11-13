@@ -408,7 +408,7 @@ typedef struct
 } PRECEIVE_JOIN_MAP_SERVER_EXTENDED, * LPPRECEIVE_JOIN_MAP_SERVER_EXTENDED;
 #pragma pack(pop)
 
-// The stage OpenMU sends the extended client when it enters the world: the
+// The stage HNMO sends the extended client when it enters the world: the
 // discriminator of the map (monsters design, D67), one byte after the struct,
 // so that a character which lost its connection in Devil Square rejoins its
 // stage. 0 for a packet too short to have one.
@@ -938,13 +938,13 @@ typedef struct {
     BYTE         PositionY;
     BYTE         Angle;
     BYTE Unused[5];
-    // Only in OpenMU's MapChangedExtended to the extended client, one byte
+    // Only in HNMO's MapChangedExtended to the extended client, one byte
     // longer than MapChanged: the discriminator of the map, the stage of Devil
     // Square (1 to 7).
     BYTE MapDiscriminator;
 } PRECEIVE_TELEPORT_POSITION, * LPPRECEIVE_TELEPORT_POSITION;
 
-// The stage OpenMU sends the extended client with the map (monsters design,
+// The stage HNMO sends the extended client with the map (monsters design,
 // D67); 0 for a packet too short to have one.
 int GetTeleportStage(const PRECEIVE_TELEPORT_POSITION& packet);
 
@@ -2765,7 +2765,7 @@ typedef struct
     char		GameId[MAX_USERNAME_SIZE];
     BYTE		byMapNumber;
     BYTE		btTeam;
-    BYTE btClass; // OpenMU evolution:line nibbles; see DecodeIllusionTempleClass.
+    BYTE btClass; // HNMO evolution:line nibbles; see DecodeIllusionTempleClass.
     int			nAddExp;
 } PMSG_CURSED_TEMPLE_USER_ADD_EXP, * LPPMSG_CURSED_TEMPLE_USER_ADD_EXP;
 
@@ -3689,7 +3689,7 @@ typedef struct
 } PRECEIVE_MUHELPER_STATUS, * LPRECEIVE_MUHELPER_STATUS;
 #pragma pack(pop)
 
-// Generated static_assert size guards. Sourced from OpenMU's authoritative
+// Generated static_assert size guards. Sourced from HNMO's authoritative
 // packet XML via tools/gen_wire_sizes.py. Must appear after all packet struct
 // declarations so the asserts can see them.
 #include "Network/Server/wire_sizes.generated.h"

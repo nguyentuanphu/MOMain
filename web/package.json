@@ -1,0 +1,17 @@
+{
+  "name": "hnmo-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HNMO web client.",
+  "type": "module",
+  "scripts": {
+    "start": "dotnet run --project bridge -c Release",
+    "generate-packets": "node tools/generate-packets.mjs"
+  },
+  "dependencies": {
+    "three": "0.160.0"
+  },
+  "devDependencies": {
+    "fast-xml-parser": "^4.5.0"
+  }
+}

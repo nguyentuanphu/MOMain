@@ -37,7 +37,7 @@ The design and the steps still to come are in
 | `item` | The item that gives the buff (`group`, `number`); left out for none. When the server sends no duration, the countdown takes the item's duration (its add option's time). Moving the item in the item tools does not move this link yet (the Buffs tool will); the buff then names a missing item, an error. |
 | `family`, `tier` | Buffs of one family are tiers of the same buff: when several are on, the buff strip shows only the highest tier. `tier` is left out for 0, the lowest. |
 | `hidden` | `true`: the effect gets no icon on the buff strip. |
-| `cancelSkill` | A right-click on the icon asks to cancel the buff and sends this skill to the server. The server decides whether it may be cancelled; OpenMU allows it for Infinity Arrow and Expansion of Wizardry and their strengthened tiers (skills 77, 441, 233, 380, 383). |
+| `cancelSkill` | A right-click on the icon asks to cancel the buff and sends this skill to the server. The server decides whether it may be cancelled; HNMO allows it for Infinity Arrow and Expansion of Wizardry and their strengthened tiers (skills 77, 441, 233, 380, 383). |
 
 A number or a name used twice, one tier of a family used twice, or a family of
 buffs and debuffs stops the game. An item the item list does not have is an

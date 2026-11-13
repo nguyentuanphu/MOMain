@@ -71,7 +71,7 @@ void ReadItemStatsJson(std::string_view text, const std::string& source, ItemSta
 std::string WriteItemStatsJson(const ItemStatFile& file);
 
 // The file without its format version and profile rules, as one object: the formulas of the
-// item exchange file with OpenMU (ItemExchangeFile), in the layout of the file.
+// item exchange file with HNMO (ItemExchangeFile), in the layout of the file.
 Json::OrderedJson WriteItemStatFormulasJson(const ItemStatFile& file);
 // Reads what WriteItemStatFormulasJson writes; profile rules in it are left out with a warning,
 // as they stay with the client.

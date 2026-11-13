@@ -154,7 +154,7 @@ std::optional<std::string> GetExchangeUrl(std::string_view adminPanelUrl, Server
         exchange.pop_back();
     }
     problem = ServerUpdateProblem::None;
-    return exchange + OpenMUExchangePath;
+    return exchange + HNMOExchangePath;
 }
 
 ServerUpdateProblem ProblemOfStatus(long status)
@@ -176,9 +176,9 @@ ServerUpdateProblem ProblemOfStatus(long status)
     }
 }
 
-std::string ReadOpenMUApiKey()
+std::string ReadHNMOApiKey()
 {
-    const char* key = std::getenv(OpenMUApiKeyVariable);
+    const char* key = std::getenv(HNMOApiKeyVariable);
     return key != nullptr ? std::string(Trim(key)) : std::string();
 }
 
@@ -189,7 +189,7 @@ std::string GetApiKeySecretName(std::string_view adminPanelUrl)
     {
         url.remove_suffix(1);
     }
-    return "OpenMU API key " + std::string(url);
+    return "HNMO API key " + std::string(url);
 }
 
 CItemSyncDownload::~CItemSyncDownload()

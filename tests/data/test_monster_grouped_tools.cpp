@@ -770,7 +770,7 @@ TEST_CASE("Monster checks: the shipped list warns about the 13 numbers of P26 an
     // In the order of their monsters' first numbers.
     std::ranges::sort(generic);
     CHECK(generic == std::vector{331, 332, 335, 336, 337, 338, 434, 435, 436, 437, 438, 439, 531});
-    // On maps where OpenMU places them nowhere: Erkanne's on 79 (the attacks
+    // On maps where HNMO places them nowhere: Erkanne's on 79 (the attacks
     // PR kept the code's case) and the Crywolf bodies of world 35, which no
     // server has (Q-MN35 kept them as variants).
     std::ranges::sort(variants);

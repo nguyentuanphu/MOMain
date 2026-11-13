@@ -12,7 +12,7 @@ namespace
     constexpr double CombatBacklogAgeMs = 250.0;
     constexpr std::size_t CombatBacklogDepth = 512;
     constexpr std::size_t EntityKeyCount = 1U << 16;
-    constexpr BYTE OpenMuBasicMonsterAttackAnimation = 120;
+    constexpr BYTE HnmoBasicMonsterAttackAnimation = 120;
 
     int GetActionEntityKey(const PacketInfo& packet)
     {
@@ -29,7 +29,7 @@ namespace
         }
 
         const auto action = reinterpret_cast<const PRECEIVE_ACTION*>(receiveBuffer);
-        if (action->Action != OpenMuBasicMonsterAttackAnimation)
+        if (action->Action != HnmoBasicMonsterAttackAnimation)
         {
             return -1;
         }

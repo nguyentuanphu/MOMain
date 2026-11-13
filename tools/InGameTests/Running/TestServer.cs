@@ -5,8 +5,8 @@ using System.Text.Json.Nodes;
 namespace MuMain.Tools.InGameTests.Running;
 
 /// <summary>
-/// The test server of docker-compose.yml: OpenMU in demo mode, which keeps its
-/// data in memory. Recreating the container brings back OpenMU's test data,
+/// The test server of docker-compose.yml: HNMO in demo mode, which keeps its
+/// data in memory. Recreating the container brings back HNMO's test data,
 /// whatever the last run changed.
 /// </summary>
 internal static class TestServer
@@ -45,7 +45,7 @@ internal static class TestServer
     }
 
     /// <summary>
-    /// The OpenMU version and commit of the test server, from the labels its compose
+    /// The HNMO version and commit of the test server, from the labels its compose
     /// file gives the container; null when that container does not serve
     /// <paramref name="host"/>:<paramref name="port"/> or cannot be asked.
     /// </summary>
@@ -66,7 +66,7 @@ internal static class TestServer
                 if (exitCode == 0 && JsonNode.Parse(output) is JsonObject labels)
                 {
                     return new ServerVersion(
-                        "OpenMU",
+                        "HNMO",
                         (string?)labels["org.opencontainers.image.version"],
                         (string?)labels["org.opencontainers.image.revision"],
                         (string?)labels["org.opencontainers.image.source"]);
@@ -202,7 +202,7 @@ internal static class TestServer
         return last;
     }
 
-    private const string ContainerName = "mumain-in-game-tests-openmu";
+    private const string ContainerName = "mumain-in-game-tests-hnmo";
     private const int TestServerPort = 56901;
     // The game server behind the published port: the first one of -demo's three, on 55901.
     private const int TestGameServer = 0;

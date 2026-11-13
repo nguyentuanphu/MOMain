@@ -375,7 +375,7 @@ struct AcceptedCastFixture : SkillFixture
         characters[0].Object.Position[0] = hero.Object.Position[0];
         characters[0].Object.Position[1] = hero.Object.Position[1];
         LoadManagedLibrary();
-        REQUIRE(munique_client_library_handle != nullptr);
+        REQUIRE(hnmo_client_library_handle != nullptr);
         connection = std::make_unique<Connection>(u"127.0.0.1", peer.port, false, nullptr);
         SocketClient = connection.get();
         REQUIRE(connection->State() != Network::ConnectionState::Closed);

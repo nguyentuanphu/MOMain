@@ -3,7 +3,7 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sven-n/MuMain)
 
 A fork of the Season 5.2 client sources [uploaded by Louis](https://github.com/LouisEmulator/Main5.2),
-modernized for Season 6 Episode 3 and playable with [OpenMU](https://github.com/MUnique/OpenMU).
+modernized for Season 6 Episode 3 and playable with [HNMO](https://github.com/nguyentuanphu/HNMO).
 The project improves rendering, UI, networking and developer tooling while continuing work
 on Season 6 compatibility.
 
@@ -29,7 +29,7 @@ on Season 6 compatibility.
 - 🔥 A unified RmlUi system with layout and styling in RML/RCSS, centralized UI scaling,
   theme inheritance, and theme-defined window placement.
 - 🔥 Unicode text and a generated translation system for runtime language switching.
-- 🔥 A C# .NET 10 network library built with Native AOT, using MUnique.OpenMU.Network.
+- 🔥 A C# .NET 10 network library built with Native AOT, using HNMO.Network.
 
 ### Developer tools
 
@@ -93,7 +93,7 @@ configure-time choices are independent of Debug, Release or RelWithDebInfo; see
 Run `Main.exe` from its output directory. It connects to the server in `config.ini`
 (`[CONNECTION SETTINGS]`, localhost port `44406` by default); `Main.exe connect /u<IP> /p<PORT>`
 overrides it for that run, for example `Main.exe connect /u192.168.0.20 /p55902`. The
-[OpenMU launcher](https://github.com/MUnique/OpenMU/releases) passes the same arguments.
+[HNMO launcher](https://github.com/nguyentuanphu/HNMO/releases) passes the same arguments.
 The client identifies itself with version `2.04d` and serial `k1Pk2jcET48mxL3b`.
 
 ### Client configuration (`config.ini`)
@@ -194,7 +194,7 @@ Developer diagnostics, read at startup:
   overlay, what the loader expects of a file and its log lines.
 - [Build guide](docs/build/README.md) - platform-specific build notes.
 - [In-game tests](docs/in-game-tests.md) - the tester next to developer
-  builds that plays test scenarios with real clients against a fresh OpenMU
+  builds that plays test scenarios with real clients against a fresh HNMO
   test server and writes a report with a screenshot per step.
 - [Control socket](docs/control-socket.md) - the developer socket through
   which scripts and the in-game tests drive the client.

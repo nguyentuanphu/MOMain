@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
-using MUnique.Client.Library;
-using MUnique.OpenMU.Network;
-using MUnique.OpenMU.Network.SimpleModulus;
-using MUnique.OpenMU.Network.Xor;
+using HNMO.Client.Library;
+using HNMO.Network;
+using HNMO.Network.SimpleModulus;
+using HNMO.Network.Xor;
 
 // DeferredTcpPipe, the transport under every game connection: it is written to before the socket opens, opens or
 // fails in the background, and sends what is queued before it closes.

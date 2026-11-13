@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>HNMO.Web</RootNamespace>
+    <AssemblyName>HNMO</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- The HNMO server's source: next to this repository as MOnline, or set HnmoServerSource. -->
+    <HnmoServerSource Condition="'$(HnmoServerSource)' == '' And Exists('$(MSBuildThisFileDirectory)../../../MOnline/src')">$(MSBuildThisFileDirectory)../../../MOnline</HnmoServerSource>
+    <HnmoServerSource Condition="'$(HnmoServerSource)' == ''">$(MSBuildThisFileDirectory)../../../server</HnmoServerSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The server's own network library: packets and their encryption. -->
+    <ProjectReference Include="$(HnmoServerSource)/src/Network/HNMO.Network.csproj" />
+    <ProjectReference Include="$(HnmoServerSource)/src/Network/Packets/HNMO.Network.Packets.csproj" />
+    <PackageReference Include="Pipelines.Sockets.Unofficial" Version="2.2.8" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,7 @@
 
 > **Draft, 2026-11-08.** Area BF of the
 > [data-driven content roadmap](2026-09-29-data-driven-content-roadmap-design.md).
-> Written from the code of MuMain `upstream/main` @ `f381344cc` and OpenMU
+> Written from the code of MuMain `upstream/main` @ `f381344cc` and HNMO
 > `master` @ `00f737374`. Line numbers are those of these commits.
 >
 > **Agreed with the owner on 2026-11-08** (Q-BF1 to Q-BF13, decisions B1 to
@@ -24,8 +24,8 @@ Two gaps in the game, and the data both need:
 
 Every buff and debuff becomes data: its names and descriptions in every client
 language, whether it is a buff or a debuff, the item that gives it, and what it
-adds and for how long, as OpenMU's effect definitions say. The skill tooltip,
-the buff icons and their tooltips read that data. OpenMU tells the client the
+adds and for how long, as HNMO's effect definitions say. The skill tooltip,
+the buff icons and their tooltips read that data. HNMO tells the client the
 time left and the value of each buff on the hero.
 
 ## Scope
@@ -33,8 +33,8 @@ time left and the value of each buff on the hero.
 - **In:** `Data/Buffs/Buffs.json` and `Data/Buffs/BuffTexts.json`, replacing
   `BuffEffect_<lang>.bmd`; the time of each buff on the hero; a time bar under
   each buff icon; value lines in the buff tooltip and in the skill tooltip; an
-  OpenMU change that sends the time left and the values.
-- **Later:** a Buffs tool in MuEditor; syncing the buff data with OpenMU's
+  HNMO change that sends the time left and the values.
+- **Later:** a Buffs tool in MuEditor; syncing the buff data with HNMO's
   configuration (like items phase 7); buff visuals (the roadmap's "later" row).
   The Buffs tool also carries a buff's `item` along when the item tools move
   that item, as they carry the monsters' items; until then the buff keeps the
@@ -46,9 +46,9 @@ time left and the value of each buff on the hero.
 
 | D | Topic | Decision |
 |---|---|---|
-| B1 | Where buff facts live (Q-BF1) | A data file with one entry per buff, mirroring OpenMU's `MagicEffectDefinition`: duration and power-ups with the value format of the item options design (section 4 there, `per` terms, O7). Texts in every client language. A MuEditor tool and the OpenMU sync come later. The skill tooltip and the buff strip read the same entry, so they can't disagree. |
-| B2 | Where the remaining time comes from (Q-BF2) | Both: the client computes the duration of the hero's own casts from the data (B1) and restarts it on the hero's own recast; a time the server sends wins. An OpenMU pull request makes the server send the time left for every effect on its owner, at activation and whenever the effect restarts. |
-| B3 | A buff someone else cast (Q-BF3) | The server sends each power-up's finished value next to the time (B2), only at activation or restart, in the same OpenMU pull request. Only the server knows the caster's stats and master skills. The client's formulas stay for the skill tooltip, for the hero's own casts on servers without the change, and as fallback; formulas that differ from a server's are fixed by the later sync. |
+| B1 | Where buff facts live (Q-BF1) | A data file with one entry per buff, mirroring HNMO's `MagicEffectDefinition`: duration and power-ups with the value format of the item options design (section 4 there, `per` terms, O7). Texts in every client language. A MuEditor tool and the HNMO sync come later. The skill tooltip and the buff strip read the same entry, so they can't disagree. |
+| B2 | Where the remaining time comes from (Q-BF2) | Both: the client computes the duration of the hero's own casts from the data (B1) and restarts it on the hero's own recast; a time the server sends wins. An HNMO pull request makes the server send the time left for every effect on its owner, at activation and whenever the effect restarts. |
+| B3 | A buff someone else cast (Q-BF3) | The server sends each power-up's finished value next to the time (B2), only at activation or restart, in the same HNMO pull request. Only the server knows the caster's stats and master skills. The client's formulas stay for the skill tooltip, for the hero's own casts on servers without the change, and as fallback; formulas that differ from a server's are fixed by the later sync. |
 | B4 | The time bar (Q-BF4) | As wide as the icon (20 dp), 2 dp tall, 1 dp under it, inside the strip's 5 dp row gap, so rows keep their places. It empties from right to left. Buffs green, debuffs red; the colors are theme tokens. |
 | B5 | An unknown time (Q-BF4b) | No bar and no time line: a bar always means "this much time left". |
 | B6 | The last seconds (Q-BF4c) | Under 10 s the icon darkens a little and shows the whole seconds left (8, 7, 6 …). No blinking. The limit is a player option (B14). |
@@ -57,10 +57,10 @@ time left and the value of each buff on the hero.
 | B9 | The skill tooltip (Q-BF6) | A buff skill (one whose skill data names a buff) shows its buff's value lines with the hero's stats and master skills. Each total gets gray part lines, one per part above 0, each naming its rule: "energy 2000: +66 (1 per 30)". The duration gets the base, its terms, the cap and the master skill parts. This replaces the hand-written Elf and Soul Barrier lines. |
 | B10 | Names, descriptions, kind and item links (Q-BF7) | All 158 entries of `BuffEffect_<lang>.bmd` move into `Buffs.json`: names and descriptions in every client language, buff or debuff, group, the item that gives it. The bmd is no longer read. Broken English, `%%` and `%d` are fixed on the way. |
 | B11 | Roadmap (Q-BF8) | A new area "BF Buffs as data" before SK1, with this document. The roadmap's "later" row keeps only buff visuals. SK1 names buffs from `Buffs.json`. |
-| B12 | The strip's rules (Q-BF10) | They move into `Buffs.json` too: a buff's `family` and `tier` (only the highest tier of a family shows, today `NormalizeBuffState` and `BuffTier`), `hidden` (no icon, today `SetDisableRenderBuff`) and `cancelSkill` (a right-click asks to cancel it and sends that skill, today `CancellableSkill`). The Buffs tool notes that the server must accept a cancel too (OpenMU: skills 77, 441, 233, 380, 383). |
-| B13 | Item buffs' values and durations (Q-BF11) | `Buffs.json` is the one place (D26), as in OpenMU, where an item's `ConsumeEffect` points at the magic effect that holds the duration and the boosts. The item tooltip's `{addOptionValue1}`, `{addOptionValue2}` and `{addOptionDuration}` read the item's buff (the buff whose `item` is that item); the buff part of `ItemAddOption.bmd` goes. The item options design (O13) and the items design (phase 11) get a note that this part moved here. |
+| B12 | The strip's rules (Q-BF10) | They move into `Buffs.json` too: a buff's `family` and `tier` (only the highest tier of a family shows, today `NormalizeBuffState` and `BuffTier`), `hidden` (no icon, today `SetDisableRenderBuff`) and `cancelSkill` (a right-click asks to cancel it and sends that skill, today `CancellableSkill`). The Buffs tool notes that the server must accept a cancel too (HNMO: skills 77, 441, 233, 380, 383). |
+| B13 | Item buffs' values and durations (Q-BF11) | `Buffs.json` is the one place (D26), as in HNMO, where an item's `ConsumeEffect` points at the magic effect that holds the duration and the boosts. The item tooltip's `{addOptionValue1}`, `{addOptionValue2}` and `{addOptionDuration}` read the item's buff (the buff whose `item` is that item); the buff part of `ItemAddOption.bmd` goes. The item options design (O13) and the items design (phase 11) get a note that this part moved here. |
 | B14 | Where the countdown limit lives (Q-BF12) | A player option in the options window's Interface tab, "Buff countdown", 0 to 30 s (0 turns it off), saved in `config.ini`, default 10. |
-| B15 | Who brings the value terms (Q-BF13) | Item options 9a3, as its design plans it (O7, O20). Buffs PR 1 and the OpenMU pull request can come any time; buffs PR 2 and PR 3 follow 9a3. |
+| B15 | Who brings the value terms (Q-BF13) | Item options 9a3, as its design plans it (O7, O20). Buffs PR 1 and the HNMO pull request can come any time; buffs PR 2 and PR 3 follow 9a3. |
 
 ## Current state
 
@@ -71,7 +71,7 @@ time left and the value of each buff on the hero.
   mana, AG, cooldown, requirements, banners, element. Values of a buff only for
   Soul Barrier (`:219-236`: absorb 10 % + agility/50 + energy/200, mana 2 % of
   max mana, 60 + energy/40 s) and the Elf's Heal, Greater Defense, Greater
-  Damage and Recovery (`EmitElfBuffValues`, `:356`). These match OpenMU. The
+  Damage and Recovery (`EmitElfBuffValues`, `:356`). These match HNMO. The
   other buff skills return early (`EmitPhysicalDamage`, `:262`, the list from
   `:305`). The master skill tree's node hint
   (`CMasterLevel::BuildNodeHintLines`, `UI/HUD/MasterLevel.cpp:780`) is the
@@ -102,7 +102,7 @@ time left and the value of each buff on the hero.
   `:3886`) has none. With time 0 an item buff takes `ITEM_ADD_OPTION::m_Time`
   from `ItemAddOption.bmd`.
 
-### Server (OpenMU)
+### Server (HNMO)
 
 - **Definitions.** `src/Persistence/Initialization/Skills/*EffectInitializer.cs`
   and, for items, `VersionSeasonSix/Items/BuffItems.cs` and `Potions.cs`. A
@@ -139,8 +139,8 @@ was written for this design; its numbers go into `Buffs.json` with pull request 
 | P3 | Under a minute the time reads "Less than 1 minute" (`GetStringTime`, `:205`). |
 | P4 | Descriptions are not formatted: `%%` shows (Potion of Bless "Attack power +20%%", the seals) and Bless shows "Increases all stats by %d." (buffs 142, 161). |
 | P5 | Buff texts exist only in English, Portuguese and Spanish, so a German player reads English names. |
-| P6 | OpenMU: Jack O'Lantern Cry (37) and Scroll of Defense (45) add `DefenseFinal`, but 0x2D maps `DefenseBase`, so their time is never sent; `SendDuration` on Infinity Arrow and Defense Reduction has no effect. |
-| P7 | OpenMU: a recast or a re-buff restarts the effect without telling the client. |
+| P6 | HNMO: Jack O'Lantern Cry (37) and Scroll of Defense (45) add `DefenseFinal`, but 0x2D maps `DefenseBase`, so their time is never sent; `SendDuration` on Infinity Arrow and Defense Reduction has no effect. |
+| P7 | HNMO: a recast or a re-buff restarts the effect without telling the client. |
 
 ## Design
 
@@ -163,7 +163,7 @@ Both have `formatVersion` and follow the format rules of items phase 2.
   "kind": "buff",
   "group": 5,
   "displayName": {"en": "Critical Damage Increase", "de": "Kritischer Schaden erhöht", ...},
-  "openMu": {"number": 5, "name": "Critical Damage Increase"},
+  "hnmo": {"number": 5, "name": "Critical Damage Increase"},
   "valuesFrom": "caster",
   "duration": {"values": 60, "per": [{"attribute": "totalEnergy", "divisor": 10}], "maximum": 180},
   "powerUps": [
@@ -194,7 +194,7 @@ Both have `formatVersion` and follow the format rules of items phase 2.
 {"number": 6, "name": "infinityArrow", "cancelSkill": 77, ...}
 ```
 
-- `number`: the buff number the server sends (`eBuffState`, OpenMU's effect
+- `number`: the buff number the server sends (`eBuffState`, HNMO's effect
   number). `name`: the identifier other data uses.
 - `kind`: `buff` or `debuff` (today's buff class). `group`: today's effect type;
   the cash shop asks whether a buff of the same group is active.
@@ -204,7 +204,7 @@ Both have `formatVersion` and follow the format rules of items phase 2.
 - `valuesFrom`: `caster` (skill buffs) or `owner` (items, the Elf Soldier).
 - `duration`, `powerUps[].add` / `percent`: the value format of the item options
   design, section 4 (O6, O7, O11), plus `maximum`. The attribute names are
-  OpenMU's, as the item options use them.
+  HNMO's, as the item options use them.
 - `masterSkills`: the hero's master skills that add to a power-up or to the
   duration; their values come from the server's master skill list
   (`CharacterAttribute->MasterSkillInfo`), as the critical damage line already
@@ -214,7 +214,7 @@ Both have `formatVersion` and follow the format rules of items phase 2.
 
 ### 3. Values
 
-The value of a term is the attribute times or divided by its number, as OpenMU
+The value of a term is the attribute times or divided by its number, as HNMO
 computes it; the shown number is rounded down, like the character window. The
 evaluator is the one of the item options' `per` terms, which item options 9a3
 brings (B15). The hero's
@@ -235,16 +235,16 @@ and where the time came from (computed or sent).
 - **Unknown:** neither: no bar, no time line (B5).
 - The fixed list of `InsertBuffLogicalEffect` goes (P1); timers are keyed by the
   buff number and every new time restarts them (P2).
-- An effect ends with 0x07 off. Nothing carries across logins, since OpenMU
+- An effect ends with 0x07 off. Nothing carries across logins, since HNMO
   removes every effect when a player leaves the world.
 
-### 5. OpenMU change
+### 5. HNMO change
 
-A pull request to MUnique/OpenMU, proposed separately:
+A pull request to HNMO, proposed separately:
 
 - At activation, and when `UpdateEffect` restarts an effect, the owner gets the
   time left and each power-up's current value (B2, B3).
-- Only clients that understand it get it: OpenMU picks view plug-ins by client
+- Only clients that understand it get it: HNMO picks view plug-ins by client
   version. The original client keeps getting 0x07 and 0x2D as today.
 - The packet's shape is decided in that pull request (an extended 0x2D or a new
   custom packet). A value is what it is at that moment; a later change of the
@@ -319,8 +319,8 @@ AG use: 75
   rewards), the group (cash shop) and the item links read the new data.
 - The buff part of `ItemAddOption.bmd` (`m_Time`, the values) is no longer read
   for buffs and item tooltips (B13); a comparison test checks that the item
-  tooltips show the same numbers as before, and lists where OpenMU stores a
-  number another way (the Scroll of Defense shows +60 base defense; OpenMU adds
+  tooltips show the same numbers as before, and lists where HNMO stores a
+  number another way (the Scroll of Defense shows +60 base defense; HNMO adds
   half of it to the final defense, `BuffItems.cs:50-57`).
 - Every reader of those values moves to `Buffs.json` with it: the character
   stats' item buffs (`CHARACTER_MACHINE` in `ZzzInfomation.cpp`: the scrolls,
@@ -340,24 +340,24 @@ A proposal; each one says what it changes in game.
    kind, group, item link, family, tier, hidden and cancel equal today's for
    every buff. Visible change: the texts (P4, P5). Needs no value terms, so it
    can come any time.
-2. **Values and durations**, after item options 9a3 (B15). The OpenMU numbers
+2. **Values and durations**, after item options 9a3 (B15). The HNMO numbers
    for the skill and item effects; the item tooltips' add option values read
    the item's buff (B13); the skill tooltip lines (B9) replace the hand-written
    ones.
 3. **Time and the strip.** Time tracking (B2, section 4), the bars and countdown
    (B4 to B6) with the player option (B14), the buff tooltip (B7, B8); fixes P1
    to P3.
-4. **OpenMU** (MUnique/OpenMU): time and values for the owner (section 5); any
+4. **HNMO** (HNMO): time and values for the owner (section 5); any
    time.
 5. **The client reads it** (B3): sent times and values win.
 
 Later: the Buffs tool in MuEditor ("used by": the skills whose data names the
-buff, the items that give it); the OpenMU sync.
+buff, the items that give it); the HNMO sync.
 
 ## Tests
 
 - **Data:** every entry loads; kind, group and item link equal the bmd's; every
-  OpenMU effect number has an entry.
+  HNMO effect number has an entry.
 - **Values:** Increase Critical Damage with 2000 energy and 1500 command gives
   126 (165 with PowUp at +39), 180 s at the cap, 211 s with PowUp (2); Greater
   Damage with 1200 energy gives 174; the Elf and Soul Barrier numbers equal the
@@ -368,7 +368,7 @@ buff, the items that give it); the OpenMU sync.
   the critical damage branch's layout test).
 - **Texts:** the tooltips in English and German.
 - **In game:** own buffs (Dark Lord, Elf), a party member's buff, an item buff and
-  a debuff, with and without the OpenMU change.
+  a debuff, with and without the HNMO change.
 
 ## Open questions
 
@@ -380,7 +380,7 @@ are added here.
 
 Left to the pull requests:
 
-- The OpenMU packet's shape (section 5).
+- The HNMO packet's shape (section 5).
 - How the client counts Swell Life's nearby party members like the server
   (section 3).
 

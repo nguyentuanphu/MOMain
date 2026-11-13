@@ -1,4 +1,4 @@
-// Tests of reading OpenMU's E5 guild relationship request.
+// Tests of reading HNMO's E5 guild relationship request.
 
 #include "Network/Server/GuildRelationshipRequest.h"
 

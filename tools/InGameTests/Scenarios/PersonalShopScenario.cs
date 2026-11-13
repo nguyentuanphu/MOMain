@@ -72,7 +72,7 @@ internal sealed class PersonalShopScenario : Scenario
             [Seller]);
 
         var jewel = ItemSlots.Of(await seller.StateAsync(), "inventory").FirstOrDefault(item => item.Name == JewelName)
-                    ?? throw new ScenarioFailedException($"the seller has no '{JewelName}'; the OpenMU test data gives {sellerCharacter.Name} some");
+                    ?? throw new ScenarioFailedException($"the seller has no '{JewelName}'; the HNMO test data gives {sellerCharacter.Name} some");
         var shopSlot = 0;
         await context.StepAsync(
             $"The seller puts a '{JewelName}' into the shop with two clicks",

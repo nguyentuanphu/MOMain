@@ -102,7 +102,7 @@ is a load on whatever serves it, at the busiest times.
   downloads what changed and skips the download when nothing did.
 - The client or the launcher checks the version before the game loads its
   items and takes the newer data; the game then loads it as it loads the
-  shipped files. OpenMU's launcher (`src/ClientLauncher`) is one place that
+  shipped files. HNMO's launcher (`src/ClientLauncher`) is one place that
   could do the check.
 - What the client keeps for itself (models, looks, translations, tooltips)
   stays with the client build, or comes through the same service as files.

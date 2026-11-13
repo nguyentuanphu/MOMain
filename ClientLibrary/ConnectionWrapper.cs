@@ -1,8 +1,8 @@
-﻿// <copyright file="ConnectionWrapper.cs" company="MUnique">
+﻿// <copyright file="ConnectionWrapper.cs" company="HNMO">
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace MUnique.Client.Library;
+namespace HNMO.Client.Library;
 
 using System;
 using System.Buffers;
@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Threading;
 using System.Threading.Tasks;
-using MUnique.OpenMU.Network;
+using HNMO.Network;
 
 /// <summary>
 /// A wrapper for a <see cref="Connection"/>.

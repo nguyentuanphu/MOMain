@@ -99,7 +99,7 @@ TEST_CASE("A symbol the library lacks is found as null without an error line [ne
 TEST_CASE("The network library loads at startup, once, not during static initialisation [network][dotnet]")
 {
     // Nothing in this test binary loads it before this line.
-    CHECK(munique_client_library_handle == nullptr);
+    CHECK(hnmo_client_library_handle == nullptr);
 
     std::string firstLog;
     {
@@ -107,13 +107,13 @@ TEST_CASE("The network library loads at startup, once, not during static initial
         LoadManagedLibrary();
         firstLog = log.Text();
     }
-    const auto handle = munique_client_library_handle;
+    const auto handle = hnmo_client_library_handle;
     // Loaded, or its failure logged: the test binary may not have the library beside it.
     CHECK((handle != nullptr || !firstLog.empty()));
 
     const PlatformLogCapture log;
     LoadManagedLibrary();
-    CHECK(munique_client_library_handle == handle);
+    CHECK(hnmo_client_library_handle == handle);
     CHECK(log.Text().empty());
 }
 
@@ -124,7 +124,7 @@ TEST_CASE("Connection library path follows the executable [network][dotnet]")
     wchar_t executablePath[executablePathCapacity] = {};
     REQUIRE(GetModuleFileNameW(nullptr, executablePath, executablePathCapacity) != 0);
 
-    const auto libraryName = "MUnique.Client.Library" + std::string(MU_DOTNET_LIB_EXT);
+    const auto libraryName = "HNMO.Client.Library" + std::string(MU_DOTNET_LIB_EXT);
     const auto expectedPath = std::filesystem::path(mu_narrow_path(executablePath)).parent_path() / libraryName;
     CHECK(std::filesystem::path(ManagedLibraryPath()) == expectedPath);
 }

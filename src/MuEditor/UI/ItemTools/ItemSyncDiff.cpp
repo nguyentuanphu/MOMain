@@ -31,8 +31,8 @@ using ItemKey = std::pair<int, int>;
 constexpr const char* NameField = "name";
 constexpr const char* TagsField = "tags";
 constexpr const char* LevelField = "level";
-// A drop level OpenMU can keep: its field is a byte.
-constexpr int OpenMUMaxDropLevel = 255;
+// A drop level HNMO can keep: its field is a byte.
+constexpr int HNMOMaxDropLevel = 255;
 // What the game holds keeps (IsHeldByCharacter).
 constexpr const char* HeldFields[] = {"width", "height", "slot"};
 
@@ -183,7 +183,7 @@ void UpdateBoxForMark(bool& checked, WrongSide old, WrongSide side, bool start)
 }
 
 // A field: an inexact one starts unchecked like a locked one, also when it is marked wrong in the
-// client: the file's value is not the client's (a drop level over 255 that OpenMU keeps as 255).
+// client: the file's value is not the client's (a drop level over 255 that HNMO keeps as 255).
 // Its box takes it still.
 bool FieldStartsChecked(const SyncField& field)
 {
@@ -215,14 +215,14 @@ void MarkField(SyncField& field, const ItemKey& key, WrongSide itemSide, const I
     {
         field.locked = I18N::Editor::TheItemIsWornOrInAnItemWindowItsSizeAndSlotStayAsTheyAre;
     }
-    if (field.field == LevelField && incoming.source == Data::Items::ItemExchangeSourceOpenMU)
+    if (field.field == LevelField && incoming.source == Data::Items::ItemExchangeSourceHNMO)
     {
         const auto client = current.find(LevelField);
         const auto server = incomingFields.find(LevelField);
-        if (client != current.end() && client->second.get<int>() > OpenMUMaxDropLevel &&
-            server != incomingFields.end() && server->second.get<int>() == OpenMUMaxDropLevel)
+        if (client != current.end() && client->second.get<int>() > HNMOMaxDropLevel &&
+            server != incomingFields.end() && server->second.get<int>() == HNMOMaxDropLevel)
         {
-            field.inexact = I18N::Editor::OpenMUKeepsTheDropLevelInAByteAtMost255;
+            field.inexact = I18N::Editor::HNMOKeepsTheDropLevelInAByteAtMost255;
         }
     }
     field.checked = FieldStartsChecked(field);
